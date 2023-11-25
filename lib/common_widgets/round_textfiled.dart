@@ -10,6 +10,8 @@ class RoundTextFiled extends StatelessWidget {
   final EdgeInsets? margin;
   final bool obscureText;
   final VoidCallback? onTap;
+  final String? Function(String?)? validator;
+
   const RoundTextFiled(
       {super.key,
       this.controller,
@@ -19,7 +21,8 @@ class RoundTextFiled extends StatelessWidget {
       this.keyboardType,
       this.obscureText = false,
       this.rightIcon,
-      this.onTap});
+      this.onTap,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
@@ -27,35 +30,37 @@ class RoundTextFiled extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
           color: Tcolor.lightgray, borderRadius: BorderRadius.circular(15)),
-      child: TextField(
-          onTap: onTap,
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            hintText: hintext,
-            suffixIcon: rightIcon,
-            prefixIcon: Container(
-              alignment: Alignment.center,
+      child: TextFormField(
+        onTap: onTap,
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          hintText: hintext,
+          suffixIcon: rightIcon,
+          prefixIcon: Container(
+            alignment: Alignment.center,
+            width: 20,
+            height: 20,
+            child: Image.asset(
+              icon,
               width: 20,
               height: 20,
-              child: Image.asset(
-                icon,
-                width: 20,
-                height: 20,
-                fit: BoxFit.contain,
-                color: Tcolor.gray,
-              ),
-            ),
-            hintStyle: TextStyle(
+              fit: BoxFit.contain,
               color: Tcolor.gray,
-              fontSize: 12,
             ),
-          )),
+          ),
+          hintStyle: TextStyle(
+            color: Tcolor.gray,
+            fontSize: 12,
+          ),
+        ),
+        validator: validator,
+      ),
     );
   }
 }

@@ -14,11 +14,11 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  final _formfield = GlobalKey<FormState>();
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
   bool ischeck = false;
   bool isvisible = false;
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -29,6 +29,7 @@ class _SignupState extends State<Signup> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Form(
+              key: formkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -47,6 +48,12 @@ class _SignupState extends State<Signup> {
                     height: media.width * 0.05,
                   ),
                   RoundTextFiled(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "email is required";
+                      }
+                      return null;
+                    },
                     hintext: "email",
                     icon: "assets/images/email_icon.png",
                     keyboardType: TextInputType.emailAddress,
@@ -56,6 +63,12 @@ class _SignupState extends State<Signup> {
                     height: media.width * 0.04,
                   ),
                   RoundTextFiled(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "password is required";
+                      }
+                      return null;
+                    },
                     hintext: "password",
                     icon: "assets/images/lock_icon.png",
                     controller: _passwordTextController,
@@ -106,6 +119,7 @@ class _SignupState extends State<Signup> {
                   ),
                   RoundButton(
                       onpressed: () {
+                        if (formkey.currentState!.validate()) {}
                         FirebaseAuth.instance
                             .createUserWithEmailAndPassword(
                                 email: _emailTextController.text,

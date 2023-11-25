@@ -1,4 +1,5 @@
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
@@ -12,11 +13,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formfield = GlobalKey<FormState>;
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
   bool ischeck = false;
   bool isvisible = false;
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -27,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Form(
+              key: formkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -45,6 +47,12 @@ class _LoginPageState extends State<LoginPage> {
                     height: media.width * 0.05,
                   ),
                   RoundTextFiled(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "email is required";
+                      }
+                      return null;
+                    },
                     hintext: "email",
                     icon: "assets/images/email_icon.png",
                     keyboardType: TextInputType.emailAddress,
@@ -54,6 +62,12 @@ class _LoginPageState extends State<LoginPage> {
                     height: media.width * 0.04,
                   ),
                   RoundTextFiled(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "password is required";
+                      }
+                      return null;
+                    },
                     hintext: "password",
                     icon: "assets/images/lock_icon.png",
                     controller: _passwordTextController,
@@ -79,7 +93,17 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: media.width * 0.4,
                   ),
-                  RoundButton(onpressed: () {}, title: "Login"),
+                  RoundButton(
+                      onpressed: () {
+                        if (formkey.currentState!.validate()) {
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeView()));
+                        }
+                      },
+                      title: "Login"),
                   SizedBox(
                     height: media.width * 0.04,
                   ),
