@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "463061599891",
+    "project_id": "babytracker1-fffae",
+    "storage_bucket": "babytracker1-fffae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463061599891:android:ef6934e6d4e96155cdaf66",
+        "android_client_info": {
+          "package_name": "com.example.baby_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuVgA99gzuJCwmoeTUPdNz472EyYpXwy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
