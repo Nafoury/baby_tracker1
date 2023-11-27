@@ -37,38 +37,38 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
-    Future<void> retrieveData() async {
-      SqlDb sqlDb = SqlDb();
+    //Future<void> retrieveData() async {
+    //SqlDb sqlDb = SqlDb();
 
-      try {
-        List<Map<String, dynamic>> data = await sqlDb.readData(
-            'SELECT baby_name, first_name, date_of_birth FROM "complete information" WHERE id = 1');
+    //try {
+    //List<Map<String, dynamic>> data = await sqlDb.readData(
+    //  'SELECT baby_name, first_name, date_of_birth FROM "complete information" WHERE id = 1');
 
-        if (data.isNotEmpty) {
-          String babyName = data[0]['baby_name'].toString();
-          String firstName = data[0]['first_name'].toString();
-          String birthDateAsString = data[0]['date_of_birth'].toString();
-          DateTime birthDate = DateTime.parse(birthDateAsString);
+    //if (data.isNotEmpty) {
+    //String babyName = data[0]['baby_name'].toString();
+    //String firstName = data[0]['first_name'].toString();
+    //String birthDateAsString = data[0]['date_of_birth'].toString();
+    //DateTime birthDate = DateTime.parse(birthDateAsString);
 
-          // Calculate the number of weeks since the birth date
-          DateTime currentDate = DateTime.now();
-          int differenceInDays = currentDate.difference(birthDate).inDays;
-          int numberOfWeeks = differenceInDays ~/ 7;
+    // Calculate the number of weeks since the birth date
+    //DateTime currentDate = DateTime.now();
+    //int differenceInDays = currentDate.difference(birthDate).inDays;
+    //int numberOfWeeks = differenceInDays ~/ 7;
 
-          // Update the text box with the number of weeks
-          setState(() {
-            weekText = '$numberOfWeeks weeks';
-            babyname = 'Welcome $babyName & $firstName';
-          });
-        } else {
-          print('No data found for the specified ID');
-        }
-      } catch (e) {
-        print('Error retrieving data: $e');
-      }
-    }
+    // Update the text box with the number of weeks
+    //setState(() {
+    //weekText = '$numberOfWeeks weeks';
+    //babyname = 'Welcome $babyName & $firstName';
+    //});
+    //} else {
+    // print('No data found for the specified ID');
+    // }
+    //} catch (e) {
+    // print('Error retrieving data: $e');
+    // }
+    //}
 
-    retrieveData();
+    //retrieveData();
 
     return Scaffold(
       backgroundColor: Tcolor.white,

@@ -1,10 +1,13 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/round_textfiled.dart';
+import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/login/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:baby_tracker/sqldb.dart';
+import 'package:baby_tracker/models/user.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -19,6 +22,25 @@ class _SignupState extends State<Signup> {
   bool ischeck = false;
   bool isvisible = false;
   final formkey = GlobalKey<FormState>();
+
+  Future<int> savedata(UserModel user) async {
+    try {
+      SqlDb sqlDb = SqlDb();
+      int response = await sqlDb.insertData('user_authorization', user.toMap());
+      if (response > 0) {
+        // Show a success message
+        print("Data inserted successfully");
+      } else {
+        // Show an error message
+        print("Failed to insert data");
+      }
+      return response;
+    } catch (e) {
+      print("Error adding data: $e");
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -48,27 +70,25 @@ class _SignupState extends State<Signup> {
                     height: media.width * 0.05,
                   ),
                   RoundTextFiled(
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "email is required";
-                      }
-                      return null;
-                    },
                     hintext: "email",
                     icon: "assets/images/email_icon.png",
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailTextController,
+                    validator: (value) {
+                      bool emailValid =
+                          RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
+                              .hasMatch(value!);
+                      if (value!.isEmpty) {
+                        return "Enter Email";
+                      } else if (!emailValid) {
+                        return "Enter Valid Email";
+                      }
+                    },
                   ),
                   SizedBox(
                     height: media.width * 0.04,
                   ),
                   RoundTextFiled(
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "password is required";
-                      }
-                      return null;
-                    },
                     hintext: "password",
                     icon: "assets/images/lock_icon.png",
                     controller: _passwordTextController,
@@ -83,6 +103,13 @@ class _SignupState extends State<Signup> {
                             isvisible ? Icons.visibility : Icons.visibility_off,
                             color: Tcolor.gray,
                             size: 20)),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter password";
+                      } else if (_passwordTextController.text.length < 6) {
+                        return "Password Lenght should be more than 8 \ncharacters";
+                      }
+                    },
                   ),
                   SizedBox(
                     height: media.width * 0.04,
@@ -119,20 +146,18 @@ class _SignupState extends State<Signup> {
                   ),
                   RoundButton(
                       onpressed: () {
-                        if (formkey.currentState!.validate()) {}
-                        FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: _emailTextController.text,
-                                password: _passwordTextController.text)
-                            .then((value) {
-                          print("Created New Account");
-                          Navigator.push(
+                        if (formkey.currentState!.validate()) {
+                          UserModel user = UserModel(
+                            useremail: _emailTextController.text,
+                            userpassword: _passwordTextController.text,
+                          );
+                          savedata(user);
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Completeinfo()));
-                        }).onError((error, stackTrace) {
-                          print("Error${error.toString()}");
-                        });
+                                  builder: (context) => Completeinfo()),
+                              (Route<dynamic> rout) => false);
+                        }
                       },
                       title: "Register"),
                   SizedBox(
@@ -140,10 +165,11 @@ class _SignupState extends State<Signup> {
                   ),
                   TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginPage()));
+                                builder: (context) => LoginPage()),
+                            (Route<dynamic> rout) => false);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

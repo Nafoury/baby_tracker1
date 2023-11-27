@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme:
           ThemeData(primaryColor: Tcolor.primaryColor1, fontFamily: "Poppins"),
-      home: const Signup(),
+      home: const Completeinfo(),
     );
   }
 }

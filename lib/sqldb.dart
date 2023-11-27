@@ -1,3 +1,5 @@
+import 'package:baby_tracker/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -17,7 +19,7 @@ class SqlDb {
     String databasepath = await getDatabasesPath();
     String path = join(databasepath, 'babytracker.db');
     Database trackerdb = await openDatabase(path,
-        onCreate: _oncreate, version: 4, onUpgrade: _onUpgrade);
+        onCreate: _oncreate, version: 6, onUpgrade: _onUpgrade);
     return trackerdb;
   }
 
@@ -39,18 +41,43 @@ class SqlDb {
 
     )
 ''');
-    print("create");
+    await db.execute('''
+    CREATE TABLE "user_authorization"(
+      "userid" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "useremail" TEXT NOT NULL,
+      "userpassword" TEXT NOT NULL
+    )
+''');
+
+    print("Table is done");
   }
 
-  readData(String sql) async {
+  Future<List<Map<String, dynamic>>> readData(
+      String table, Map<String, dynamic> conditions) async {
     Database? trackerdb = await db;
-    List<Map> response = await trackerdb!.rawQuery(sql);
+
+    List<String> whereConditions = [];
+    List<dynamic> whereValues = [];
+
+    conditions.forEach((key, value) {
+      whereConditions.add('$key = ?');
+      whereValues.add(value);
+    });
+
+    String whereClause = whereConditions.join(" AND ");
+
+    List<Map<String, dynamic>> response = await trackerdb!.query(
+      table,
+      where: whereClause,
+      whereArgs: whereValues,
+    );
+
     return response;
   }
 
-  insertData(String sql) async {
+  Future<int> insertData(String table, Map<String, dynamic> data) async {
     Database? trackerdb = await db;
-    int response = await trackerdb!.rawInsert(sql);
+    int response = await trackerdb!.insert(table, data);
     return response;
   }
 
@@ -70,6 +97,5 @@ class SqlDb {
     String databasepath = await getDatabasesPath();
     String path = join(databasepath, 'babytracker.db');
     await deleteDatabase(path);
-    _db = null;
   }
 }
