@@ -2,6 +2,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/on_boarding_page.dart';
 import 'package:baby_tracker/view/login/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class OnBoradingView1 extends StatefulWidget {
   const OnBoradingView1({
@@ -100,15 +101,9 @@ class _OnBoradingView1State extends State<OnBoradingView1> {
                         controller.animateToPage(selectpage,
                             duration: const Duration(microseconds: 300),
                             curve: Curves.bounceIn);
-                        //controller.jumpToPage(selectpage);
-
                         setState(() {});
                       } else {
-                        //open welcome screen
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Signup()));
+                        Get.to(Signup());
                       }
                     },
                   ),

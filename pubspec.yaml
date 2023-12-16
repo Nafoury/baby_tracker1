@@ -43,6 +43,14 @@ dependencies:
   path: ^1.8.3
   intl: ^0.18.1
   path_provider: ^2.1.1
+  provider: ^6.1.1
+  permission_handler: ^11.1.0
+  gcloud: ^0.8.11
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^5.0.2
+  http: ^1.1.2
+  get: ^4.6.6
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +97,7 @@ flutter:
     - assets/images/diaper_change.png
     - assets/images/sleep_act.png
     - assets/images/baby_bottl2.png
+    - assets/images/back_Navs.png
     
 
 

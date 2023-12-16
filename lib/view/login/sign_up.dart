@@ -1,6 +1,7 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/round_textfiled.dart';
+import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/login/login_page.dart';
@@ -8,6 +9,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/sqldb.dart';
 import 'package:baby_tracker/models/user.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:baby_tracker/common_widgets/crud.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -17,27 +22,32 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  Crud crud = Crud();
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
+  bool isloading = false;
   bool ischeck = false;
   bool isvisible = false;
   final formkey = GlobalKey<FormState>();
 
-  Future<int> savedata(UserModel user) async {
-    try {
-      SqlDb sqlDb = SqlDb();
-      int response = await sqlDb.insertData('user_authorization', user.toMap());
-      if (response > 0) {
-        // Show a success message
-        print("Data inserted successfully");
+  signUp() async {
+    var response = await crud.postrequest(linksignup, {
+      "email": _emailTextController.text,
+      "password": _passwordTextController.text
+    });
+    print(response); // Print the response to check its structure
+    if (response['status'] == "success") {
+      if (response.containsKey('id')) {
+        String userId = response['id'].toString();
+        // Store the user ID in shared preferences
+        sharedPref.setString("id", userId);
+        sharedPref.setBool('isLoggedIn', true);
+        Get.offAllNamed("/completeinfo");
       } else {
-        // Show an error message
-        print("Failed to insert data");
+        print("ID not found in the response"); // Check this print statement
       }
-      return response;
-    } catch (e) {
-      print("Error adding data: $e");
-      return 0;
+    } else {
+      print("signup fail");
     }
   }
 
@@ -145,18 +155,9 @@ class _SignupState extends State<Signup> {
                     height: media.width * 0.4,
                   ),
                   RoundButton(
-                      onpressed: () {
+                      onpressed: () async {
                         if (formkey.currentState!.validate()) {
-                          UserModel user = UserModel(
-                            useremail: _emailTextController.text,
-                            userpassword: _passwordTextController.text,
-                          );
-                          savedata(user);
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Completeinfo()),
-                              (Route<dynamic> rout) => false);
+                          await signUp();
                         }
                       },
                       title: "Register"),

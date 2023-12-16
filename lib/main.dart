@@ -1,17 +1,27 @@
 import 'dart:io';
 
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/provider/completeinfo_provider.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
+import 'package:baby_tracker/view/login/login_page.dart';
 import 'package:baby_tracker/view/login/sign_up.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:baby_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baby_tracker/view/on_boarding/started_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:baby_tracker/models/completeinf.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+late SharedPreferences sharedPref;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  sharedPref = await SharedPreferences.getInstance();
+
+  bool isLoggedIn = sharedPref.getBool('isLoggedIn') ?? false;
 
   Platform.isAndroid
       ? await Firebase.initializeApp(
@@ -22,21 +32,27 @@ void main() async {
               projectId: "babytracker1-fffae"),
         )
       : await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Baby Tracker',
       debugShowCheckedModeBanner: false,
       theme:
           ThemeData(primaryColor: Tcolor.primaryColor1, fontFamily: "Poppins"),
-      home: const Completeinfo(),
+      home: isLoggedIn ? HomeView() : Startview(),
+      getPages: [
+        GetPage(name: "/completeinfo", page: () => Completeinfo()),
+        GetPage(name: "/home", page: () => HomeView()),
+        GetPage(name: "/login", page: () => LoginPage()),
+      ],
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/sqldb.dart';
+import 'package:get/get.dart';
 
 class Startview extends StatefulWidget {
   const Startview({super.key});
@@ -45,11 +47,11 @@ class _StartviewState extends State<Startview> {
                   type: isChangedcolor
                       ? RoundButtonType.textGradient
                       : RoundButtonType.bgGradiant,
-                  onpressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const OnBoradingView1()));
+                  onpressed: () async {
+                    SqlDb sqlDb = SqlDb();
+                    sqlDb.getDatabasePath();
+
+                    Get.to(OnBoradingView1());
                   },
                 ),
               ),

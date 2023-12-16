@@ -1,11 +1,22 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/activites.dart';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
+import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:baby_tracker/sqldb.dart';
+import 'package:baby_tracker/models/completeinf.dart';
+import 'package:baby_tracker/view/main_tab/main_tab.dart';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
+import 'package:baby_tracker/provider/completeinfo_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:baby_tracker/view/login/complete_info.dart';
+import 'dart:async';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -15,8 +26,73 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  String weekText = '';
-  String babyname = '';
+  late SharedPreferences sharedPref;
+  late String weekText = '';
+  late String babyname = '';
+  late String firstName = '';
+  late String dateOfBirthString = '';
+  @override
+  void initState() {
+    super.initState();
+    loadDataFromSharedPreferences();
+    startWeekUpdateTimer();
+  }
+
+  loadDataFromSharedPreferences() async {
+    sharedPref = await SharedPreferences.getInstance();
+    dateOfBirthString = sharedPref.getString('date_of_birth') ?? '';
+    if (dateOfBirthString.isEmpty) {
+      dateOfBirthString = '2012-11-13';
+      await sharedPref.setString('date_of_birth', dateOfBirthString);
+    }
+    setState(() {
+      firstName = sharedPref.getString('first_name') ?? '';
+      babyname = sharedPref.getString('baby_name') ?? '';
+      print('Date of Birth String: $dateOfBirthString');
+      calculateWeeks(); // Calculate weeks initially after setting the dateOfBirthString
+    });
+  }
+
+  void calculateWeeks() {
+    // Calculate weeks from dateOfBirthString and assign it to weekText
+    weekText = calculateAgeInWeeks(dateOfBirthString);
+    setState(() {});
+  }
+
+  String calculateAgeInWeeks(String dobString) {
+    // Parse the date of birth string to a DateTime object
+    DateTime dob = DateTime.parse(dobString);
+
+    // Calculate the difference between the current date and the birth date
+    Duration difference = DateTime.now().difference(dob);
+
+    // Calculate the age in weeks (considering 7 days per week)
+    int weeks = difference.inDays ~/ 7;
+
+    return ' $weeks weeks'; // Return the age in weeks as a string
+  }
+
+  void startWeekUpdateTimer() {
+    const oneWeek = const Duration(days: 7); // Update every week
+    Timer.periodic(oneWeek, (Timer timer) {
+      // Call calculateWeeks every week to update the displayed age
+      calculateWeeks();
+    });
+  }
+
+  String getGreeting() {
+    var now = DateTime.now();
+    var currentTime = now.hour;
+
+    // Morning is considered until 12 PM (noon)
+    if (currentTime < 12) {
+      return 'Good morning';
+    } else {
+      // If not morning, consider it as evening
+      return 'Good evening';
+    }
+  }
+
   List activiteslist = [
     {
       "activityname": "Sleep",
@@ -37,39 +113,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
-    //Future<void> retrieveData() async {
-    //SqlDb sqlDb = SqlDb();
-
-    //try {
-    //List<Map<String, dynamic>> data = await sqlDb.readData(
-    //  'SELECT baby_name, first_name, date_of_birth FROM "complete information" WHERE id = 1');
-
-    //if (data.isNotEmpty) {
-    //String babyName = data[0]['baby_name'].toString();
-    //String firstName = data[0]['first_name'].toString();
-    //String birthDateAsString = data[0]['date_of_birth'].toString();
-    //DateTime birthDate = DateTime.parse(birthDateAsString);
-
-    // Calculate the number of weeks since the birth date
-    //DateTime currentDate = DateTime.now();
-    //int differenceInDays = currentDate.difference(birthDate).inDays;
-    //int numberOfWeeks = differenceInDays ~/ 7;
-
-    // Update the text box with the number of weeks
-    //setState(() {
-    //weekText = '$numberOfWeeks weeks';
-    //babyname = 'Welcome $babyName & $firstName';
-    //});
-    //} else {
-    // print('No data found for the specified ID');
-    // }
-    //} catch (e) {
-    // print('Error retrieving data: $e');
-    // }
-    //}
-
-    //retrieveData();
-
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: Padding(
@@ -96,78 +139,99 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: media.width * 0.02,
-                ),
                 Container(
-                  height: media.width * 0.4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: Tcolor.primaryG),
-                    borderRadius: BorderRadius.circular(media.width * 0.075),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/images/dots_lighter.png",
-                        height: media.width * 0.4,
-                        width: double.maxFinite,
-                        fit: BoxFit.fitHeight,
-                      ),
-                      Positioned(
-                        top: 0,
-                        left: 7,
-                        child: CircleAvatar(
-                          minRadius: 20,
-                          maxRadius: 20,
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(
-                              "assets/images/profile.png",
-                              width: 25,
-                              height: 25,
-                              fit: BoxFit.fitHeight,
+                  height: media.height * 0.2,
+                  //color: Tcolor.black,
+                  child: LayoutBuilder(builder: (context, constraints) {
+                    double innerHeight = constraints.maxHeight;
+                    double innerWidth = constraints.maxWidth;
+                    return Stack(
+                      children: [
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 20,
+                          child: Container(
+                            height: innerHeight * 0.80,
+                            width: innerWidth,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(colors: Tcolor.primaryG),
+                              borderRadius:
+                                  BorderRadius.circular(media.width * 0.07),
+                            ),
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Image.asset(
+                                    "assets/images/dots_lighter.png",
+                                    height: media.width * 0.4,
+                                    width: double.maxFinite,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 15,
+                                  right: 20,
+                                  child: Text(
+                                    weekText,
+                                    style: TextStyle(
+                                        color: Tcolor.black, fontSize: 15),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 20,
+                                  top: 40,
+                                  //bottom: 25,
+                                  child: Text(
+                                    "${getGreeting()} $babyname & $firstName",
+                                    style: TextStyle(
+                                        color: Tcolor.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 40,
-                        child: CircleAvatar(
-                          minRadius: 15,
-                          maxRadius: 15,
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(
-                              "assets/images/profile.png",
-                              width: 25,
-                              height: 25,
-                              fit: BoxFit.fitHeight,
+                        Positioned(
+                          top: 0,
+                          left: 20,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.grey.shade300,
+                            minRadius: 20,
+                            maxRadius: 20,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/images/profile.png",
+                                width: innerWidth * 0.16,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 15,
-                        right: 20,
-                        child: Text(
-                          weekText,
-                          style: TextStyle(color: Tcolor.black, fontSize: 15),
+                        Positioned(
+                          top: 15,
+                          left: 59,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.grey.shade300,
+                            minRadius: 15,
+                            maxRadius: 15,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/images/profile.png",
+                                width: innerWidth * 0.16,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        babyname,
-                        style: TextStyle(
-                            color: Tcolor.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: media.width * 0.05,
+                      ],
+                    );
+                  }),
                 ),
                 Align(
                   alignment: Alignment.topLeft,
@@ -187,8 +251,6 @@ class _HomeViewState extends State<HomeView> {
                       itemBuilder: (context, index) {
                         var aobj = activiteslist[index] as Map? ?? {};
                         Widget pageRoute;
-
-                        // Define different page routes for each button
                         switch (index) {
                           case 0:
                             pageRoute = SleepingView();
@@ -200,8 +262,7 @@ class _HomeViewState extends State<HomeView> {
                             pageRoute = DiaperChange();
                             break;
                           default:
-                            pageRoute =
-                                Container(); // Replace with your default route or an empty container
+                            pageRoute = Container();
                             break;
                         }
                         return Activites(
@@ -227,6 +288,16 @@ class _HomeViewState extends State<HomeView> {
                         color: Tcolor.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w700),
+                  ),
+                ),
+                SizedBox(
+                  height: media.width * 0.1,
+                ),
+                Container(
+                  height: media.height * 0.15,
+                  decoration: BoxDecoration(
+                    color: Tcolor.light1gray.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(media.width * 0.07),
                   ),
                 ),
               ],

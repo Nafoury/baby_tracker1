@@ -1,4 +1,7 @@
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
+import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/sign_up.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/round_textfiled.dart';
 import 'package:baby_tracker/sqldb.dart';
 import 'package:baby_tracker/models/user.dart';
+import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,43 +24,36 @@ class _LoginPageState extends State<LoginPage> {
   bool ischeck = false;
   bool isvisible = false;
   final formkey = GlobalKey<FormState>();
-  bool isLoginTrue = false;
-  String errorMessage = '';
-  Future<bool> login(UserModel user) async {
-    if (user.useremail.isEmpty || user.userpassword.isEmpty) {
-      // Show an error if fields are empty
-      setState(() {
-        errorMessage = 'Email and password are required.';
-      });
-      return false;
+
+  Crud crud = Crud();
+
+  login() async {
+    var response = await crud.postrequest(linklogin, {
+      "email": _emailTextController.text,
+      "password": _passwordTextController.text,
+    });
+    if (response['status'] == "success") {
+      sharedPref.setString("id", response['data']['id'].toString());
+      sharedPref.setString("email", response['data']['email']);
+      Get.offAllNamed("/home");
     } else {
-      try {
-        SqlDb sqlDb = SqlDb();
-        Map<String, dynamic> conditions = {
-          'useremail': user.useremail,
-          'userpassword': user.userpassword,
-        };
-        List<Map<String, dynamic>> response =
-            await sqlDb.readData('user_authorization', conditions);
-        if (response.isNotEmpty) {
-          // Show a success message
-          print("Data read correctly successfully");
-          setState(() {
-            errorMessage = '';
-          });
-          return true;
-        } else {
-          // Show an error message
-          print("Failed to read data or user not found");
-          setState(() {
-            errorMessage = 'Incorrect email or password.';
-          });
-          return false;
-        }
-      } catch (e) {
-        print("Error while reading data: $e");
-        return false;
-      }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Login Failed'),
+            content: Text('Incorrect email or password'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -138,20 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                   RoundButton(
                       onpressed: () async {
                         if (formkey.currentState!.validate()) {
-                          UserModel user = UserModel(
-                            useremail: _emailTextController.text,
-                            userpassword: _passwordTextController.text,
-                          );
-
-                          bool loginSuccess = await login(user);
-                          if (loginSuccess) {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeView()),
-                              (Route<dynamic> rout) => false,
-                            );
-                          }
+                          login();
                         }
                       },
                       title: "Login"),
@@ -160,8 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Signup()));
+                      Get.to(Signup());
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -184,16 +167,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  isLoginTrue
-                      ? const Text("email or password is incorrect",
-                          style: TextStyle(color: Colors.red))
-                      : const SizedBox(),
-                  errorMessage.isNotEmpty
-                      ? Text(
-                          errorMessage,
-                          style: const TextStyle(color: Colors.red),
-                        )
-                      : const SizedBox(),
                 ],
               ),
             ),
