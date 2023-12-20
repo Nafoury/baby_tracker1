@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'dart:async';
+import 'package:baby_tracker/common_widgets/recentlyactivities.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -92,6 +93,21 @@ class _HomeViewState extends State<HomeView> {
       return 'Good evening';
     }
   }
+
+  List todaySleepArr = [
+    {
+      "name": "Sleep",
+      "image": "assets/images/sleep_yellow.png",
+    },
+    {
+      "name": "Diapers",
+      "image": "assets/images/diaper_blue.png",
+    },
+    {
+      "name": "Feed",
+      "image": "assets/images/blue_bottle.png",
+    },
+  ];
 
   List activiteslist = [
     {
@@ -278,7 +294,7 @@ class _HomeViewState extends State<HomeView> {
                       }),
                 ),
                 SizedBox(
-                  height: media.width * 0.02,
+                  height: media.width * 0.01,
                 ),
                 Align(
                   alignment: Alignment.topLeft,
@@ -291,14 +307,24 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
                 SizedBox(
-                  height: media.width * 0.1,
+                  height: media.width * 0.01,
                 ),
-                Container(
-                  height: media.height * 0.15,
-                  decoration: BoxDecoration(
-                    color: Tcolor.light1gray.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(media.width * 0.07),
-                  ),
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: todaySleepArr.length,
+                  itemBuilder: (context, index) {
+                    if (todaySleepArr[index] is Map<String, dynamic>) {
+                      Map<String, dynamic> sObj = todaySleepArr[index];
+
+                      if (sObj.isNotEmpty) {
+                        return TodaySleepScheduleRow(
+                          activityData: sObj,
+                        );
+                      }
+                    }
+                  },
                 ),
               ],
             ),

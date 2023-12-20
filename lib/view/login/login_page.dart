@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     if (response['status'] == "success") {
       sharedPref.setString("id", response['data']['id'].toString());
       sharedPref.setString("email", response['data']['email']);
-      Get.offAllNamed("/home");
+      Get.offAllNamed("/mainTab");
     } else {
       showDialog(
         context: context,

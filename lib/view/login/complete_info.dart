@@ -77,7 +77,7 @@ class _CompleteinfoState extends State<Completeinfo> {
             'date_of_birth',
             DateFormat('yyyy-MM-dd')
                 .format(DateTime.parse(_dateTextController.text)));
-        Get.offAllNamed("/home");
+        Get.offAllNamed("/mainTab");
       } else {
         print("Signup failed");
         // Handle signup failure here

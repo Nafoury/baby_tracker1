@@ -23,12 +23,12 @@ class TabButton extends StatelessWidget {
           children: [
             Image.asset(
               isActive ? selectedicon : icon,
-              width: 25,
-              height: 25,
+              width: 23,
+              height: 23,
               fit: BoxFit.fitWidth,
             ),
             SizedBox(
-              height: isActive ? 8 : 12,
+              height: isActive ? 5 : 10,
             ),
             if (isActive)
               Container(
@@ -36,7 +36,7 @@ class TabButton extends StatelessWidget {
                   width: 4,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: Tcolor.secondryG),
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(5),
                   ))
           ],
         ));

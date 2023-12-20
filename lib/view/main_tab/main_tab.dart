@@ -5,7 +5,7 @@ import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:flutter/material.dart';
 
 class MainTab extends StatefulWidget {
-  const MainTab({super.key});
+  const MainTab({Key? key}) : super(key: key);
 
   @override
   State<MainTab> createState() => _MainTabState();
@@ -13,61 +13,76 @@ class MainTab extends StatefulWidget {
 
 class _MainTabState extends State<MainTab> {
   int selectTab = 0;
-  final PageStorageBucket pageBucket = PageStorageBucket();
-  Widget currenttab = const HomeView();
+  late Widget currenttab;
+
+  @override
+  void initState() {
+    super.initState();
+    currenttab = const HomeView();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Tcolor.white,
-      body: PageStorage(
-        bucket: pageBucket,
-        child: currenttab,
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-            decoration: BoxDecoration(color: Tcolor.white, boxShadow: const [
-              BoxShadow(
-                  color: Colors.black12, blurRadius: 2, offset: Offset(0, -2))
-            ]),
-            height: kToolbarHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TabButton(
-                    icon: "assets/images/home_icon.png",
-                    selectedicon: "assets/images/home_icon.png",
-                    isActive: selectTab == 0,
-                    onTap: () {
-                      selectTab = 0;
-                      currenttab = const HomeView();
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    }),
-                TabButton(
-                    icon: "assets/images/tracking_icon.png",
-                    selectedicon: "assets/images/tracking_icon.png",
-                    isActive: selectTab == 1,
-                    onTap: () {
-                      selectTab = 1;
-                      currenttab = const BlankView();
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    }),
-                TabButton(
-                    icon: "assets/images/more_ square1.png",
-                    selectedicon: "assets/images/more_ square1.png",
-                    isActive: selectTab == 2,
-                    onTap: () {
-                      selectTab = 2;
-                      currenttab = const BlankView();
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    })
-              ],
-            )),
+      backgroundColor: Colors.white,
+      body: currenttab,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Tcolor.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 2,
+              offset: Offset(0, -1),
+            )
+          ],
+        ),
+        height: kToolbarHeight + MediaQuery.of(context).padding.bottom,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: TabButton(
+                icon: "assets/images/home_icon.png",
+                selectedicon: "assets/images/home_icon.png",
+                isActive: selectTab == 0,
+                onTap: () {
+                  setState(() {
+                    selectTab = 0;
+                    currenttab = const HomeView();
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: TabButton(
+                icon: "assets/images/tracking_icon.png",
+                selectedicon: "assets/images/tracking_icon.png",
+                isActive: selectTab == 1,
+                onTap: () {
+                  setState(() {
+                    selectTab = 1;
+                    currenttab = const BlankView();
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: TabButton(
+                icon: "assets/images/more_ square1.png",
+                selectedicon: "assets/images/more_ square1.png",
+                isActive: selectTab == 2,
+                onTap: () {
+                  setState(() {
+                    selectTab = 2;
+                    currenttab = const BlankView();
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

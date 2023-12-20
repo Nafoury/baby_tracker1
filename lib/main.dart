@@ -47,11 +47,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme:
           ThemeData(primaryColor: Tcolor.primaryColor1, fontFamily: "Poppins"),
-      home: isLoggedIn ? HomeView() : Startview(),
+      home: isLoggedIn ? MainTab() : Startview(),
       getPages: [
         GetPage(name: "/completeinfo", page: () => Completeinfo()),
         GetPage(name: "/home", page: () => HomeView()),
         GetPage(name: "/login", page: () => LoginPage()),
+        GetPage(name: "/mainTab", page: () => MainTab()),
       ],
     );
   }

@@ -1,4 +1,4 @@
-const String linkServerName = "http://192.168.1.6/babyphp";
+const String linkServerName = "http://192.168.1.14/babyphp";
 
 const String linksignup = "$linkServerName/auth/signup.php";
 
