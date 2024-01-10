@@ -1,6 +1,5 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/provider/completeinfo_provider.dart';
 import 'package:baby_tracker/sqldb.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
@@ -9,10 +8,6 @@ import 'package:baby_tracker/common_widgets/round_textfiled.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:baby_tracker/models/completeinf.dart';
-import 'package:baby_tracker/provider/completeinfo_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';

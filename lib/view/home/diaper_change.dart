@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/addingactivites.dart';
+import 'package:get/get.dart';
 
 class DiaperChange extends StatefulWidget {
   const DiaperChange({super.key});
@@ -29,7 +30,9 @@ class _DiaperChangeState extends State<DiaperChange> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.offAllNamed("/mainTab");
+                  },
                   icon: Image.asset(
                     "assets/images/back_Navs.png",
                     width: 25,
@@ -140,17 +143,27 @@ class _DiaperChangeState extends State<DiaperChange> {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
                 if (selectedbutton == 0)
                   Column(
                     children: [
                       TrackingWidget(
-                          trackingType: TrackingType.Diaper,
-                          startDate: startDate,
-                          endDate: endDate,
-                          summaryOnly: false),
+                        trackingType: TrackingType.Diaper,
+                        summaryOnly: false,
+                        startDate: startDate ??
+                            DateTime.now(), // Ensure startDate is not null
+                        onDateTimeChanged:
+                            (DateTime newStartDate, DateTime newEndDate) {
+                          setState(() {
+                            startDate = newStartDate;
+                          });
+                        },
+                      ),
                       SizedBox(
                           height:
-                              350), // Call the method/widget to display detailed tracking info
+                              300), // Call the method/widget to display detailed tracking info
                       RoundButton(onpressed: () {}, title: "Save change")
                     ],
                   ),

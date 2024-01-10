@@ -1,5 +1,4 @@
 import 'package:baby_tracker/common_widgets/linkapi.dart';
-import 'package:baby_tracker/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';

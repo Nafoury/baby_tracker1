@@ -12,7 +12,6 @@ import 'package:baby_tracker/models/completeinf.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
-import 'package:baby_tracker/provider/completeinfo_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/round_textfiled.dart';
 import 'package:baby_tracker/sqldb.dart';
-import 'package:baby_tracker/models/user.dart';
+import 'package:baby_tracker/models/sleepData.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {

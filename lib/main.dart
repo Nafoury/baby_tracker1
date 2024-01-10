@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:baby_tracker/common/color_extension.dart';
-import 'package:baby_tracker/provider/completeinfo_provider.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/login/login_page.dart';
@@ -15,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:baby_tracker/models/completeinf.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:baby_tracker/provider/sleep_provider.dart';
 
 late SharedPreferences sharedPref;
 void main() async {
@@ -33,12 +32,20 @@ void main() async {
         )
       : await Firebase.initializeApp();
 
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SleepDataProvider()),
+        // Add more providers if needed
+      ],
+      child: MyApp(isLoggedIn: isLoggedIn),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

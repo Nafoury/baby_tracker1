@@ -15,20 +15,21 @@ enum TrackingType {
 
 class TrackingWidget extends StatelessWidget {
   final TrackingType trackingType;
-  DateTime startDate;
-  DateTime endDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final String? status;
   final String? note;
   final bool summaryOnly;
+  final Function(DateTime, DateTime)? onDateTimeChanged;
 
-  TrackingWidget({
-    required this.trackingType,
-    required this.startDate,
-    required this.endDate,
-    this.status,
-    this.note,
-    required this.summaryOnly,
-  });
+  TrackingWidget(
+      {required this.trackingType,
+      this.startDate,
+      this.endDate,
+      this.status,
+      this.note,
+      required this.summaryOnly,
+      this.onDateTimeChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ class TrackingWidget extends StatelessWidget {
                               fontSize: 12,
                             )),
                         Text(
-                          DateFormat('dd MMM yyyy  HH:mm').format(startDate),
+                          DateFormat('dd MMM yyyy  HH:mm').format(startDate!),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
@@ -86,7 +87,7 @@ class TrackingWidget extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     _showDatePicker(
-                        context, true); // Show date picker for start date
+                        context, false); // Show date picker for start date
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,7 +98,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 13,
                           )),
                       Text(
-                        DateFormat('dd MMM yyyy  HH:mm:ss').format(endDate),
+                        DateFormat('dd MMM yyyy  HH:mm').format(endDate!),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                         ),
@@ -110,7 +111,7 @@ class TrackingWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Duration "),
-                    Text("${endDate.difference(startDate).toString()}"),
+                    Text(_formattedDuration(endDate!.difference(startDate!))),
                   ],
                 );
               default:
@@ -123,9 +124,14 @@ class TrackingWidget extends StatelessWidget {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-              color: Colors.grey,
-              height: 1,
+            return const Column(
+              children: [
+                SizedBox(height: 25),
+                Divider(
+                  color: Colors.grey,
+                  height: 1,
+                ),
+              ],
             );
           },
           itemCount: 5,
@@ -146,7 +152,8 @@ class TrackingWidget extends StatelessWidget {
                               fontSize: 12,
                             )),
                         Text(
-                          DateFormat('dd MMM yyyy  HH:mm:ss').format(startDate),
+                          DateFormat('dd MMM yyyy  HH:mm:ss')
+                              .format(startDate!),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
@@ -155,7 +162,7 @@ class TrackingWidget extends StatelessWidget {
                     ));
 
               case 1:
-                Row(
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Fruits ",
@@ -172,7 +179,7 @@ class TrackingWidget extends StatelessWidget {
                   ],
                 );
               case 2:
-                return const Row(
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Vegetables "),
@@ -180,7 +187,7 @@ class TrackingWidget extends StatelessWidget {
                   ],
                 );
               case 3:
-                return const Row(
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Meat &Protein "),
@@ -188,7 +195,7 @@ class TrackingWidget extends StatelessWidget {
                   ],
                 );
               case 4:
-                return const Row(
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Grains "),
@@ -206,9 +213,14 @@ class TrackingWidget extends StatelessWidget {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-              color: Colors.grey,
-              height: 1,
+            return const Column(
+              children: [
+                SizedBox(height: 20),
+                Divider(
+                  color: Colors.grey,
+                  height: 1,
+                ),
+              ],
             );
           },
           itemCount: 3,
@@ -229,27 +241,59 @@ class TrackingWidget extends StatelessWidget {
                               fontSize: 12,
                             )),
                         Text(
-                          DateFormat('dd MMM yyyy  HH:mm').format(startDate),
+                          DateFormat('dd MMM yyyy  HH:mm').format(startDate!),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ));
-
               case 1:
-                child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Status ",
-                        style: TextStyle(
-                          color: Tcolor.black,
-                          fontSize: 13,
-                        )),
-                    Text("pee"),
+                    ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 80, // Adjust maximum width of the box
+                          maxHeight: 25, // Adjust maximum height of the box
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: status,
+                          onChanged: (String? newValue) {
+                            // Implement logic to update the status value
+                            // For instance, you can use setState to update the status value
+                          },
+                          items: <String>['pee', 'poop', 'mixed', 'clean']
+                              .map<DropdownMenuItem<String>>(
+                            (String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(value),
+                                    if (value == status)
+                                      Icon(Icons.check, color: Colors.green),
+                                  ],
+                                ),
+                              );
+                            },
+                          ).toList(),
+                          icon: const Icon(Icons.arrow_drop_down),
+                          isExpanded: true,
+                          hint: const Text(
+                            'Status',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ))),
                   ],
                 );
+
               case 2:
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -272,55 +316,6 @@ class TrackingWidget extends StatelessWidget {
   Widget _buildSummary() {
     switch (trackingType) {
       case TrackingType.Sleeping:
-        Duration duration = endDate.difference(startDate);
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Date",
-                  style: TextStyle(
-                    color: Tcolor.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  DateFormat('dd MMM yyyy').format(startDate),
-                  style: TextStyle(
-                    color: Tcolor.black.withOpacity(0.3),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(width: 120), // Adjust the space between the columns
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Total Duration",
-                  style: TextStyle(
-                    color: Tcolor.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  duration.toString(),
-                  style: TextStyle(
-                    color: Tcolor.black.withOpacity(0.3),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
       case TrackingType.Feeding:
       // Your implementation for Feeding type
       case TrackingType.Diaper:
@@ -343,30 +338,71 @@ class TrackingWidget extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context, bool isStartDate) {
-    DateTime initialDateTime = isStartDate ? startDate : endDate;
+    DateTime? newStartDate = startDate;
+    DateTime? newEndDate = endDate;
+    DateTime? initialDateTime = isStartDate ? startDate : endDate;
+    DateTime minimumDateTime =
+        DateTime.now().subtract(const Duration(days: 40)); // Previous date
+    DateTime maximumDateTime = DateTime.now(); // Current date
 
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext builderContext) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: CupertinoDatePicker(
-            mode: CupertinoDatePickerMode.dateAndTime,
-            initialDateTime: initialDateTime,
-            onDateTimeChanged: (DateTime newDateTime) {
-              if (isStartDate) {
-                // Update the start date
-                // You may want to add additional logic to prevent end date before start date, etc.
-                startDate = newDateTime;
-              } else {
-                // Update the end date
-                endDate = newDateTime;
-              }
-            },
-          ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: 200,
+              color: Colors.white,
+              child: Stack(
+                children: [
+                  CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.dateAndTime,
+                    initialDateTime: initialDateTime ?? DateTime.now(),
+                    minimumDate: minimumDateTime,
+                    maximumDate: maximumDateTime,
+                    onDateTimeChanged: (DateTime? newDateTime) {
+                      setState(() {
+                        if (newDateTime != null) {
+                          if (isStartDate) {
+                            newStartDate = newDateTime;
+                          } else {
+                            newEndDate = newDateTime;
+                          }
+                          if (newStartDate != null && newEndDate != null) {
+                            Duration duration =
+                                newEndDate!.difference(newStartDate!);
+                            onDateTimeChanged?.call(newStartDate!, newEndDate!);
+                          }
+                        }
+                      });
+                    },
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Done'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
+  }
+
+  String _formattedDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitHours = twoDigits(duration.inHours);
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds';
   }
 }
