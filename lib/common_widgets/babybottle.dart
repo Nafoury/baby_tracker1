@@ -1,52 +1,93 @@
 import 'package:flutter/material.dart';
 
-class BabyBottleSelector extends StatefulWidget {
-  @override
-  _BabyBottleSelectorState createState() => _BabyBottleSelectorState();
-}
+class BottlePainter extends CustomPainter {
+  final double liquidHeight;
+  final Color liquidColor;
 
-class _BabyBottleSelectorState extends State<BabyBottleSelector> {
-  double liquidHeight = 100.0; // Initial liquid height in millimeters
+  BottlePainter(this.liquidHeight, this.liquidColor);
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        setState(() {
-          // Adjust the liquid height based on the vertical drag
-          liquidHeight -=
-              details.primaryDelta! / 2; // You can adjust the sensitivity
+  void paint(Canvas canvas, Size size) {
+    var backgroundPaint = Paint()
+      ..color = Colors.blue.shade50; // Set your desired background color
+    canvas.drawRect(Rect.fromLTWH(-50, 0, size.width + 110, size.height + 40),
+        backgroundPaint);
 
-          // Ensure the liquid height stays within the bottle
-          liquidHeight = liquidHeight.clamp(0.0, 200.0);
-        });
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: 100.0,
-            height: 200.0,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(80.0),
-                bottomRight: Radius.circular(85.0),
-                topLeft: Radius.circular(5.0),
-              ),
-            ),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 100),
-                width: 50.0,
-                height: liquidHeight,
-                color: Colors.grey, // Change color to represent the liquid
-              ),
-            ),
+    var paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5.0;
+
+    double bottleNeckHeight = size.height * 0.2;
+    double bottleBodyHeight = size.height * 0.6;
+    double bottleBodyWidth = size.width * 0.4;
+
+    // Draw the curved sides of the bottle with an ergonomic shape in the middle
+    Path path = Path()
+      ..moveTo(size.width / 2 + bottleBodyWidth / 2, size.height)
+      ..lineTo(size.width / 2 - bottleBodyWidth / 2, size.height)
+      ..lineTo(
+        size.width / 2 - bottleBodyWidth / 2,
+        size.height - bottleBodyHeight,
+      )
+      ..quadraticBezierTo(
+        size.width / 2,
+        size.height - bottleBodyHeight - bottleNeckHeight * 1.7,
+        size.width / 2 + bottleBodyWidth / 2,
+        size.height - bottleBodyHeight,
+      )
+      ..close();
+    // Drawing the liquid
+    double liquidTop = size.height - bottleBodyHeight * liquidHeight / 200.0;
+    Path liquidPath = Path()
+      ..moveTo(size.width / 2 + bottleBodyWidth / 2, size.height)
+      ..lineTo(size.width / 2 - bottleBodyWidth / 2, size.height)
+      ..lineTo(
+        size.width / 2 - bottleBodyWidth / 2,
+        liquidTop,
+      )
+      ..lineTo(size.width / 2 + bottleBodyWidth / 2,
+          size.height - bottleBodyHeight * (liquidHeight / 200.0))
+      ..close();
+
+    var liquidPaint = Paint()
+      ..color = liquidColor // Set the color of the liquid dynamically
+      ..style = PaintingStyle.fill; // Use fill to fill the liquid
+
+    // Draw the combined path
+    canvas.drawPath(path, paint);
+    canvas.drawPath(liquidPath, liquidPaint);
+
+    final double mlMarkHeight = size.height - bottleBodyHeight;
+    for (int ml = 400; ml >= 50; ml -= 50) {
+      final double y = mlMarkHeight + (1 - ml / 400) * bottleBodyHeight;
+      canvas.drawLine(
+          Offset(size.width / 2 - 8, y), Offset(size.width / 2 + 8, y), paint);
+      canvas.drawLine(
+          Offset(size.width / 2 - 8, y), Offset(size.width / 2 + 8, y), paint);
+
+      // Add text beside the specific markings with custom style
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(
+          text: ml.toString(),
+          style: TextStyle(
+            color: Colors.blue, // Set your desired text color
+            fontSize: 8, // Set your desired text size
+            fontWeight: FontWeight.bold, // Set your desired font weight
           ),
-        ],
-      ),
-    );
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(size.width / 2 + 12, y - 8));
+    }
+
+    // Draw the combined path
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

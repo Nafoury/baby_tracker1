@@ -25,6 +25,7 @@ class _SignupState extends State<Signup> {
   Crud crud = Crud();
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
+  final _firstname = TextEditingController();
   bool isloading = false;
   bool ischeck = false;
   bool isvisible = false;
@@ -32,6 +33,7 @@ class _SignupState extends State<Signup> {
 
   signUp() async {
     var response = await crud.postrequest(linksignup, {
+      "first_name": _firstname.text,
       "email": _emailTextController.text,
       "password": _passwordTextController.text
     });
@@ -40,6 +42,7 @@ class _SignupState extends State<Signup> {
       if (response.containsKey('id')) {
         String userId = response['id'].toString();
         // Store the user ID in shared preferences
+        await sharedPref.setString('first_name', _firstname.text);
         sharedPref.setString("id", userId);
         sharedPref.setBool('isLoggedIn', true);
         Get.offAllNamed("/completeinfo");
@@ -49,6 +52,10 @@ class _SignupState extends State<Signup> {
     } else {
       print("signup fail");
     }
+  }
+
+  saveToSharedPreferences() async {
+    sharedPref.setString('first_name', _firstname.text);
   }
 
   @override
@@ -78,6 +85,19 @@ class _SignupState extends State<Signup> {
                   ),
                   SizedBox(
                     height: media.width * 0.05,
+                  ),
+                  RoundTextFiled(
+                      hintext: "First Name",
+                      icon: "assets/images/profile.png",
+                      controller: _firstname,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "password is required";
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: media.width * 0.04,
                   ),
                   RoundTextFiled(
                     hintext: "email",

@@ -94,14 +94,6 @@ class TodaySleepScheduleRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Start: ${data["15 second ago,date of adding,the time of adding"]}", //15 second ago,date of adding,the time of adding
-            style: TextStyle(
-              color: Tcolor.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
             "Start: ${data["HH:mm"]}", //showing the hours am or pm
             style: TextStyle(
               color: Tcolor.black,

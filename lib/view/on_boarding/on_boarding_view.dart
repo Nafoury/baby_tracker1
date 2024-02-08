@@ -19,7 +19,6 @@ class _OnBoradingView1State extends State<OnBoradingView1> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     controller.addListener(() {

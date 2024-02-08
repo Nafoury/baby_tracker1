@@ -24,7 +24,6 @@ class _CompleteinfoState extends State<Completeinfo> {
   final _dateTextController = TextEditingController();
   final _babyheight = TextEditingController();
   final _babyweight = TextEditingController();
-  final _firstname = TextEditingController();
   double? babyWeight;
   double? babyHeight;
 
@@ -52,7 +51,6 @@ class _CompleteinfoState extends State<Completeinfo> {
       babyHeight = double.tryParse(_babyheight.text);
     }
     var response = await crud.postrequest(linkAddinfo, {
-      "first_name": _firstname.text,
       "baby_name": _babynamecontroller.text,
       "gender": selectedValue!,
       "date_of_birth": DateFormat('yyyy-MM-dd')
@@ -66,7 +64,6 @@ class _CompleteinfoState extends State<Completeinfo> {
         response is Map<String, dynamic> &&
         response.containsKey('status')) {
       if (response['status'] == "success") {
-        await sharedPref.setString('first_name', _firstname.text);
         await sharedPref.setString('baby_name', _babynamecontroller.text);
         await sharedPref.setString(
             'date_of_birth',
@@ -84,7 +81,6 @@ class _CompleteinfoState extends State<Completeinfo> {
   }
 
   saveToSharedPreferences() async {
-    sharedPref.setString('first_name', _firstname.text);
     sharedPref.setString('baby_name', _babynamecontroller.text);
     sharedPref.setString(
       'date_of_birth',
@@ -124,19 +120,6 @@ class _CompleteinfoState extends State<Completeinfo> {
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Column(
                     children: [
-                      RoundTextFiled(
-                          hintext: "First Name",
-                          icon: "assets/images/profile.png",
-                          controller: _firstname,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "password is required";
-                            }
-                            return null;
-                          }),
-                      SizedBox(
-                        height: media.width * 0.03,
-                      ),
                       RoundTextFiled(
                           hintext: "Baby Name",
                           icon: "assets/images/profile.png",

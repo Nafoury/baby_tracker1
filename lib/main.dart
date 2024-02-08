@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/login/login_page.dart';
@@ -10,7 +11,7 @@ import 'package:baby_tracker/view/on_boarding/started_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:baby_tracker/models/completeinf.dart';
+import 'package:baby_tracker/models/diaperData.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
@@ -36,6 +37,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SleepDataProvider()),
+        ChangeNotifierProvider(create: (_) => DiaperProvider()),
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),

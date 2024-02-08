@@ -48,9 +48,6 @@ class _StartviewState extends State<Startview> {
                       ? RoundButtonType.textGradient
                       : RoundButtonType.bgGradiant,
                   onpressed: () async {
-                    SqlDb sqlDb = SqlDb();
-                    sqlDb.getDatabasePath();
-
                     Get.to(OnBoradingView1());
                   },
                 ),

@@ -162,7 +162,6 @@ class _SleepingViewState extends State<SleepingView> {
                         trackingType: TrackingType.Sleeping,
                         startDate: startDate,
                         endDate: endDate,
-                        summaryOnly: false,
                         onDateTimeChanged:
                             (DateTime newStartDate, DateTime newEndDate) {
                           setState(() {
@@ -171,7 +170,7 @@ class _SleepingViewState extends State<SleepingView> {
                           });
                         },
                       ),
-                      const SizedBox(height: 350),
+                      SizedBox(height: 300),
                       RoundButton(
                         onpressed: () async {
                           var sleepDataProvider =
