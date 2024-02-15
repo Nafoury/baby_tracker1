@@ -52,6 +52,7 @@ dependencies:
   get: ^4.6.6
   shared_preferences: ^2.2.2
   flutter_cupertino_datetime_picker: ^3.0.0
+  debounce_throttle: ^2.0.0
 
 dev_dependencies:
   flutter_test:

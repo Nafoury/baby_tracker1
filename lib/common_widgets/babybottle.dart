@@ -10,7 +10,7 @@ class BottlePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var backgroundPaint = Paint()
       ..color = Colors.blue.shade50; // Set your desired background color
-    canvas.drawRect(Rect.fromLTWH(-50, 0, size.width + 110, size.height + 40),
+    canvas.drawRect(Rect.fromLTWH(-65, 0, size.width + 130, size.height + 40),
         backgroundPaint);
 
     var paint = Paint()

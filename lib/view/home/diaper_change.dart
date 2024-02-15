@@ -11,6 +11,8 @@ import 'package:baby_tracker/controller/diapercontroller.dart';
 import 'package:provider/provider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:baby_tracker/common_widgets/notebutton.dart';
+import 'package:baby_tracker/view/editionanddeletion/diaper_edit.dart';
 
 class DiaperChange extends StatefulWidget {
   const DiaperChange({super.key});
@@ -23,9 +25,9 @@ class _DiaperChangeState extends State<DiaperChange> {
   int selectedbutton = 0;
   DateTime dateTime = DateTime.now();
   DateTime startDate = DateTime.now();
-  late final TextEditingController noteController;
   String status = '';
-  String note = '';
+  final _note = TextEditingController();
+
   DiaperController diaperController = DiaperController();
 
   @override
@@ -165,7 +167,7 @@ class _DiaperChangeState extends State<DiaperChange> {
                       children: [
                         TrackingWidget(
                           trackingType: TrackingType.Diaper,
-                          note: note,
+                          controller: _note,
                           startDate: startDate,
                           status: status,
                           onStatusChanged: (String newStatus) {
@@ -178,37 +180,69 @@ class _DiaperChangeState extends State<DiaperChange> {
                               startDate = newStartDate;
                             });
                           },
-                          onNoteChanged: (String newNote) {
-                            setState(() {
-                              note = newNote;
-                            });
+                          onNoteChanged: (String note) {
+                            _note.text = note;
                           },
                         ),
                         SizedBox(height: 300),
                         RoundButton(
-                            onpressed: () async {
-                              var diaperDataprovider =
-                                  Provider.of<DiaperProvider>(context,
-                                      listen: false);
-                              DiaperData diaperData = DiaperData(
-                                  startDate: startDate,
-                                  status: status,
-                                  note: note,
-                                  id: sharedPref.getString("id") ?? "");
-                              await diaperController.saveDiaperData(
-                                  diaperData: diaperData);
+                          onpressed: () async {
+                            var diaperDataprovider =
+                                Provider.of<DiaperProvider>(context,
+                                    listen: false);
+                            if (status.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Status is empty'),
+                                    content: Text("Status is required"),
+                                  );
+                                },
+                              );
+                              return;
+                            }
 
-                              // Show a success message or handle as needed
-                              diaperDataprovider.addDiaperRecord(diaperData);
-                              setState(() {
-                                startDate = DateTime
-                                    .now(); // Replace with your initial/default date values
-                                note = '';
-                                status =
-                                    ''; // Replace with your initial/default date values
-                              });
-                            },
-                            title: "Save change")
+                            // Check if a record with the same date and status exists
+                            bool recordExists = diaperDataprovider.diaperRecords
+                                .any((diaperData) =>
+                                    diaperData.startDate == startDate &&
+                                    diaperData.status == status);
+
+                            if (recordExists) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Exisiting record '),
+                                    content: Text(
+                                        "Record with the same date and status already exists"),
+                                  );
+                                },
+                              );
+                              return;
+                            }
+
+                            DiaperData diaperData = DiaperData(
+                                startDate: startDate,
+                                status: status,
+                                note: _note.text,
+                                infoid: sharedPref.getString("info_id") ?? "");
+                            await diaperController.saveDiaperData(
+                                diaperData: diaperData);
+
+                            // Show a success message or handle as needed
+                            diaperDataprovider.addDiaperRecord(diaperData);
+                            setState(() {
+                              startDate = DateTime
+                                  .now(); // Replace with your initial/default date values
+                              _note.clear();
+                              status =
+                                  ''; // Replace with your initial/default date values
+                            });
+                          },
+                          title: "Save change",
+                        ),
                       ],
                     ),
                   if (selectedbutton == 1)
@@ -216,34 +250,37 @@ class _DiaperChangeState extends State<DiaperChange> {
                       builder: (context, diaperDataprovider, _) {
                         List<DiaperData> diaperRecords =
                             diaperDataprovider.diaperRecords;
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            columns: [
-                              DataColumn(
-                                label: Text('Date'),
-                                numeric: false,
-                              ),
-                              DataColumn(label: Text('Note')),
-                              DataColumn(
-                                label: Text('Type'),
-                              ),
-                            ],
-                            rows: diaperRecords.map((diaperData) {
-                              String note = diaperData.note;
-                              String type = diaperData.status;
-                              String formattedDate = DateFormat(
-                                      'dd MMM yyyy HH:mm ')
-                                  .format(diaperData
-                                      .startDate); // Adjust date format as needed
+                        return DataTable(
+                          columns: [
+                            DataColumn(
+                              label: Text('Date&time'),
+                              numeric: false,
+                            ),
+                            DataColumn(label: Text('Note')),
+                            DataColumn(
+                              label: Text('Type'),
+                            ),
+                          ],
+                          rows: diaperRecords.map((diaperData) {
+                            String note = diaperData.note;
+                            String type = diaperData.status;
+                            String formattedDate =
+                                DateFormat('dd MMM yyyy HH:mm ')
+                                    .format(diaperData.startDate);
 
-                              return DataRow(cells: [
-                                DataCell(Text(formattedDate)),
-                                DataCell(Text(note)),
-                                DataCell(Text(type))
-                              ]);
-                            }).toList(),
-                          ),
+                            return DataRow(cells: [
+                              DataCell(Text(formattedDate)),
+                              DataCell(
+                                note.isNotEmpty
+                                    ? EntryButton(
+                                        entryData: diaperData,
+                                        onTap: () {},
+                                      )
+                                    : Container(), // Show the button only if note is not empty
+                              ),
+                              DataCell(Text(type))
+                            ]);
+                          }).toList(),
                         );
                       },
                     ),

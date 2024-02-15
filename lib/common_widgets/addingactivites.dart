@@ -23,30 +23,27 @@ class TrackingWidget extends StatelessWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   String? status;
-  String? note;
-
+  final TextEditingController? controller;
   final Function(DateTime, DateTime)? onDateTimeChanged;
   final Function(DateTime)? onDateStratTimeChanged;
-  late final TextEditingController noteController;
   final Function(String)? onStatusChanged;
   final Function(String)? onNoteChanged;
   String? selectedValue;
   String? dropdownError;
-  final TextDirection? textDirection;
+  String? note;
 
-  TrackingWidget({
-    required this.trackingType,
-    this.feedingSubtype,
-    this.startDate,
-    this.endDate,
-    this.status,
-    this.textDirection,
-    this.note,
-    this.onDateTimeChanged,
-    this.onDateStratTimeChanged,
-    this.onStatusChanged,
-    this.onNoteChanged,
-  }) : noteController = TextEditingController(text: note ?? '');
+  TrackingWidget(
+      {required this.trackingType,
+      this.controller,
+      this.feedingSubtype,
+      this.startDate,
+      this.endDate,
+      this.status,
+      this.note,
+      this.onDateTimeChanged,
+      this.onDateStratTimeChanged,
+      this.onStatusChanged,
+      this.onNoteChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -231,19 +228,18 @@ class TrackingWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: TextField(
-                        controller: noteController,
-                        onChanged: (String value) {
-                          onNoteChanged?.call(value);
-                        },
-                        textAlign: TextAlign.left,
-                        decoration: InputDecoration(
-                          hintText: "note",
-                          // Set your desired hint text
-                        ),
-                        //textAlign: TextAlign.start,
+                        child: TextField(
+                      controller: controller,
+                      onChanged: (String value) {
+                        onNoteChanged?.call(value);
+                        note:
+                        value;
+                      },
+                      decoration: InputDecoration(
+                        hintText: "note",
+                        // Set your desired hint text
                       ),
-                    ),
+                    ))
                   ],
                 );
 
@@ -446,63 +442,62 @@ class TrackingWidget extends StatelessWidget {
             });
       case FeedingSubtype.bottle:
         return ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) {
-              return const Column(
-                children: [
-                  SizedBox(height: 25),
-                  Divider(
-                    color: Colors.grey,
-                    height: 1,
-                  ),
-                ],
-              );
-            },
-            itemCount: 2,
-            itemBuilder: (BuildContext context, int index) {
-              switch (index) {
-                case 0:
-                  return GestureDetector(
-                      onTap: () {
-                        _showStartDatePicker(
-                            context); // Show date picker for start date
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(" Date & Time ",
-                              style: TextStyle(
-                                  color: Tcolor.black,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold)),
-                          Text(
-                            DateFormat('dd MMM yyyy  HH:mm').format(startDate!),
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          separatorBuilder: (BuildContext context, int index) {
+            return const Column(
+              children: [
+                SizedBox(height: 25),
+                Divider(
+                  color: Colors.grey,
+                  height: 1,
+                ),
+              ],
+            );
+          },
+          itemCount: 2,
+          itemBuilder: (BuildContext context, int index) {
+            switch (index) {
+              case 0:
+                return GestureDetector(
+                    onTap: () {
+                      _showStartDatePicker(
+                          context); // Show date picker for start date
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(" Date & Time ",
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                                color: Tcolor.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold)),
+                        Text(
+                          DateFormat('dd MMM yyyy  HH:mm').format(startDate!),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
                           ),
-                        ],
-                      ));
-                case 1:
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: TextField(
-                          onChanged: (String value) {},
-                          textAlign: TextAlign.left,
-                          decoration: InputDecoration(
-                            hintText: "note",
-                            // Set your desired hint text
-                          ),
-                          //textAlign: TextAlign.start,
                         ),
+                      ],
+                    ));
+              case 1:
+                return const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "note",
+                          // Set your desired hint text
+                        ),
+                        //textAlign: TextAlign.start,
                       ),
-                    ],
-                  );
-              }
-            });
+                    ),
+                  ],
+                );
+            }
+          },
+        );
       case FeedingSubtype.nursing:
         return ListView.separated(
             shrinkWrap: true,
@@ -518,10 +513,18 @@ class TrackingWidget extends StatelessWidget {
                 ],
               );
             },
-            itemCount: 2,
+            itemCount: 3,
             itemBuilder: (BuildContext context, int index) {
               switch (index) {
                 case 0:
+                  return Container(
+                      height: 250,
+                      width: 0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: Tcolor.primaryG),
+                        borderRadius: BorderRadius.circular(0.07),
+                      ));
+                case 1:
                   return GestureDetector(
                       onTap: () {
                         _showStartDatePicker(
@@ -544,22 +547,10 @@ class TrackingWidget extends StatelessWidget {
                         ],
                       ));
 
-                case 1:
+                case 2:
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: TextField(
-                          onChanged: (String value) {},
-                          textAlign: TextAlign.left,
-                          decoration: InputDecoration(
-                            hintText: "note",
-                            // Set your desired hint text
-                          ),
-                          //textAlign: TextAlign.start,
-                        ),
-                      ),
-                    ],
+                    children: [],
                   );
                 default:
                   return SizedBox();

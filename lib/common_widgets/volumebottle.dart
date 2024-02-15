@@ -1,7 +1,10 @@
 import 'package:baby_tracker/common_widgets/babybottle.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class BabyBottleSelector extends StatefulWidget {
+  final ValueChanged<double> onMlValueChanged;
+  BabyBottleSelector({required this.onMlValueChanged});
   @override
   _BabyBottleSelectorState createState() => _BabyBottleSelectorState();
 }
@@ -11,6 +14,14 @@ class _BabyBottleSelectorState extends State<BabyBottleSelector> {
   final double maxLiquidHeight = 200.0;
   double mlValue = 0.0; // Declare mlValue outside the callback
   Color liquidColor = Colors.blue; // Set your desired default liquid color
+  late Timer _debounceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the timer with a 300 milliseconds delay
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +47,11 @@ class _BabyBottleSelectorState extends State<BabyBottleSelector> {
 
               // Update liquidColor based on some logic (e.g., based on mlValue)
               liquidColor = calculateLiquidColor(mlValue);
+              _debounceTimer = Timer(const Duration(milliseconds: 100), () {
+                // Execute the callback after the delay
+                widget.onMlValueChanged(mlValue);
+              });
             });
-
-            // Print the actual milliliter value
-            print('Drag Update: ${mlValue}');
-
-            // Update the UI with the new mlValue
-            setState(() {});
           },
           child: Container(
             width: 50.0,

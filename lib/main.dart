@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
+import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/login/login_page.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/home", page: () => HomeView()),
         GetPage(name: "/login", page: () => LoginPage()),
         GetPage(name: "/mainTab", page: () => MainTab()),
+        GetPage(name: "/diaperchnage", page: () => DiaperChange()),
       ],
     );
   }

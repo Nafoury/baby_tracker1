@@ -1,6 +1,5 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/sqldb.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:flutter/material.dart';
@@ -64,11 +63,13 @@ class _CompleteinfoState extends State<Completeinfo> {
         response is Map<String, dynamic> &&
         response.containsKey('status')) {
       if (response['status'] == "success") {
+        String babyId = response['info_id'].toString();
         await sharedPref.setString('baby_name', _babynamecontroller.text);
         await sharedPref.setString(
             'date_of_birth',
             DateFormat('yyyy-MM-dd')
                 .format(DateTime.parse(_dateTextController.text)));
+        sharedPref.setString("info_id", babyId);
         Get.offAllNamed("/mainTab");
       } else {
         print("Signup failed");
