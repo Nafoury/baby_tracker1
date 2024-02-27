@@ -1,7 +1,9 @@
 import 'dart:ffi';
-
+import 'package:baby_tracker/common_widgets/notebutton.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/common_widgets/nursingbuttons.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/solidsData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:baby_tracker/common_widgets/addingactivites.dart';
@@ -11,8 +13,11 @@ import 'package:baby_tracker/common_widgets/volumebottle.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/controller/feedingBottle.dart';
-
+import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
+import 'package:baby_tracker/view/summary/bottleSummary.dart';
+import 'package:baby_tracker/controller/feedingSolids.dart';
 
 class FeedingView extends StatefulWidget {
   const FeedingView({Key? key});
@@ -26,8 +31,22 @@ class _FeedingViewState extends State<FeedingView> {
   DateTime dateTime = DateTime.now();
   DateTime startDate = DateTime.now();
   double mlValue = 0.0;
+
   String note = '';
+  final _note = TextEditingController();
   BottleController bottleController = BottleController();
+  List<BottleData> bottleRecords = [];
+  final _fruit = TextEditingController();
+  final _protein = TextEditingController();
+  final _grain = TextEditingController();
+  final _dairy = TextEditingController();
+  final _veg = TextEditingController();
+  int? fruit;
+  int? grains;
+  int? protein;
+  int? veg;
+  int? dairy;
+  SolidsController solidsController = SolidsController();
 
   @override
   Widget build(BuildContext context) {
@@ -222,26 +241,7 @@ class _FeedingViewState extends State<FeedingView> {
                       const SizedBox(
                         height: 20,
                       ),
-                      if (selectedbutton == 0)
-                        Column(
-                          children: [
-                            TrackingWidget(
-                              trackingType: TrackingType.Feeding,
-                              feedingSubtype: FeedingSubtype.nursing,
-                              startDate: startDate,
-                              onDateStratTimeChanged: (DateTime newStartDate) {
-                                setState(() {
-                                  startDate = newStartDate;
-                                });
-                              },
-                            ),
-                            SizedBox(height: 50),
-                            RoundButton(
-                              onpressed: () async {},
-                              title: "save feed",
-                            )
-                          ],
-                        ),
+                      if (selectedbutton == 0) RoundButton1(),
                       if (selectedbutton == 1)
                         Column(
                           children: [
@@ -267,11 +267,12 @@ class _FeedingViewState extends State<FeedingView> {
                               onpressed: () async {
                                 print("mlValue: $mlValue");
                                 print("note: $note");
+
                                 BottleData bottleData = BottleData(
-                                    date: startDate,
+                                    startDate: startDate,
                                     amount: mlValue,
                                     note: note,
-                                    id: sharedPref.getString("info_id") ?? "");
+                                    babyId: sharedPref.getString("info_id"));
                                 await bottleController.savebottlerData(
                                     bottleData: bottleData);
                               },
@@ -286,18 +287,70 @@ class _FeedingViewState extends State<FeedingView> {
                               trackingType: TrackingType.Feeding,
                               feedingSubtype: FeedingSubtype.solids,
                               startDate: startDate,
+                              controller: _note,
+                              controller1: _fruit,
+                              controller2: _veg,
+                              controller3: _grain,
+                              controller4: _protein,
+                              controller5: _dairy,
                               onDateStratTimeChanged: (DateTime newStartDate) {
                                 setState(() {
                                   startDate = newStartDate;
                                 });
                               },
+                              onNoteChanged: (String note) {
+                                _note.text = note;
+                              },
+                              onDairyChanged: (int value) {
+                                dairy = value;
+                              },
+                              onFruitChanged: (int value) {
+                                fruit = value;
+                              },
+                              onGrainsChanged: (int value) {
+                                grains = value;
+                              },
+                              onProteinChanged: (int value) {
+                                protein = value;
+                              },
                             ),
                             SizedBox(height: 50),
                             RoundButton(
-                              onpressed: () async {},
+                              onpressed: () async {
+                                SolidsData solidsData = SolidsData(
+                                  date: startDate,
+                                  note: _note.text,
+                                  dairy: dairy,
+                                  fruits: fruit,
+                                  grains: grains,
+                                  protein: protein,
+                                );
+                                await solidsController.savebottlerData(
+                                    solidsData: solidsData);
+                              },
                               title: "save feed",
                             )
                           ],
+                        ),
+                      if (selectedbutton == 3)
+                        FutureBuilder(
+                          future: bottleController.retrieveBottleData(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: Text("Loading..."));
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (snapshot.hasData) {
+                              bottleRecords =
+                                  (snapshot.data as List).cast<BottleData>();
+                              return BottleSummaryTable(
+                                  bottleRecords: bottleRecords);
+                            } else {
+                              return Text('No data available.');
+                            }
+                          },
                         )
                     ],
                   ),

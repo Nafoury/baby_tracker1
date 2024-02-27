@@ -17,3 +17,7 @@ const String linkDeleteRecord =
 const String linkUpdateDiaper = "$linkServerName/diaper_change/update.php";
 
 const String linkBottleData = "$linkServerName/feeding/add.php";
+const String linkViewBottle = "$linkServerName/feeding/read.php";
+
+const String linkAddSolids = "$linkServerName/feedSolids/add.php";
+const String linkViewSolids = "$linkServerName/feedSolids/view.php";

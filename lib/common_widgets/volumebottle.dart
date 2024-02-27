@@ -43,7 +43,9 @@ class _BabyBottleSelectorState extends State<BabyBottleSelector> {
               // Adjust the calculation to match your desired maximum liquid height
               insideLiquidHeight = newLiquidHeight.clamp(0.0, maxLiquidHeight);
               // Update mlValue within the callback
-              mlValue = (insideLiquidHeight / maxLiquidHeight) * 400.0;
+              mlValue = double.parse(
+                  (insideLiquidHeight / maxLiquidHeight * 400.0)
+                      .toStringAsFixed(1));
 
               // Update liquidColor based on some logic (e.g., based on mlValue)
               liquidColor = calculateLiquidColor(mlValue);

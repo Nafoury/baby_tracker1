@@ -1,4 +1,6 @@
 import 'dart:ffi';
+import 'package:baby_tracker/common_widgets/nursingbuttons.dart';
+import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
@@ -24,26 +26,58 @@ class TrackingWidget extends StatelessWidget {
   final DateTime? endDate;
   String? status;
   final TextEditingController? controller;
+  final TextEditingController? controller1;
+  final TextEditingController? controller2;
+  final TextEditingController? controller3;
+  final TextEditingController? controller4;
+  final TextEditingController? controller5;
   final Function(DateTime, DateTime)? onDateTimeChanged;
   final Function(DateTime)? onDateStratTimeChanged;
   final Function(String)? onStatusChanged;
   final Function(String)? onNoteChanged;
+  final Function(int)? onFruitChanged;
+  final Function(int)? onVegChanged;
+  final Function(int)? onDairyChanged;
+  final Function(int)? onProteinChanged;
+  final Function(int)? onGrainsChanged;
   String? selectedValue;
   String? dropdownError;
   String? note;
+  int? fruit;
+  int? garins;
+  int? protein;
+  int? veg;
+  int? dairy;
 
-  TrackingWidget(
-      {required this.trackingType,
-      this.controller,
-      this.feedingSubtype,
-      this.startDate,
-      this.endDate,
-      this.status,
-      this.note,
-      this.onDateTimeChanged,
-      this.onDateStratTimeChanged,
-      this.onStatusChanged,
-      this.onNoteChanged});
+  TrackingWidget({
+    required this.trackingType,
+    this.controller,
+    this.controller1,
+    this.controller2,
+    this.controller3,
+    this.controller4,
+    this.controller5,
+    this.feedingSubtype,
+    this.startDate,
+    this.endDate,
+    this.status,
+    this.note,
+    this.onDateTimeChanged,
+    this.onDateStratTimeChanged,
+    this.onStatusChanged,
+    this.onNoteChanged,
+    this.onDairyChanged,
+    this.onFruitChanged,
+    this.onGrainsChanged,
+    this.onProteinChanged,
+    this.onVegChanged,
+    this.selectedValue,
+    this.dairy,
+    this.fruit,
+    this.garins,
+    this.protein,
+    this.veg,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +316,7 @@ class TrackingWidget extends StatelessWidget {
                 ],
               );
             },
-            itemCount: 5,
+            itemCount: 7,
             itemBuilder: (BuildContext context, int index) {
               switch (index) {
                 case 0:
@@ -310,24 +344,36 @@ class TrackingWidget extends StatelessWidget {
 
                 case 1:
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors
+                              .pink.shade100, // Customize the color as needed
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text("Fruits ",
                           style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 100, // Adjust the width as needed
+                        width: 275, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
+                          controller: controller1,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                           onChanged: (value) {
-                            // Handle the user input here
-                            // You can update the state or perform any necessary actions
+                            int intValue = int.parse(value);
+                            onFruitChanged?.call(intValue);
                           },
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.zero,
@@ -342,24 +388,36 @@ class TrackingWidget extends StatelessWidget {
                   );
                 case 2:
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors
+                              .green.shade200, // Customize the color as needed
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text("Vegetables ",
                           style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 100, // Adjust the width as needed
+                        width: 233, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
+                          controller: controller2,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                           onChanged: (value) {
-                            // Handle the user input here
-                            // You can update the state or perform any necessary actions
+                            int intValue = int.parse(value);
+                            onVegChanged?.call(intValue);
                           },
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.zero,
@@ -374,24 +432,36 @@ class TrackingWidget extends StatelessWidget {
                   );
                 case 3:
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors
+                              .brown.shade200, // Customize the color as needed
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text("Meat & Protein ",
                           style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 100, // Adjust the width as needed
+                        width: 205, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
+                          controller: controller3,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                           onChanged: (value) {
-                            // Handle the user input here
-                            // You can update the state or perform any necessary actions
+                            int intValue = int.parse(value);
+                            onProteinChanged?.call(intValue);
                           },
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.zero,
@@ -406,24 +476,36 @@ class TrackingWidget extends StatelessWidget {
                   );
                 case 4:
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors
+                              .blue.shade100, // Customize the color as needed
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text("Grains",
                           style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 100, // Adjust the width as needed
+                        width: 270, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
+                          controller: controller4,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                           onChanged: (value) {
-                            // Handle the user input here
-                            // You can update the state or perform any necessary actions
+                            int intValue = int.parse(value);
+                            onGrainsChanged?.call(intValue);
                           },
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.zero,
@@ -434,6 +516,69 @@ class TrackingWidget extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ],
+                  );
+                case 5:
+                  return Row(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors
+                              .blue.shade100, // Customize the color as needed
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text("Dairy",
+                          style: TextStyle(
+                            color: Tcolor.black,
+                            fontSize: 14,
+                          )),
+                      SizedBox(
+                        width: 270, // Adjust the width as needed
+                        child: TextFormField(
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.number,
+                          controller: controller5,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          onChanged: (value) {
+                            int intValue = int.parse(value);
+                            onDairyChanged?.call(intValue);
+                          },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            hintText: "0g",
+                            hintStyle: TextStyle(color: Colors.black26),
+                            isDense: true,
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                case 6:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                          child: TextField(
+                        controller: controller,
+                        onChanged: (String value) {
+                          onNoteChanged?.call(value);
+                          note:
+                          value;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "note",
+                          // Set your desired hint text
+                        ),
+                      ))
                     ],
                   );
                 default:
@@ -517,13 +662,8 @@ class TrackingWidget extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               switch (index) {
                 case 0:
-                  return Container(
-                      height: 250,
-                      width: 0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: Tcolor.primaryG),
-                        borderRadius: BorderRadius.circular(0.07),
-                      ));
+                  return RoundButton1();
+
                 case 1:
                   return GestureDetector(
                       onTap: () {
