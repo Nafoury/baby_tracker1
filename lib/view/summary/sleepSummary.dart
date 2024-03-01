@@ -1,3 +1,4 @@
+import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/models/sleepData.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -66,18 +67,40 @@ class SleepSummaryTable extends StatelessWidget {
 
       return DataRow(
         cells: [
-          DataCell(Text(formattedDate)),
-          DataCell(Text(formattedDuration)),
+          DataCell(
+            Text(
+              formattedDate,
+              style: TextStyle(
+                  color: Colors.black.withOpacity(0.4),
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+          DataCell(Text(
+            formattedDuration,
+            style: TextStyle(
+                color: Colors.black.withOpacity(0.4),
+                fontWeight: FontWeight.w600),
+          )),
         ],
       );
     }).toList();
 
-    return DataTable(
-      columns: [
-        DataColumn(label: Text('Date')),
-        DataColumn(label: Text('Total Sleep')),
-      ],
-      rows: summaryRows,
+    return Container(
+      child: DataTable(
+        columns: [
+          DataColumn(
+              label: Text(
+            'Date',
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+          )),
+          DataColumn(
+              label: Text(
+            'Total Sleep',
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+          )),
+        ],
+        rows: summaryRows,
+      ),
     );
   }
 }

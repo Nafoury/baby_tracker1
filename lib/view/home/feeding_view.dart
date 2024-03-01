@@ -2,7 +2,9 @@ import 'dart:ffi';
 import 'package:baby_tracker/common_widgets/notebutton.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/nursingbuttons.dart';
+import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -46,6 +48,7 @@ class _FeedingViewState extends State<FeedingView> {
   int? veg;
   int? dairy;
   SolidsController solidsController = SolidsController();
+  NursingController nursingController = NursingController();
 
   @override
   Widget build(BuildContext context) {
@@ -386,6 +389,7 @@ class _FeedingViewState extends State<FeedingView> {
                           future: Future.wait([
                             bottleController.retrieveBottleData(),
                             solidsController.retrieveSolidsData(),
+                            nursingController.retrieveNursingData(),
                           ]),
                           builder: (BuildContext context,
                               AsyncSnapshot<List<dynamic>> snapshot) {
@@ -401,10 +405,14 @@ class _FeedingViewState extends State<FeedingView> {
                               List<SolidsData> solidsRecords =
                                   (snapshot.data![1] as List)
                                       .cast<SolidsData>();
+                              List<NusringData> nursingRecords =
+                                  (snapshot.data![2] as List)
+                                      .cast<NusringData>();
 
                               return FeedingSummaryTable(
                                 bottleRecords: bottleRecords,
                                 solidsRecrods: solidsRecords,
+                                nursingRecords: nursingRecords,
                               );
                             } else {
                               return Text('No data available.');

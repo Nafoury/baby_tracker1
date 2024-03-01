@@ -105,9 +105,16 @@ flutter:
     - assets/images/diaper_blue.png
     - assets/images/blue_bottle.png
     - assets/images/sleep_yellow.png
-    - assets/images/weight.png
-   
-    
+    - assets/images/weight1.png
+    - assets/images/sleepingT.png
+    - assets/images/health.png
+    - assets/images/momsweight.png
+    - assets/images/bottleT.png
+    - assets/images/diaperT.png
+    - assets/images/activities.png
+    - assets/images/face.png
+    - assets/images/milestone.png
+    - assets/images/guide.png
 
 
   #   - images/a_dot_ham.jpeg

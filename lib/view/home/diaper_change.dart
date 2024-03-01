@@ -257,12 +257,28 @@ class _DiaperChangeState extends State<DiaperChange> {
                             return DataTable(
                               columns: [
                                 DataColumn(
-                                  label: Text('Date'),
-                                  numeric: false,
+                                  label: Text(
+                                    'Date',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
-                                DataColumn(label: Text('Note')),
                                 DataColumn(
-                                  label: Text('Type'),
+                                  label: Text(
+                                    'Note',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Type',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
                               ],
                               rows: diaperRecords.map((diaperData) {
@@ -272,7 +288,12 @@ class _DiaperChangeState extends State<DiaperChange> {
                                     .format(diaperData.startDate);
 
                                 return DataRow(cells: [
-                                  DataCell(Text(formattedDate)),
+                                  DataCell(Text(
+                                    formattedDate,
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.4),
+                                        fontWeight: FontWeight.w600),
+                                  )),
                                   DataCell(
                                     note.isNotEmpty
                                         ? EntryButton(
@@ -291,7 +312,12 @@ class _DiaperChangeState extends State<DiaperChange> {
                                           )
                                         : Container(),
                                   ),
-                                  DataCell(Text(type))
+                                  DataCell(Text(
+                                    type,
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.4),
+                                        fontWeight: FontWeight.w600),
+                                  ))
                                 ]);
                               }).toList(),
                             );

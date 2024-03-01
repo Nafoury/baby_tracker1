@@ -1,20 +1,27 @@
 import 'package:baby_tracker/models/bottleData.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class FeedingSummaryTable extends StatelessWidget {
   final List<BottleData> bottleRecords;
   final List<SolidsData> solidsRecrods;
+  final List<NusringData> nursingRecords;
 
-  FeedingSummaryTable(
-      {required this.bottleRecords, required this.solidsRecrods});
+  FeedingSummaryTable({
+    required this.bottleRecords,
+    required this.solidsRecrods,
+    required this.nursingRecords,
+  });
 
   @override
   Widget build(BuildContext context) {
     // Group records by date
     Map<String, double> totalLiquidAmounts = {};
     Map<String, int> totalSolidsAmounts = {};
+    Map<String, Duration> totalNursingAmounts = {};
 
     for (var record in bottleRecords) {
       String? dateStr = record.startDate?.toLocal().toString().split(' ')[0];
@@ -35,37 +42,96 @@ class FeedingSummaryTable extends StatelessWidget {
                   (record.protein ?? 0).toDouble())
               .toInt();
     }
+    for (var record in nursingRecords) {
+      String? dateStr = record.date?.toLocal().toString().split(' ')[0];
+      dateStr = DateFormat('yyyy-MM-dd').format(DateTime.parse(dateStr!));
+      totalNursingAmounts[dateStr] ??= Duration.zero;
+
+      // Check if leftDuration is not null before parsing
+      Duration leftDuration = record.leftDuration != null
+          ? _parseDuration(record.leftDuration!)
+          : Duration.zero;
+
+      // Check if rightDuration is not null before parsing
+      Duration rightDuration = record.rightDuration != null
+          ? _parseDuration(record.rightDuration!)
+          : Duration.zero;
+
+      // Add the durations together
+      totalNursingAmounts[dateStr] =
+          (totalNursingAmounts[dateStr] ?? Duration.zero) +
+              leftDuration +
+              rightDuration;
+    }
 
     print("Total Liquid Amounts: $totalLiquidAmounts");
     print("Total Solids Amounts: $totalSolidsAmounts");
+    print("Total Nursing Durations: $totalNursingAmounts");
 
     Set<String> allDates = {
       ...totalLiquidAmounts.keys,
-      ...totalSolidsAmounts.keys
+      ...totalSolidsAmounts.keys,
+      ...totalNursingAmounts.keys,
     };
 
-// Build summary rows
+    // Build summary rows
     List<DataRow> summaryRows = allDates.map((dateStr) {
       DateTime date = DateFormat('yy-MM-dd').parse(dateStr);
       String formattedDate = DateFormat('dd MMM yy').format(date);
 
       return DataRow(
         cells: [
-          DataCell(Text(formattedDate)),
+          DataCell(Padding(
+              padding: EdgeInsets.only(right: 35), child: Text(formattedDate))),
           DataCell(
               Text((totalLiquidAmounts[dateStr] ?? 0.0).toString() + 'ml')),
           DataCell(Text((totalSolidsAmounts[dateStr] ?? 0).toString() + 'g')),
+          DataCell(Text(_formatDuration(totalNursingAmounts[dateStr]))),
         ],
       );
     }).toList();
 
-    return DataTable(
-      columns: [
-        DataColumn(label: Text('Date')),
-        DataColumn(label: Text('Liquid')),
-        DataColumn(label: Text('Solids')),
-      ],
-      rows: summaryRows,
+    return Container(
+      width:
+          MediaQuery.of(context).size.width, // Set the width of the container
+      child: DataTable(
+        columnSpacing: 11.0, // Set the space between columns
+        columns: [
+          DataColumn(
+              label: Text(
+            'Date',
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+          )),
+          DataColumn(
+              label: Text(
+            'Liquid',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          )),
+          DataColumn(
+              label: Text(
+            'Solids',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          )),
+          DataColumn(
+              label: Text(
+            'Nursing',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          )),
+        ],
+        rows: summaryRows,
+      ),
     );
+  }
+
+  Duration _parseDuration(String durationString) {
+    List<String> parts = durationString.split(':');
+    int minutes = int.parse(parts[0]);
+    int seconds = int.parse(parts[1]);
+    return Duration(minutes: minutes, seconds: seconds);
+  }
+
+  String _formatDuration(Duration? duration) {
+    if (duration == null) return '0:00';
+    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 }

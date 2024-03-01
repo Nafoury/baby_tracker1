@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 
-class TrackingPage extends StatefulWidget {
-  const TrackingPage({Key? key}) : super(key: key);
+class MorePage extends StatefulWidget {
+  const MorePage({Key? key}) : super(key: key);
 
   @override
-  State<TrackingPage> createState() => _TrackingPage();
+  State<MorePage> createState() => _MorePage();
 }
 
-class _TrackingPage extends State<TrackingPage> {
+class _MorePage extends State<MorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +21,7 @@ class _TrackingPage extends State<TrackingPage> {
             Container(
               margin: EdgeInsets.all(25), // Adjust the bottom margin as needed
               child: Text(
-                "Tracking",
+                "More",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ),
@@ -35,13 +35,13 @@ class _TrackingPage extends State<TrackingPage> {
                     ),
                     child: Column(children: [
                       Image.asset(
-                        "assets/images/weight1.png",
-                        width: 120,
-                        height: 120,
+                        "assets/images/activities.png",
+                        width: 100,
+                        height: 90,
                         fit: BoxFit.contain,
                       ),
                       Text(
-                        "Growth",
+                        "Activites",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
@@ -54,14 +54,14 @@ class _TrackingPage extends State<TrackingPage> {
                     ),
                     child: Column(children: [
                       Image.asset(
-                        "assets/images/sleepingT.png",
+                        "assets/images/face.png",
                         width: 80,
                         height: 100,
                         fit: BoxFit.contain,
                       ),
                       SizedBox(height: 15),
                       Text(
-                        "Sleeping",
+                        "Face_A_Day",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       )
@@ -74,13 +74,13 @@ class _TrackingPage extends State<TrackingPage> {
                     ),
                     child: Column(children: [
                       Image.asset(
-                        "assets/images/health.png",
+                        "assets/images/milestone.png",
                         width: 100,
-                        height: 80,
+                        height: 100,
                         fit: BoxFit.contain,
                       ),
                       Text(
-                        "Health",
+                        "Milestones",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
@@ -93,13 +93,13 @@ class _TrackingPage extends State<TrackingPage> {
                     ),
                     child: Column(children: [
                       Image.asset(
-                        "assets/images/momsweight.png",
-                        width: 100,
-                        height: 100,
+                        "assets/images/guide.png",
+                        width: 90,
+                        height: 90,
                         fit: BoxFit.contain,
                       ),
                       Text(
-                        "Mom's weight",
+                        "Guides",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
@@ -110,38 +110,12 @@ class _TrackingPage extends State<TrackingPage> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.grey.shade100,
                     ),
-                    child: Column(children: [
-                      Image.asset(
-                        "assets/images/bottleT.png",
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
-                      ),
-                      Text(
-                        "Feeding",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ]),
                   ),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.grey.shade100,
                     ),
-                    child: Column(children: [
-                      Image.asset(
-                        "assets/images/diaperT.png",
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
-                      ),
-                      Text(
-                        "Diaper",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ]),
                   ),
                 ],
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

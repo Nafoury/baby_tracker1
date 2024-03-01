@@ -22,3 +22,6 @@ const String linkViewBottle = "$linkServerName/feeding/read.php";
 
 const String linkAddSolids = "$linkServerName/feedSolids/add.php";
 const String linkViewSolids = "$linkServerName/feedSolids/view.php";
+
+const String linkAddNursing = "$linkServerName/feedNursing/add.php";
+const String linkViewNursing = "$linkServerName/feedNursing/view.php";

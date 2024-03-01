@@ -2,6 +2,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/tab_button.dart';
 import 'package:baby_tracker/view/home/blank_view.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
+import 'package:baby_tracker/view/more/mainMorePage.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/view/tracking/mainTracking.dart';
 
@@ -77,7 +78,7 @@ class _MainTabState extends State<MainTab> {
                 onTap: () {
                   setState(() {
                     selectTab = 2;
-                    currenttab = const BlankView();
+                    currenttab = const MorePage();
                   });
                 },
               ),

@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:baby_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/controller/feedNursing.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 
 class RoundButton1 extends StatefulWidget {
   const RoundButton1({
@@ -29,10 +32,13 @@ class _RoundButton1State extends State<RoundButton1> {
   DateTime? startDate;
   Function(DateTime)? onDateStratTimeChanged;
   DateTime dateTime = DateTime.now();
+  NursingController nursingController = NursingController();
+  late DateTime startDate1;
 
   @override
   void initState() {
     super.initState();
+    startDate1 = DateTime.now();
     timerControllerL = StreamController<String>.broadcast();
     timerControllerR = StreamController<String>.broadcast();
   }
@@ -236,7 +242,7 @@ class _RoundButton1State extends State<RoundButton1> {
                 GestureDetector(
                   onTap: () {
                     _showStartDatePicker(
-                        context); // Show date picker for start date
+                        context, startDate1); // Show date picker for start date
                   },
                   child: Container(
                     padding: EdgeInsets.all(8.0),
@@ -250,9 +256,7 @@ class _RoundButton1State extends State<RoundButton1> {
                           BorderRadius.circular(10.0), // Set the border radius
                     ),
                     child: Text(
-                      startDate != null
-                          ? DateFormat('dd MMM yyyy  HH:mm').format(startDate!)
-                          : 'Start Time ${DateFormat('HH:mm').format(DateTime.now())}',
+                      DateFormat('dd MMM yyyy  HH:mm').format(startDate1),
                       style: TextStyle(
                         color: Colors.purpleAccent.shade100,
                         fontWeight: FontWeight.w600,
@@ -270,10 +274,12 @@ class _RoundButton1State extends State<RoundButton1> {
     setState(() {
       if (side == 'L') {
         isTimerLRunning = true;
+        isTimerRRunning = false; // Stop the timer of the other side
         startTimeL = DateTime.now();
         elapsedTimeL = Duration.zero;
       } else if (side == 'R') {
         isTimerRRunning = true;
+        isTimerLRunning = false; // Stop the timer of the other side
         startTimeR = DateTime.now();
         elapsedTimeR = Duration.zero;
       }
@@ -302,17 +308,46 @@ class _RoundButton1State extends State<RoundButton1> {
     });
   }
 
-  void _stopTimer() {
+  void _stopTimer() async {
     setState(() {
       isTimerLRunning = false;
       isTimerRRunning = false;
 
-      elapsedTimeL = DateTime.now().difference(startTimeL!);
-      elapsedTimeR = DateTime.now().difference(startTimeR!);
+      // Add null checks before accessing startTimeL and startTimeR
+      elapsedTimeL = startTimeL != null
+          ? DateTime.now().difference(startTimeL!)
+          : Duration.zero;
+      elapsedTimeR = startTimeR != null
+          ? DateTime.now().difference(startTimeR!)
+          : Duration.zero;
 
       timerL.cancel();
       timerR.cancel();
     });
+
+    // Determine the breast side and nursing side based on the first button clicked
+    String breastSide = isButtonLTapped ? 'L' : 'R';
+    String nursingSide = isButtonLTapped ? 'L' : 'R';
+
+    // If both buttons are clicked, update nursing side to 'both' and use the first clicked side as the starting breast
+    if (isButtonLTapped && isButtonRTapped) {
+      nursingSide = 'both';
+      breastSide = isButtonLTapped ? 'L' : 'R';
+    }
+
+    // Create an instance of NusringData based on the last active button
+    NusringData nursingData = NusringData(
+      leftDuration: isButtonLTapped ? _formatDuration(elapsedTimeL) : '0',
+      date: startDate1,
+      nursingSide: nursingSide,
+      startingBreast: breastSide,
+      rightDuration: isButtonRTapped ? _formatDuration(elapsedTimeR) : '0',
+      babyId:
+          sharedPref.getString("info_id"), // Replace with the actual baby ID
+    );
+
+    // Save the nursing data using NursingController
+    await nursingController.savenursingData(nusringData: nursingData);
   }
 
   void _resetTimer() {
@@ -334,57 +369,29 @@ class _RoundButton1State extends State<RoundButton1> {
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
 
-  void _showStartDatePicker(BuildContext context) {
-    DateTime? newStartDate = startDate;
-    DateTime? initialDateTime = startDate ?? DateTime.now();
+  void _showStartDatePicker(BuildContext context, DateTime initialDateTime) {
     DateTime minimumDateTime =
         DateTime.now().subtract(const Duration(days: 40));
-    DateTime maximumDateTime = DateTime.now(); // You can adjust this if needed
-
-    if (initialDateTime.isAfter(maximumDateTime)) {
-      initialDateTime = minimumDateTime;
-    }
+    DateTime maximumDateTime = DateTime.now();
 
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext builderContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              height: 200,
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: initialDateTime,
-                    minimumDate: minimumDateTime,
-                    maximumDate: maximumDateTime,
-                    onDateTimeChanged: (DateTime? newDateTime) {
-                      setState(() {
-                        if (newDateTime != null) {
-                          newStartDate = newDateTime;
-                          onDateStratTimeChanged?.call(newStartDate!);
-                        }
-                      });
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Done'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+        return Container(
+          height: 200,
+          color: Colors.white,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.dateAndTime,
+            initialDateTime: initialDateTime,
+            minimumDate: minimumDateTime,
+            maximumDate: maximumDateTime,
+            onDateTimeChanged: (DateTime newDateTime) {
+              print('New DateTime: $newDateTime');
+              setState(() {
+                startDate1 = newDateTime;
+              });
+            },
+          ),
         );
       },
     );
