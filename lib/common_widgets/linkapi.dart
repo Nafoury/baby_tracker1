@@ -7,7 +7,8 @@ const String linklogin = "$linkServerName/auth/login.php";
 const String linkAddinfo = "$linkServerName/completeinfo/add.php";
 const String linkViewinfo = "$linkServerName/completeinfo/view.php";
 
-const String linkaddsleep = "$linkServerName/sleep_add/adds.php";
+const String linkaddsleep = "$linkServerName/sleep_records/add.php";
+const String linkviewsleep = "$linkServerName/sleep_records/view.php";
 
 const String linkdiaperchange = "$linkServerName/diaper_change/addchange.php";
 const String linkdiaperview = "$linkServerName/diaper_change/retreive.php";

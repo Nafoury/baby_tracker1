@@ -31,7 +31,6 @@ class _FeedingViewState extends State<FeedingView> {
   DateTime dateTime = DateTime.now();
   DateTime startDate = DateTime.now();
   double mlValue = 0.0;
-
   String note = '';
   final _note = TextEditingController();
   BottleController bottleController = BottleController();
@@ -255,26 +254,44 @@ class _FeedingViewState extends State<FeedingView> {
                             TrackingWidget(
                               trackingType: TrackingType.Feeding,
                               feedingSubtype: FeedingSubtype.bottle,
+                              controller: _note,
                               startDate: startDate,
                               onDateStratTimeChanged: (DateTime newStartDate) {
                                 setState(() {
                                   startDate = newStartDate;
                                 });
                               },
+                              onNoteChanged: (String note) {
+                                _note.text = note;
+                              },
                             ),
                             SizedBox(height: 90),
                             RoundButton(
                               onpressed: () async {
-                                print("mlValue: $mlValue");
-                                print("note: $note");
+                                if (mlValue.isEqual(0)) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title:
+                                            Text('You have to fill the bottle'),
+                                        content:
+                                            Text("Liquied amount is required"),
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
 
                                 BottleData bottleData = BottleData(
                                     startDate: startDate,
                                     amount: mlValue,
-                                    note: note,
+                                    note: _note.text,
                                     babyId: sharedPref.getString("info_id"));
                                 await bottleController.savebottlerData(
                                     bottleData: bottleData);
+
+                                Navigator.of(context).pop();
                               },
                               title: "save feed",
                             )
@@ -325,33 +342,75 @@ class _FeedingViewState extends State<FeedingView> {
                                   grains: grains,
                                   protein: protein,
                                 );
+                                int totalAmount = (fruit ?? 0) +
+                                    (veg ?? 0) +
+                                    (protein ?? 0) +
+                                    (grains ?? 0) +
+                                    (dairy ?? 0);
+
+                                // Add your condition here
+                                if (totalAmount < 15 || totalAmount > 700) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Text(
+                                          "Total amount should be between 15g and 700g.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
+
                                 await solidsController.savebottlerData(
                                     solidsData: solidsData);
+
+                                _note.clear();
+                                _fruit.clear();
+                                _veg.clear();
+                                _grain.clear();
+                                _protein.clear();
+                                _dairy.clear();
                               },
-                              title: "save feed",
+                              title: "Save feed",
                             )
                           ],
                         ),
                       if (selectedbutton == 3)
                         FutureBuilder(
-                          future: bottleController.retrieveBottleData(),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
+                          future: Future.wait([
+                            bottleController.retrieveBottleData(),
+                            solidsController.retrieveSolidsData(),
+                          ]),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<dynamic>> snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: Text("Loading..."));
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else if (snapshot.hasData) {
-                              bottleRecords =
-                                  (snapshot.data as List).cast<BottleData>();
-                              return BottleSummaryTable(
-                                  bottleRecords: bottleRecords);
+                              List<BottleData> bottleRecords =
+                                  (snapshot.data![0] as List)
+                                      .cast<BottleData>();
+                              List<SolidsData> solidsRecords =
+                                  (snapshot.data![1] as List)
+                                      .cast<SolidsData>();
+
+                              return FeedingSummaryTable(
+                                bottleRecords: bottleRecords,
+                                solidsRecrods: solidsRecords,
+                              );
                             } else {
                               return Text('No data available.');
                             }
                           },
-                        )
+                        ),
                     ],
                   ),
                 ],

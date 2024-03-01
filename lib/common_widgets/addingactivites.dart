@@ -101,7 +101,7 @@ class TrackingWidget extends StatelessWidget {
               ],
             );
           },
-          itemCount: 3,
+          itemCount: 4,
           itemBuilder: (BuildContext context, int index) {
             switch (index) {
               case 0:
@@ -158,6 +158,28 @@ class TrackingWidget extends StatelessWidget {
                     Text(_formattedDuration(endDate!.difference(startDate!))),
                   ],
                 );
+              case 3:
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: TextField(
+                        controller: controller,
+                        onChanged: (String value) {
+                          onNoteChanged?.call(value);
+                          note:
+                          value;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "note",
+                          // Set your desired hint text
+                        ),
+                        //textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                );
+
               default:
                 return SizedBox();
             }
@@ -443,7 +465,7 @@ class TrackingWidget extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 10,
+                        width: 13,
                       ),
                       Text("Meat & Protein ",
                           style: TextStyle(
@@ -527,7 +549,7 @@ class TrackingWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors
-                              .blue.shade100, // Customize the color as needed
+                              .blue.shade500, // Customize the color as needed
                         ),
                       ),
                       SizedBox(
@@ -539,7 +561,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 270, // Adjust the width as needed
+                        width: 280, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -626,11 +648,17 @@ class TrackingWidget extends StatelessWidget {
                       ],
                     ));
               case 1:
-                return const Row(
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
                       child: TextField(
+                        controller: controller,
+                        onChanged: (String value) {
+                          onNoteChanged?.call(value);
+                          note:
+                          value;
+                        },
                         decoration: InputDecoration(
                           hintText: "note",
                           // Set your desired hint text

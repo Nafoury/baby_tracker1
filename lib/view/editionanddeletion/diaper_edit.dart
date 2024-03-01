@@ -14,11 +14,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Diaperchange extends StatefulWidget {
   final DiaperData entryData;
-  final VoidCallback onDelete;
+
   final Function(DateTime)? onDateStratTimeChanged;
 
   Diaperchange({
-    required this.onDelete,
     required this.entryData,
     this.onDateStratTimeChanged,
   });
@@ -35,14 +34,30 @@ class _DiaperchangeState extends State<Diaperchange> {
   late TextEditingController noteController;
 
   deleteDiaper() async {
-    var response = await crud.postrequest(linkDeleteRecord, {
-      "change_id": widget.entryData.changeId.toString(),
-    });
-    if (response == 'success') {
-      Navigator.of(context).pushReplacementNamed("/diaperchnage");
-    } else {
-      // Handle the case where the server response is not 'success'
-      print('Editing failed. Server response: $response');
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteRecord, {
+          "change_id": widget.entryData.changeId.toString(),
+        });
+        if (response['status'] == 'success') {
+          // Use pop to navigate back to the previous screen
+          Navigator.of(context).pushReplacementNamed("/diaperchnage");
+        } else {
+          // Handle the case where the server response is not 'success'
+          print('Deleting failed. Server response: $response');
+        }
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
     }
   }
 

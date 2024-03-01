@@ -257,7 +257,7 @@ class _DiaperChangeState extends State<DiaperChange> {
                             return DataTable(
                               columns: [
                                 DataColumn(
-                                  label: Text('Date&time'),
+                                  label: Text('Date'),
                                   numeric: false,
                                 ),
                                 DataColumn(label: Text('Note')),
@@ -268,9 +268,8 @@ class _DiaperChangeState extends State<DiaperChange> {
                               rows: diaperRecords.map((diaperData) {
                                 String note = diaperData.note;
                                 String type = diaperData.status;
-                                String formattedDate =
-                                    DateFormat('dd MMM yyyy HH:mm ')
-                                        .format(diaperData.startDate);
+                                String formattedDate = DateFormat('dd MMM yy ')
+                                    .format(diaperData.startDate);
 
                                 return DataRow(cells: [
                                   DataCell(Text(formattedDate)),
@@ -285,7 +284,6 @@ class _DiaperChangeState extends State<DiaperChange> {
                                                   builder: (context) =>
                                                       Diaperchange(
                                                     entryData: diaperData,
-                                                    onDelete: () {},
                                                   ),
                                                 ),
                                               );

@@ -2,6 +2,7 @@ import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SolidsController {
   Crud crud = Crud();
@@ -40,6 +41,38 @@ class SolidsController {
     } catch (e) {
       print("Error: $e");
       return false; // Return false in case of an error
+    }
+  }
+
+  Future<List<SolidsData>> retrieveSolidsData() async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(
+            linkViewSolids, {"baby_id": sharedPref.getString("info_id")});
+        print(response);
+
+        if (response['status'] == "success" && response.containsKey('data')) {
+          // Parse the data and return it
+          List<dynamic> data = response['data'];
+          List<SolidsData> solidsDataList =
+              data.map((item) => SolidsData.fromJson(item)).toList();
+          return solidsDataList;
+        } else {
+          print("Error: Failed to retrieve bottle data");
+          return []; // Return an empty list if there's an error
+        }
+      } else {
+        print("Error: No internet connection");
+        return []; // Return an empty list if there's no internet connection
+      }
+    } catch (e) {
+      print("Error: $e");
+      return []; // Return an empty list in case of an error
     }
   }
 }

@@ -7,7 +7,7 @@ class SleepDataProvider extends ChangeNotifier {
   late SharedPreferences sharedPref;
 
   List<SleepData> _sleepRecords = [];
-
+/*
   SleepDataProvider() {
     initSharedPreferences(); // Call init function in constructor or wherever appropriate
   }
@@ -55,6 +55,7 @@ class SleepDataProvider extends ChangeNotifier {
 
   void addOrUpdateSleepRecord(SleepData sleepData) {
     try {
+      
       int existingIndex = _sleepRecords.indexWhere((record) =>
           record.startDate.year == sleepData.startDate.year &&
           record.startDate.month == sleepData.startDate.month &&
@@ -92,4 +93,5 @@ class SleepDataProvider extends ChangeNotifier {
       return null;
     }
   }
+  */
 }

@@ -3,6 +3,7 @@ import 'package:baby_tracker/common_widgets/tab_button.dart';
 import 'package:baby_tracker/view/home/blank_view.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:baby_tracker/view/tracking/mainTracking.dart';
 
 class MainTab extends StatefulWidget {
   const MainTab({Key? key}) : super(key: key);
@@ -63,7 +64,7 @@ class _MainTabState extends State<MainTab> {
                 onTap: () {
                   setState(() {
                     selectTab = 1;
-                    currenttab = const BlankView();
+                    currenttab = const TrackingPage();
                   });
                 },
               ),

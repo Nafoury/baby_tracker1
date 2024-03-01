@@ -11,7 +11,7 @@ class BottleData {
   BottleData.fromMap(Map<String, dynamic> json) {
     feed1Id = json['feed1_id'];
     startDate = DateTime.parse(json['date']);
-    amount = json['amount'];
+    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : 0.0;
     note = json['note'];
     babyId = json['baby_id'].toString();
   }
