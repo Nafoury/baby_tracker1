@@ -304,47 +304,50 @@ class _FeedingViewState extends State<FeedingView> {
                         Column(
                           children: [
                             TrackingWidget(
-                              trackingType: TrackingType.Feeding,
-                              feedingSubtype: FeedingSubtype.solids,
-                              startDate: startDate,
-                              controller: _note,
-                              controller1: _fruit,
-                              controller2: _veg,
-                              controller3: _grain,
-                              controller4: _protein,
-                              controller5: _dairy,
-                              onDateStratTimeChanged: (DateTime newStartDate) {
-                                setState(() {
-                                  startDate = newStartDate;
-                                });
-                              },
-                              onNoteChanged: (String note) {
-                                _note.text = note;
-                              },
-                              onDairyChanged: (int value) {
-                                dairy = value;
-                              },
-                              onFruitChanged: (int value) {
-                                fruit = value;
-                              },
-                              onGrainsChanged: (int value) {
-                                grains = value;
-                              },
-                              onProteinChanged: (int value) {
-                                protein = value;
-                              },
-                            ),
+                                trackingType: TrackingType.Feeding,
+                                feedingSubtype: FeedingSubtype.solids,
+                                startDate: startDate,
+                                controller: _note,
+                                controller1: _fruit,
+                                controller2: _veg,
+                                controller3: _grain,
+                                controller4: _protein,
+                                controller5: _dairy,
+                                onDateStratTimeChanged:
+                                    (DateTime newStartDate) {
+                                  setState(() {
+                                    startDate = newStartDate;
+                                  });
+                                },
+                                onNoteChanged: (String note) {
+                                  _note.text = note;
+                                },
+                                onDairyChanged: (int value) {
+                                  dairy = value;
+                                },
+                                onFruitChanged: (int value) {
+                                  fruit = value;
+                                },
+                                onGrainsChanged: (int value) {
+                                  grains = value;
+                                },
+                                onProteinChanged: (int value) {
+                                  protein = value;
+                                },
+                                onVegChanged: (int value) {
+                                  veg = value;
+                                }),
                             SizedBox(height: 50),
                             RoundButton(
                               onpressed: () async {
                                 SolidsData solidsData = SolidsData(
-                                  date: startDate,
-                                  note: _note.text,
-                                  dairy: dairy,
-                                  fruits: fruit,
-                                  grains: grains,
-                                  protein: protein,
-                                );
+                                    date: startDate,
+                                    note: _note.text,
+                                    dairy: dairy,
+                                    fruits: fruit,
+                                    grains: grains,
+                                    protein: protein,
+                                    veg: veg);
                                 int totalAmount = (fruit ?? 0) +
                                     (veg ?? 0) +
                                     (protein ?? 0) +

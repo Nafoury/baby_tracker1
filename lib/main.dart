@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:baby_tracker/common/color_extension.dart';
-import 'package:baby_tracker/provider/diaper_provider.dart';
+import 'package:baby_tracker/provider/bottleDataProvider.dart';
+import 'package:baby_tracker/provider/nursingDataProvider.dart';
+import 'package:baby_tracker/provider/solidsDataProvider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
@@ -9,6 +11,7 @@ import 'package:baby_tracker/view/login/sign_up.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:baby_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baby_tracker/view/on_boarding/started_view.dart';
+import 'package:baby_tracker/view/tracking/feedinT.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +40,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SleepDataProvider()),
-        ChangeNotifierProvider(create: (_) => DiaperProvider()),
+        ChangeNotifierProvider(create: (context) => BottleDataProvider()),
+        ChangeNotifierProvider(create: (context) => SolidsDataProvider()),
+        ChangeNotifierProvider(create: (context) => NursingDataProvider()),
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
@@ -64,6 +68,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/login", page: () => LoginPage()),
         GetPage(name: "/mainTab", page: () => MainTab()),
         GetPage(name: "/diaperchnage", page: () => DiaperChange()),
+        GetPage(name: "/feedingTrack", page: () => FeedingTracking()),
       ],
     );
   }

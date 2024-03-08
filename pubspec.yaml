@@ -54,6 +54,8 @@ dependencies:
   flutter_cupertino_datetime_picker: ^3.0.0
   debounce_throttle: ^2.0.0
   connectivity_checker: ^1.1.0
+  fl_chart: ^0.66.2
+  syncfusion_flutter_charts: ^24.2.8
 
 dev_dependencies:
   flutter_test:
@@ -115,6 +117,8 @@ flutter:
     - assets/images/face.png
     - assets/images/milestone.png
     - assets/images/guide.png
+    - assets/images/teeth.png
+    - assets/images/develop.png
 
 
   #   - images/a_dot_ham.jpeg

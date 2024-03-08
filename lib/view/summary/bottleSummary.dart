@@ -39,7 +39,8 @@ class FeedingSummaryTable extends StatelessWidget {
           ((record.dairy ?? 0).toDouble() +
                   (record.fruits ?? 0).toDouble() +
                   (record.grains ?? 0).toDouble() +
-                  (record.protein ?? 0).toDouble())
+                  (record.protein ?? 0).toDouble() +
+                  (record.veg ?? 0).toDouble())
               .toInt();
     }
     for (var record in nursingRecords) {
