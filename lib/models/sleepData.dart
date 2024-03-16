@@ -29,8 +29,9 @@ class SleepData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['sleep_id'] = this.sleepId;
-    data['start_date'] = this.startDate;
-    data['end_date'] = this.endDate;
+    data['start_date'] =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(this.startDate!);
+    data['end_date'] = DateFormat('yyyy-MM-dd HH:mm:ss').format(this.endDate!);
     data['duration'] = this.duration;
     data['note'] = this.note;
     data['baby_id'] = this.babyId;

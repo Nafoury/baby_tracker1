@@ -1,5 +1,8 @@
 import 'package:baby_tracker/view/tracking/diaperT.dart';
+import 'package:baby_tracker/view/tracking/growthT.dart';
 import 'package:baby_tracker/view/tracking/health.dart';
+import 'package:baby_tracker/view/tracking/momsweight.dart';
+import 'package:baby_tracker/view/tracking/sleepT.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/view/tracking/feedinT.dart';
@@ -32,47 +35,63 @@ class _TrackingPage extends State<TrackingPage> {
             Expanded(
               child: GridView(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GrowthTracking()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/weight1.png",
+                              width: 115,
+                              height: 100,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Growth",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            ),
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/weight1.png",
-                            width: 115,
-                            height: 100,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Growth",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
-                          ),
-                        ]),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SleepTracking()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/sleepingT.png",
+                              width: 80,
+                              height: 100,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Sleeping",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            )
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/sleepingT.png",
-                            width: 80,
-                            height: 100,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Sleeping",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
-                          )
-                        ]),
                   ),
                   InkWell(
                     onTap: () {
@@ -103,26 +122,34 @@ class _TrackingPage extends State<TrackingPage> {
                           ]),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WeightTracking()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/momsweight.png",
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Mom's weight",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w600),
+                            ),
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/momsweight.png",
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Mom's weight",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w600),
-                          ),
-                        ]),
                   ),
                   InkWell(
                     onTap: () {

@@ -2,6 +2,7 @@ import 'package:baby_tracker/controller/feedingBottle.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/view/charts/nursingchart.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
@@ -261,6 +262,7 @@ class _FeedingTracking extends State<FeedingTracking> {
                               return Container(); // You can replace this with an appropriate widget.
                             },
                           ),
+                        if (selectedbutton == 2) LineChartSample3(),
                       ])
                 ])))));
   }

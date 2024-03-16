@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:baby_tracker/shapes/temp1.dart';
+
+class BubbleTemperatureIndicator extends StatelessWidget {
+  final int temperature;
+
+  const BubbleTemperatureIndicator({super.key, required this.temperature});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 100,
+      height: 100,
+      child: CustomPaint(
+        painter: BubblePainter(),
+        child: Center(
+          child: Text(
+            "$temperature °",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

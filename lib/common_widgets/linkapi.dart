@@ -25,3 +25,7 @@ const String linkViewSolids = "$linkServerName/feedSolids/view.php";
 
 const String linkAddNursing = "$linkServerName/feedNursing/add.php";
 const String linkViewNursing = "$linkServerName/feedNursing/view.php";
+
+const String linkAddvaccine = "$linkServerName/vaccines/add.php";
+
+const String linkAddMed = "$linkServerName/med/add.php";

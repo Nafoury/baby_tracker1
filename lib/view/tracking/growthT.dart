@@ -1,32 +1,27 @@
-import 'package:baby_tracker/common_widgets/healthActivites.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/shapes/temp3.dart';
-import 'package:baby_tracker/shapes/temp4.dart';
-import 'package:baby_tracker/view/subTrackingPages/addVaccine.dart';
-import 'package:baby_tracker/view/subTrackingPages/addmed.dart';
+import 'package:baby_tracker/common_widgets/weightBalance.dart';
+import 'package:baby_tracker/controller/feedingBottle.dart';
+import 'package:baby_tracker/controller/feedingSolids.dart';
+import 'package:baby_tracker/models/bottleData.dart';
+import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/view/charts/solidschart.dart';
+import 'package:baby_tracker/view/subTrackingPages/momweight.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
-import 'package:baby_tracker/shapes/temp.dart';
-import 'package:baby_tracker/shapes/temp1.dart';
+import 'package:baby_tracker/view/charts/bottlechart.dart';
+import 'package:baby_tracker/view/subTrackingPages/bottleView.dart';
 
-class HealthTracking extends StatefulWidget {
-  const HealthTracking({Key? key});
+class GrowthTracking extends StatefulWidget {
+  const GrowthTracking({Key? key});
 
   @override
-  State<HealthTracking> createState() => _HealthTracking();
+  State<GrowthTracking> createState() => _GrowthTracking();
 }
 
-class _HealthTracking extends State<HealthTracking> {
+class _GrowthTracking extends State<GrowthTracking> {
   int selectedbutton = 0;
-  DateTime dateTime = DateTime.now();
-  DateTime startDate = DateTime.now();
-  final _note = TextEditingController();
-  final _note1 = TextEditingController();
-  final _note2 = TextEditingController();
-  String status = '';
-  String status1 = '';
-  final ValueNotifier<double> temperature = ValueNotifier(0.5);
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -54,7 +49,7 @@ class _HealthTracking extends State<HealthTracking> {
                       ),
                       SizedBox(width: 85),
                       Text(
-                        "Health",
+                        "Growth",
                         style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 16,
@@ -85,13 +80,17 @@ class _HealthTracking extends State<HealthTracking> {
                                   alignment: selectedbutton == 0
                                       ? Alignment.centerLeft
                                       : selectedbutton == 1
-                                          ? Alignment.center
+                                          ? Alignment.centerLeft +
+                                              const Alignment(0.7, 0)
                                           : (selectedbutton == 2
-                                              ? Alignment.centerRight
-                                              : Alignment.centerRight),
+                                              ? Alignment.centerRight -
+                                                  const Alignment(0.7, 0)
+                                              : (selectedbutton == 3
+                                                  ? Alignment.centerRight
+                                                  : Alignment.centerLeft)),
                                   duration: const Duration(milliseconds: 200),
                                   child: Container(
-                                    width: (media.width * 0.4) - 30,
+                                    width: (media.width * 0.3) - 30,
                                     height: 40,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
@@ -118,13 +117,13 @@ class _HealthTracking extends State<HealthTracking> {
                                                   BorderRadius.circular(30),
                                             ),
                                             child: Text(
-                                              "Temperture",
+                                              "Weight",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: selectedbutton == 0
                                                       ? Tcolor.white
                                                       : Tcolor.gray,
-                                                  fontSize: 13,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w600),
                                             ),
                                           ),
@@ -143,13 +142,13 @@ class _HealthTracking extends State<HealthTracking> {
                                                   BorderRadius.circular(30),
                                             ),
                                             child: Text(
-                                              "Vaccines",
+                                              "Height",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: selectedbutton == 1
                                                       ? Tcolor.white
                                                       : Tcolor.gray,
-                                                  fontSize: 13,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w700),
                                             ),
                                           ),
@@ -168,13 +167,38 @@ class _HealthTracking extends State<HealthTracking> {
                                                   BorderRadius.circular(30),
                                             ),
                                             child: Text(
-                                              "Medications",
+                                              "Head",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: selectedbutton == 2
                                                       ? Tcolor.white
                                                       : Tcolor.gray,
-                                                  fontSize: 13,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedbutton = 3;
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            child: Text(
+                                              "Summary",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: selectedbutton == 3
+                                                      ? Tcolor.white
+                                                      : Tcolor.gray,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w600),
                                             ),
                                           ),
@@ -191,53 +215,49 @@ class _HealthTracking extends State<HealthTracking> {
                           height: 20,
                         ),
                         if (selectedbutton == 0)
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SliderTemperature(temperature),
-                                  Thermometer(temperature),
-                                ],
-                              ),
-                              HealthWidget(
-                                healthType: HealthType.Temp,
-                                startDate: startDate,
-                                controller: _note,
-                                onDateStratTimeChanged:
-                                    (DateTime newStartDate) {
-                                  setState(() {
-                                    startDate = newStartDate;
-                                  });
-                                },
-                                onNoteChanged: (String note) {
-                                  _note.text = note;
-                                },
-                              ),
-                              SizedBox(height: 30),
-                              RoundButton(
-                                  onpressed: () {}, title: "Save Temprature")
-                            ],
-                          ),
-                        if (selectedbutton == 1)
-                          RoundButton(
-                              onpressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddVaccine()),
-                                );
-                              },
-                              title: "Add Vaccine"),
-                        if (selectedbutton == 2)
-                          RoundButton(
-                              onpressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddMed()),
-                                );
-                              },
-                              title: "Add drug"),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    color: Tcolor.gray.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(
+                                        media.width * 0.07),
+                                  ),
+                                ),
+                                Container(
+                                  height: 80,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    color: Tcolor.gray.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(
+                                        media.width * 0.07),
+                                  ),
+                                ),
+                                Container(
+                                  height: 80,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    color: Tcolor.gray.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(
+                                        media.width * 0.07),
+                                  ),
+                                ),
+                              ]),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RoundButton(
+                            onpressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => WeightPage()),
+                              );
+                            },
+                            title: "Add Weight")
                       ])
                 ])))));
   }
