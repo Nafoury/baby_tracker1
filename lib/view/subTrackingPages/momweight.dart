@@ -1,13 +1,24 @@
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/weightBalance.dart';
+import 'package:baby_tracker/controller/momController.dart';
+import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/momweightData.dart';
 import 'package:baby_tracker/view/charts/sleepchart.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 
-class WeightPage extends StatelessWidget {
+class WeightPage extends StatefulWidget {
   const WeightPage({super.key});
 
+  @override
+  State<WeightPage> createState() => _WeightPageState();
+}
+
+class _WeightPageState extends State<WeightPage> {
+  double mlValue = 0.0;
+  MomController momController = MomController();
+  DateTime startDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +57,33 @@ class WeightPage extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              BalanceWeight(),
+              BalanceWeight(
+                  max: 200,
+                  min: 0,
+                  startDate: startDate,
+                  onStartDateChanged: (DateTime newStartDate) {
+                    setState(() {
+                      startDate = newStartDate;
+                    });
+                  },
+                  onWeightChanged: (double value) {
+                    setState(() {
+                      mlValue = value;
+                    });
+                  }),
               SizedBox(
                 height: 20,
               ),
-              RoundButton(onpressed: () {}, title: "Save Weight")
+              RoundButton(
+                  onpressed: () {
+                    MomData momData = MomData(
+                        date: startDate,
+                        weight: mlValue ?? 0.0,
+                        babyId: sharedPref.getString("info_id"));
+
+                    momController.saveweightData(momData: momData);
+                  },
+                  title: "Save Weight")
             ])))));
   }
 }

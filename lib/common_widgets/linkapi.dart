@@ -29,3 +29,6 @@ const String linkViewNursing = "$linkServerName/feedNursing/view.php";
 const String linkAddvaccine = "$linkServerName/vaccines/add.php";
 
 const String linkAddMed = "$linkServerName/med/add.php";
+
+const String linkAddWeight = "$linkServerName/momWeight/add.php";
+const String linkViewWeight = "$linkServerName/momWeight/view.php";

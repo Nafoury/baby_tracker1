@@ -1,28 +1,24 @@
-import 'package:animated_weight_picker/animated_weight_picker.dart';
-import 'package:baby_tracker/common/color_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:animated_weight_picker/animated_weight_picker.dart';
 import 'package:intl/intl.dart';
 
-class BalanceWeight extends StatefulWidget {
-  const BalanceWeight({Key? key}) : super(key: key);
+class BalanceWeight extends StatelessWidget {
+  final double min;
+  final double max;
+  String? selectedValue;
+  final DateTime? startDate;
+  final Function(DateTime) onStartDateChanged;
+  final Function(double) onWeightChanged;
 
-  @override
-  State<BalanceWeight> createState() => _BalanceWeightState();
-}
-
-class _BalanceWeightState extends State<BalanceWeight> {
-  final double min = 0;
-  final double max = 100;
-  String selectedValue = '';
-
-  DateTime startDate = DateTime.now();
-
-  @override
-  void initState() {
-    selectedValue = min.toString();
-    super.initState();
-  }
+  BalanceWeight({
+    Key? key,
+    required this.min,
+    required this.max,
+    this.selectedValue,
+    this.startDate,
+    required this.onStartDateChanged,
+    required this.onWeightChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +38,7 @@ class _BalanceWeightState extends State<BalanceWeight> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              DateFormat('dd MMM yyyy').format(startDate),
+              DateFormat('dd MMM yyyy').format(startDate!),
               style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),
             ),
             SizedBox(height: 30),
@@ -53,9 +49,8 @@ class _BalanceWeightState extends State<BalanceWeight> {
               min: min,
               max: max,
               onChange: (newValue) {
-                setState(() {
-                  selectedValue = newValue.toString();
-                });
+                // newValue is the newly selected weight
+                onWeightChanged(double.parse(newValue!));
               },
             ),
           ],
@@ -65,56 +60,19 @@ class _BalanceWeightState extends State<BalanceWeight> {
   }
 
   void _showStartDatePicker(BuildContext context) {
-    DateTime? newStartDate = startDate;
-    DateTime? initialDateTime = startDate;
     DateTime minimumDateTime =
         DateTime.now().subtract(const Duration(days: 40));
-    DateTime maximumDateTime = DateTime.now(); // You can adjust this if needed
+    DateTime maximumDateTime = DateTime.now();
 
-    showCupertinoModalPopup(
+    showDatePicker(
       context: context,
-      builder: (BuildContext builderContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              height: 200,
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: initialDateTime ?? DateTime.now(),
-                    minimumDate: minimumDateTime,
-                    maximumDate: maximumDateTime,
-                    onDateTimeChanged: (DateTime? newDateTime) {
-                      setState(() {
-                        if (newDateTime != null) {
-                          newStartDate = newDateTime;
-                        }
-                      });
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            startDate = newStartDate ?? startDate;
-                          });
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Done'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
+      initialDate: startDate,
+      firstDate: minimumDateTime,
+      lastDate: maximumDateTime,
+    ).then((pickedDate) {
+      if (pickedDate != null) {
+        onStartDateChanged(pickedDate);
+      }
+    });
   }
 }
