@@ -1,3 +1,4 @@
+import 'package:baby_tracker/controller/sleepcontroller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:baby_tracker/models/sleepData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +7,35 @@ import 'dart:convert';
 class SleepDataProvider extends ChangeNotifier {
   late SharedPreferences sharedPref;
 
-  List<SleepData> _sleepRecords = [];
+  List<SleepData> _sleepRecords = List<SleepData>.empty(growable: true);
+  List<SleepData> get sleepRecords => _sleepRecords;
+
+  Future getSleepRecords() async {
+    List<SleepData> res = await SleepController().retrievesleepData();
+    _sleepRecords = res;
+    notifyListeners();
+  }
+
+  Future addSleepRecord(SleepData sleepData) async {
+    bool res = await SleepController().saveSleepData(sleepData: sleepData);
+    if (res) {
+      await getSleepRecords();
+    }
+  }
+
+  Future editSleepRecord() async {
+    // bool res = await SleepController().editSleepData(sleepData: sleepData);
+    // if (res) {
+    //   await getSleepRecords();
+    // }
+  }
+  Future deleteSleepRecord() async {
+    // bool res = await SleepController().deleteSleepData(sleepData: sleepData);
+    // if (res) {
+    //   await getSleepRecords();
+    // }
+  }
+
 /*
   SleepDataProvider() {
     initSharedPreferences(); // Call init function in constructor or wherever appropriate

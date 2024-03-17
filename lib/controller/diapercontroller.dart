@@ -7,7 +7,7 @@ import 'package:baby_tracker/localDatabase/sqlite_diaperchange.dart';
 
 class DiaperController {
   Crud crud = Crud();
-  DiaperDatabase _db = DiaperDatabase();
+  final DiaperDatabase _db = DiaperDatabase();
 
   Future<bool> saveDiaperData({
     required DiaperData diaperData,
@@ -43,7 +43,7 @@ class DiaperController {
     }
   }
 
-  retrieveDiaperData() async {
+  Future<List<DiaperData>> retrieveDiaperData() async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
@@ -77,6 +77,66 @@ class DiaperController {
     } catch (e) {
       print("Error: $e");
       return []; // Return an empty list in case of an error
+    }
+  }
+
+  Future<bool> deleteDiaper(int changeId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteRecord, {
+          "change_id": changeId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> editDiaper(DiaperData diaperData) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkUpdateDiaper, {
+          "start_date": diaperData.startDate.toString(),
+          "status": diaperData.status,
+          "note": diaperData.note,
+          "change_id": diaperData.changeId.toString(),
+        });
+        // Print the response for debugging
+        print('Server response: $response');
+
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
     }
   }
 

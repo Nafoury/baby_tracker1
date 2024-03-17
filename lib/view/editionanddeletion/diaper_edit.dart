@@ -11,13 +11,17 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/diaper_provider.dart';
 
 class Diaperchange extends StatefulWidget {
   final DiaperData entryData;
 
   final Function(DateTime)? onDateStratTimeChanged;
 
-  Diaperchange({
+  const Diaperchange({
+    super.key,
     required this.entryData,
     this.onDateStratTimeChanged,
   });
@@ -27,83 +31,26 @@ class Diaperchange extends StatefulWidget {
 }
 
 class _DiaperchangeState extends State<Diaperchange> {
+  late DiaperProvider diaperProvider;
   Crud crud = Crud();
   late DateTime startDate;
   late String status;
   late String note;
   late TextEditingController noteController;
 
-  deleteDiaper() async {
-    try {
-      // Check for internet connectivity
-      ConnectivityResult connectivityResult =
-          await Connectivity().checkConnectivity();
-      bool isOnline = (connectivityResult != ConnectivityResult.none);
-
-      if (isOnline) {
-        var response = await crud.postrequest(linkDeleteRecord, {
-          "change_id": widget.entryData.changeId.toString(),
-        });
-        if (response['status'] == 'success') {
-          // Use pop to navigate back to the previous screen
-          Navigator.of(context).pushReplacementNamed("/diaperchnage");
-        } else {
-          // Handle the case where the server response is not 'success'
-          print('Deleting failed. Server response: $response');
-        }
-      } else {
-        // Handle the case where there is no internet connection
-        print('No internet connection. Cannot update data.');
-      }
-    } catch (e) {
-      // Handle any exceptions that might occur during the update process
-      print("Error: $e");
-    }
-  }
-
-  editDiaper() async {
-    try {
-      // Check for internet connectivity
-      ConnectivityResult connectivityResult =
-          await Connectivity().checkConnectivity();
-      bool isOnline = (connectivityResult != ConnectivityResult.none);
-
-      if (isOnline) {
-        var response = await crud.postrequest(linkUpdateDiaper, {
-          "start_date": startDate.toString(),
-          "status": status,
-          "note": note,
-          "change_id": widget.entryData.changeId.toString(),
-        });
-
-        // Print the response for debugging
-        print(widget.entryData.changeId.toString());
-        print('Server response: $response');
-
-        // Adjusted comparison
-        if (response is Map && response['status'] == 'success') {
-          Navigator.of(context).pushReplacementNamed("/diaperchnage");
-        } else {
-          // Handle the case where the server response is not 'success'
-          print('Editing failed. Server response: $response');
-        }
-      } else {
-        // Handle the case where there is no internet connection
-        print('No internet connection. Cannot update data.');
-      }
-    } catch (e) {
-      // Handle any exceptions that might occur during the update process
-      print("Error: $e");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     startDate = widget.entryData.startDate;
     status = widget.entryData.status;
-    note = widget.entryData.note ?? '';
+    note = widget.entryData.note;
     noteController = TextEditingController(text: note);
+  }
+
+  @override
+  void didChangeDependencies() {
+    diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
+    super.didChangeDependencies();
   }
 
   @override
@@ -134,7 +81,7 @@ class _DiaperchangeState extends State<Diaperchange> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
+                    const SizedBox(width: 85),
                     Text(
                       "Diaper",
                       style: TextStyle(
@@ -143,12 +90,15 @@ class _DiaperchangeState extends State<Diaperchange> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 80),
+                    const SizedBox(width: 80),
                     TextButton(
                       onPressed: () {
-                        deleteDiaper();
+                        if (widget.entryData.changeId != null) {
+                          diaperProvider
+                              .deleteDiaperRecord(widget.entryData.changeId!);
+                        }
                       },
-                      child: Text(
+                      child: const Text(
                         "Delete",
                         style: TextStyle(color: Colors.red),
                       ),
@@ -160,7 +110,7 @@ class _DiaperchangeState extends State<Diaperchange> {
                 ),
                 ListView.separated(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   separatorBuilder: (BuildContext context, int index) {
                     return const Column(
                       children: [
@@ -191,7 +141,7 @@ class _DiaperchangeState extends State<Diaperchange> {
                               Text(
                                 DateFormat('dd MMM yyyy  HH:mm')
                                     .format(startDate),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -241,8 +191,8 @@ class _DiaperchangeState extends State<Diaperchange> {
                               ),
                             ),
                             Text(
-                              '${status ?? 'None'}',
-                              style: TextStyle(
+                              status ?? 'None',
+                              style: const TextStyle(
                                 fontSize: 14.0,
                               ),
                             ),
@@ -263,7 +213,7 @@ class _DiaperchangeState extends State<Diaperchange> {
                                   });
                                 },
 
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "note",
                                 ),
                               ),
@@ -272,14 +222,20 @@ class _DiaperchangeState extends State<Diaperchange> {
                         );
 
                       default:
-                        return SizedBox();
+                        return const SizedBox();
                     }
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 RoundButton(
                     onpressed: () {
-                      editDiaper();
+                      if (widget.entryData.changeId != null) {
+                        diaperProvider.editDiaperRecord(DiaperData(
+                            startDate: startDate,
+                            note: note,
+                            status: status,
+                            changeId: widget.entryData.changeId!));
+                      }
                     },
                     title: "Save changes")
               ],
