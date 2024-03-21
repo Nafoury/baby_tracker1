@@ -12,7 +12,7 @@ class MedData {
     date = DateTime.parse(json['date']);
     type = json['type'];
     note = json['note'];
-    babyId = json['baby_id'];
+    babyId = json['baby_id'].toString();
   }
 
   Map<String, dynamic> toJson() {

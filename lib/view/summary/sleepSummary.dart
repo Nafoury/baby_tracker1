@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class SleepSummaryTable extends StatelessWidget {
   final List<SleepData>? sleepRecords;
 
-  SleepSummaryTable({this.sleepRecords});
+  SleepSummaryTable({required this.sleepRecords});
 
   String formatDuration(int seconds) {
     Duration duration = Duration(seconds: seconds);

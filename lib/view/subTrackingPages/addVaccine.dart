@@ -3,9 +3,11 @@ import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/vaccinecontroller.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/vaccineData.dart';
+import 'package:baby_tracker/provider/vaccine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class AddVaccine extends StatefulWidget {
   const AddVaccine({super.key});
@@ -19,6 +21,14 @@ class _AddVaccineState extends State<AddVaccine> {
   final _note1 = TextEditingController();
   String status = '';
   VaccineController vaccineController = VaccineController();
+  late VaccineProvider vaccineProvider;
+
+  @override
+  void didChangeDependencies() {
+    vaccineProvider = Provider.of<VaccineProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,14 +91,8 @@ class _AddVaccineState extends State<AddVaccine> {
                   SizedBox(height: 30),
                   RoundButton(
                       onpressed: () async {
-                        VaccineData vaccineData = VaccineData(
-                            date: startDate,
-                            type: status,
-                            note: _note1.text,
-                            babyId: sharedPref.getString("info_id"));
-                        await vaccineController.saveVaccineData(
-                            vaccineData: vaccineData);
-
+                        vaccineProvider.addVaccineRecord(VaccineData(
+                            date: startDate, type: status, note: _note1.text));
                         Navigator.of(context).pop();
                       },
                       title: "Save Vaccine")

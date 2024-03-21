@@ -4,6 +4,9 @@ import 'package:baby_tracker/shapes/temp3.dart';
 import 'package:baby_tracker/shapes/temp4.dart';
 import 'package:baby_tracker/view/subTrackingPages/addVaccine.dart';
 import 'package:baby_tracker/view/subTrackingPages/addmed.dart';
+import 'package:baby_tracker/view/summary/medicationsTable.dart';
+import 'package:baby_tracker/view/summary/vaccineTable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
@@ -188,7 +191,7 @@ class _HealthTracking extends State<HealthTracking> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         if (selectedbutton == 0)
                           Column(
@@ -219,25 +222,33 @@ class _HealthTracking extends State<HealthTracking> {
                             ],
                           ),
                         if (selectedbutton == 1)
-                          RoundButton(
-                              onpressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddVaccine()),
-                                );
-                              },
-                              title: "Add Vaccine"),
+                          Column(children: [
+                            VaccineRecordsTable(),
+                            RoundButton(
+                                onpressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddVaccine()),
+                                  );
+                                },
+                                title: "Add Vaccine"),
+                          ]),
                         if (selectedbutton == 2)
-                          RoundButton(
-                              onpressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddMed()),
-                                );
-                              },
-                              title: "Add drug"),
+                          Column(
+                            children: [
+                              MediciationRecordsTable(),
+                              RoundButton(
+                                  onpressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AddMed()),
+                                    );
+                                  },
+                                  title: "Add drug"),
+                            ],
+                          )
                       ])
                 ])))));
   }

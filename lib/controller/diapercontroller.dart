@@ -3,11 +3,10 @@ import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/models/diaperData.dart';
 import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/localDatabase/sqlite_diaperchange.dart';
+import 'package:flutter/cupertino.dart';
 
 class DiaperController {
   Crud crud = Crud();
-  DiaperDatabase _db = DiaperDatabase();
 
   Future<bool> saveDiaperData({
     required DiaperData diaperData,
@@ -43,77 +42,95 @@ class DiaperController {
     }
   }
 
-  retrieveDiaperData() async {
+  Future<List<DiaperData>> retrieveDiaperData() async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
           await Connectivity().checkConnectivity();
       bool isOnline = (connectivityResult != ConnectivityResult.none);
 
-      // Fetch additional data from the API only if the device is online
-      var response;
-      List<DiaperData> apiData = [];
-
       if (isOnline) {
-        response = await crud.postrequest(
+        var response = await crud.postrequest(
             linkdiaperview, {"baby_id": sharedPref.getString("info_id")});
-        apiData = convertData(response);
+        print(response);
 
-        // Save the fetched data to the local database
-        await _db.saveApiDataToLocal(apiData);
+        if (response['status'] == "success" && response.containsKey('data')) {
+          // Parse the data and return it
+          List<dynamic> data = response['data'];
+          List<DiaperData> diaperDataList =
+              data.map((item) => DiaperData.fromMap(item)).toList();
+          return diaperDataList;
+        } else {
+          debugPrint("Error: Failed to retrieve bottle data");
+          return []; // Return an empty list if there's an error
+        }
+      } else {
+        debugPrint("Error: No internet connection");
+        return []; // Return an empty list if there's no internet connection
       }
-
-      // Load local data without duplicates
-      List<DiaperData> localData = await _db.loadLocalData();
-      List<DiaperData> nonDuplicateLocalData = localData
-          .where((localDiaper) => !apiData
-              .any((apiDiaper) => localDiaper.startDate == apiDiaper.startDate))
-          .toList();
-
-      // Combine local and API data
-      List<DiaperData> combinedData = [...nonDuplicateLocalData, ...apiData];
-
-      return combinedData;
     } catch (e) {
       print("Error: $e");
       return []; // Return an empty list in case of an error
     }
   }
 
-  List<DiaperData> convertData(dynamic data) {
-    List<DiaperData> diaperRecords = [];
+  Future<bool> deleteDiaper(int diaperId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
 
-    if (data is Map && data.containsKey('status') && data.containsKey('data')) {
-      // Assuming the response is a valid JSON with 'status' and 'data' fields
-      if (data['status'] == 'success') {
-        List<dynamic> dataList = data['data'];
-
-        for (var record in dataList) {
-          DateTime startDate = DateTime.parse(record['start_date']);
-          String status = record['status'];
-          String note = record['note'];
-          String infoid = sharedPref.getString("info_id") ?? "";
-          int changeId = record['change_id']; // Add this line
-
-          DiaperData diaperData = DiaperData(
-            changeId: changeId,
-            startDate: startDate,
-            status: status,
-            note: note,
-            infoid: infoid,
-          );
-
-          diaperRecords.add(diaperData);
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteRecord, {
+          "change_id": diaperId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
         }
+        return false;
       } else {
-        // Handle server response indicating failure
-        print('Server response indicates failure: ${data['status']}');
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
       }
-    } else {
-      // Handle unexpected response format (possibly HTML or other non-JSON format)
-      print('Unexpected response format: $data');
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
     }
+  }
 
-    return diaperRecords;
+  Future<bool> editDiaper(DiaperData diaperData) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkUpdateDiaper, {
+          "start_date": diaperData.startDate.toString(),
+          "status": diaperData.status,
+          "note": diaperData.note,
+          "change_id": diaperData.changeId.toString(),
+        });
+        // Print the response for debugging
+        print('Server response: $response');
+
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
   }
 }

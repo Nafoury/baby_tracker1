@@ -7,7 +7,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SleepController {
   Crud crud = Crud();
-  SleepDataProvider sleepDataProvider = SleepDataProvider();
 
   Future<bool> saveSleepData({
     required SleepData sleepData,
@@ -85,6 +84,62 @@ class SleepController {
     } catch (e) {
       print("Error: $e");
       return []; // Return an empty list in case of an error
+    }
+  }
+
+  Future<bool> deleteRecord(int sleepId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteRecord, {
+          "sleep_id": sleepId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> editRecord(SleepData sleepData) async {
+    try {
+      Duration duration = sleepData.endDate!.difference(sleepData.startDate!);
+
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (duration.inMilliseconds > 0 && isOnline) {
+        var response = await crud.postrequest(linkUpdatesleep, {
+          "start_date": sleepData.startDate.toString(),
+          "end_date": sleepData.endDate.toString(),
+          "duration": duration.inMinutes.toString(),
+          "note": sleepData.note,
+          "sleep_id": sleepData.sleepId.toString(),
+        });
+        print('Server response: $response');
+        return response['status'] == 'success';
+      } else {
+        print(
+            'Invalid duration or no internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return false;
     }
   }
 }

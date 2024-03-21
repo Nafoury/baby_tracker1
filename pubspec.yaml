@@ -121,6 +121,9 @@ flutter:
     - assets/images/guide.png
     - assets/images/teeth.png
     - assets/images/develop.png
+    - assets/images/stroke3.png
+    - assets/images/arroNext.png
+
 
 
   #   - images/a_dot_ham.jpeg

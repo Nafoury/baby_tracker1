@@ -26,8 +26,15 @@ class _SleepingViewState extends State<SleepingView> {
   DateTime dateTime = DateTime.now();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
-  SleepController sleepController = SleepController();
+
   final _note = TextEditingController();
+  late SleepProvider sleepProvider;
+
+  @override
+  void didChangeDependencies() {
+    sleepProvider = Provider.of<SleepProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,25 +192,11 @@ class _SleepingViewState extends State<SleepingView> {
                             SizedBox(height: 40),
                             RoundButton(
                               onpressed: () async {
-                                SleepData sleepData = SleepData(
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    note: _note.text);
-                                bool isSaved = await sleepController
-                                    .saveSleepData(sleepData: sleepData);
-                                if (!isSaved) {
-                                  // Show a success message or handle as needed
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Invalid Duration'),
-                                        content:
-                                            Text("The duration can't be zero"),
-                                      );
-                                    },
-                                  );
-                                }
+                                sleepProvider.addSleepData(SleepData(
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  note: _note.text,
+                                ));
                                 setState(() {
                                   startDate = DateTime
                                       .now(); // Replace with your initial/default date values
@@ -217,25 +210,12 @@ class _SleepingViewState extends State<SleepingView> {
                           ],
                         ),
                       if (selectButton == 1)
-                        FutureBuilder(
-                          future: sleepController.retrievesleepData(),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: Text("Loading.."));
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.hasData &&
-                                snapshot.data!.isNotEmpty) {
-                              List<SleepData> sleepRecords = snapshot.data!;
-
-                              return SleepSummaryTable(
-                                  sleepRecords: sleepRecords);
-                            } else {
-                              return Center(
-                                  child: Text('No sleep data available.'));
-                            }
+                        Consumer<SleepProvider>(
+                          builder: (context, sleepProvider, child) {
+                            List<SleepData> sleepRecords =
+                                sleepProvider.sleepRecords;
+                            return SleepSummaryTable(
+                                sleepRecords: sleepRecords);
                           },
                         ),
                     ])

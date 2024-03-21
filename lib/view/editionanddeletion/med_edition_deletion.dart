@@ -1,48 +1,55 @@
+import 'dart:ffi';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/models/diaperData.dart';
-import 'package:baby_tracker/provider/diaper_provider.dart';
+
+import 'package:baby_tracker/models/medData.dart';
+import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 
-class DiaperEdit extends StatefulWidget {
-  final DiaperData entryData;
+class MediciationEdit extends StatefulWidget {
+  final MedData entryData;
 
   final Function(DateTime)? onDateStratTimeChanged;
 
-  DiaperEdit({
+  MediciationEdit({
     required this.entryData,
     this.onDateStratTimeChanged,
   });
 
   @override
-  _DiaperchangeState createState() => _DiaperchangeState();
+  _MediciationEditState createState() => _MediciationEditState();
 }
 
-class _DiaperchangeState extends State<DiaperEdit> {
-  late DateTime startDate;
-  late String status;
+class _MediciationEditState extends State<MediciationEdit> {
+  Crud crud = Crud();
+  late DateTime? startDate;
+  late String type;
   late String note;
   late TextEditingController noteController;
-  late DiaperProvider diaperProvider;
-
-  @override
-  void didChangeDependencies() {
-    diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
-    super.didChangeDependencies();
-  }
+  late MedicationsProvider medicationsProvider;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.entryData.startDate;
-    status = widget.entryData.status;
+    startDate = widget.entryData.date;
+    type = widget.entryData.type.toString();
     note = widget.entryData.note ?? '';
     noteController = TextEditingController(text: note);
+  }
+
+  @override
+  void didChangeDependencies() {
+    medicationsProvider =
+        Provider.of<MedicationsProvider>(context, listen: false);
+    super.didChangeDependencies();
   }
 
   @override
@@ -75,19 +82,19 @@ class _DiaperchangeState extends State<DiaperEdit> {
                     ),
                     SizedBox(width: 85),
                     Text(
-                      "Diaper",
+                      "Mediciation",
                       style: TextStyle(
                         color: Tcolor.black,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 80),
+                    SizedBox(width: 48),
                     TextButton(
                       onPressed: () {
-                        if (widget.entryData.changeId != null) {
-                          diaperProvider
-                              .deleteDiaperRecord(widget.entryData.changeId!);
+                        if (widget.entryData.medId != null) {
+                          medicationsProvider
+                              .deleteMedicationRecord(widget.entryData.medId!);
                         }
                         Navigator.pop(context);
                       },
@@ -121,7 +128,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                       case 0:
                         return GestureDetector(
                           onTap: () {
-                            _showStartDatePicker(context, startDate);
+                            _showStartDatePicker(context, startDate!);
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,7 +140,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                                   )),
                               Text(
                                 DateFormat('dd MMM yyyy  HH:mm')
-                                    .format(startDate),
+                                    .format(startDate!),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -145,48 +152,58 @@ class _DiaperchangeState extends State<DiaperEdit> {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxWidth: 80,
-                                maxHeight: 25,
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  items: ["poop", "pee", "mixed", "clean"]
-                                      .map((name) => DropdownMenuItem(
-                                            value: name,
-                                            child: Text(
-                                              name,
-                                              style: TextStyle(
-                                                color: Tcolor.gray,
-                                                fontSize: 14,
+                            Expanded(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 100,
+                                  maxHeight: 35,
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    items: [
+                                      "Drops",
+                                      "Sprays",
+                                      "Pain-relief",
+                                      "Anti-fever",
+                                      "Anti-inflammatory",
+                                      "Antibiotics",
+                                      "Probiotics",
+                                      "Antiseptic",
+                                      "Vitamin C",
+                                      "Vitamin D"
+                                    ]
+                                        .map((name) => DropdownMenuItem(
+                                              value: name,
+                                              child: Text(
+                                                name,
+                                                style: TextStyle(
+                                                  color: Tcolor.gray,
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                            ),
-                                          ))
-                                      .toList(),
-                                  value: status,
-                                  onChanged: (String? value) {
-                                    print('Status changed: $value');
-                                    setState(() {
-                                      status = value!;
-                                    });
-                                  },
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  isExpanded: true,
-                                  hint: const Text(
-                                    'Status',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
+                                            ))
+                                        .toList(),
+                                    value: type,
+                                    onChanged: (String? value) {
+                                      print('Status changed: $value');
+                                      setState(() {
+                                        type = value!;
+                                      });
+                                    },
+                                    icon: const Icon(Icons.arrow_drop_down),
+                                    hint: const Text(
+                                      'choose Medication',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                             Text(
-                              '${status ?? 'None'}',
+                              '${type ?? 'None'}',
                               style: TextStyle(
-                                fontSize: 14.0,
+                                fontSize: 13.0,
                               ),
                             ),
                           ],
@@ -196,21 +213,18 @@ class _DiaperchangeState extends State<DiaperEdit> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
-                              child: TextField(
-                                controller:
-                                    noteController, // Use noteController here
-                                onChanged: (newNote) {
-                                  // Update the note variable when the text changes
-                                  setState(() {
-                                    note = newNote;
-                                  });
-                                },
-
-                                decoration: InputDecoration(
-                                  hintText: "note",
-                                ),
+                                child: TextField(
+                              controller: noteController,
+                              onChanged: (newNote) {
+                                setState(() {
+                                  note = newNote;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: "note",
+                                // Set your desired hint text
                               ),
-                            ),
+                            ))
                           ],
                         );
 
@@ -222,13 +236,14 @@ class _DiaperchangeState extends State<DiaperEdit> {
                 SizedBox(height: 20),
                 RoundButton(
                     onpressed: () {
-                      if (widget.entryData.changeId != null) {
-                        diaperProvider.editDiaperRecord(DiaperData(
-                            startDate: startDate,
+                      if (widget.entryData.medId != null) {
+                        medicationsProvider.editMedicationRecord(MedData(
+                            date: startDate,
+                            type: type,
                             note: note,
-                            status: status,
-                            changeId: widget.entryData.changeId!));
+                            medId: widget.entryData.medId!));
                       }
+                      Navigator.pop(context);
                     },
                     title: "Save changes")
               ],
@@ -260,7 +275,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
               setState(() {
                 startDate = newDateTime;
                 print('Updated startDate: $startDate');
-                widget.onDateStratTimeChanged?.call(startDate);
+                widget.onDateStratTimeChanged?.call(startDate!);
               });
             },
           ),

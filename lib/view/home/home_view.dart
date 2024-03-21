@@ -2,6 +2,9 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/activites.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/sleepData.dart';
+import 'package:baby_tracker/provider/diaper_provider.dart';
+import 'package:baby_tracker/provider/sleep_provider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
@@ -31,11 +34,48 @@ class _HomeViewState extends State<HomeView> {
   late String babyname = '';
   late String firstName = '';
   late String dateOfBirthString = '';
+  late List<DiaperData> diapersRecords = [];
+  late List<SleepData> sleepRecords = [];
+  late DiaperProvider diaperProvider;
+  late SleepProvider sleepProvider;
+
+  Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
+    try {
+      List<DiaperData> records = await diaperProvider.getMedicationRecords();
+      print('Fetched Medication Records: $records');
+      setState(() {
+        diapersRecords = records;
+        print('Fetched Medication Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching medication records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchSleepRecords(SleepProvider sleepProvider) async {
+    try {
+      List<SleepData> record = await sleepProvider.getSleepRecords();
+      print('Fetched Medication Records: $record');
+      setState(() {
+        sleepRecords = record;
+        print('Fetched Medication Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching medication records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     loadDataFromSharedPreferences();
     startWeekUpdateTimer();
+    diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
+    fetchMedicationRecords(diaperProvider);
+    sleepProvider = Provider.of<SleepProvider>(context, listen: false);
+    fetchSleepRecords(sleepProvider);
   }
 
   loadDataFromSharedPreferences() async {

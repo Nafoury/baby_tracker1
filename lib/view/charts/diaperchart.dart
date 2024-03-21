@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/models/diaperData.dart';
 
 class DiaperChart extends StatelessWidget {
-  final List<Map<String, dynamic>> diaperRecords;
+  final List<DiaperData> diaperRecords;
   const DiaperChart({required this.diaperRecords});
 
   @override
@@ -13,7 +13,7 @@ class DiaperChart extends StatelessWidget {
       child: BarChart(
         BarChartData(
           minY: 0,
-          maxY: 4,
+          maxY: 6,
           titlesData: titlesData,
           borderData: borderData,
           barGroups: generateBarGroups(),
@@ -37,7 +37,7 @@ class DiaperChart extends StatelessWidget {
     }
 
     for (var record in diaperRecords) {
-      DiaperData diaperData = DiaperData.fromMap(record);
+      DiaperData diaperData = record;
 
       String dateStr = diaperData.startDate.toLocal().toString().split(' ')[0];
       if (totalAmounts.containsKey(dateStr)) {

@@ -2,9 +2,11 @@ import 'package:baby_tracker/common_widgets/healthActivites.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/medController.dart';
 import 'package:baby_tracker/models/medData.dart';
+import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class AddMed extends StatefulWidget {
   const AddMed({super.key});
@@ -14,10 +16,19 @@ class AddMed extends StatefulWidget {
 }
 
 class _AddMedState extends State<AddMed> {
+  late MedicationsProvider medicationsProvider;
   DateTime startDate = DateTime.now();
   final _note = TextEditingController();
   String status = '';
   MedController medController = MedController();
+
+  @override
+  void didChangeDependencies() {
+    medicationsProvider =
+        Provider.of<MedicationsProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,12 +91,11 @@ class _AddMedState extends State<AddMed> {
                   SizedBox(height: 30),
                   RoundButton(
                       onpressed: () async {
-                        MedData medData = MedData(
-                            date: startDate, type: status, note: _note.text);
-
-                        await medController.saveMedData(medData: medData);
-
-                        Navigator.of(context).pop();
+                        medicationsProvider.addMedicationRecord(MedData(
+                          date: startDate,
+                          type: status,
+                          note: _note.text,
+                        ));
                       },
                       title: "Save drug")
                 ],
