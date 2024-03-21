@@ -74,7 +74,7 @@ class DiaperController {
     }
   }
 
-  Future<bool> deleteDiaper(int diaperId) async {
+  Future<bool> deleteDiaper(int changeId) async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
@@ -83,7 +83,7 @@ class DiaperController {
 
       if (isOnline) {
         var response = await crud.postrequest(linkDeleteRecord, {
-          "change_id": diaperId.toString(),
+          "change_id": changeId.toString(),
         });
         if (response['status'] == 'success') {
           return true;

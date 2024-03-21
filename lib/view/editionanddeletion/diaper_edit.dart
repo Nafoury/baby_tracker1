@@ -9,12 +9,19 @@ import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 
+
+
 class DiaperEdit extends StatefulWidget {
   final DiaperData entryData;
 
   final Function(DateTime)? onDateStratTimeChanged;
 
+<<<<<<< HEAD
   DiaperEdit({
+=======
+  const Diaperchange({
+    super.key,
+>>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
     required this.entryData,
     this.onDateStratTimeChanged,
   });
@@ -23,26 +30,41 @@ class DiaperEdit extends StatefulWidget {
   _DiaperchangeState createState() => _DiaperchangeState();
 }
 
+<<<<<<< HEAD
 class _DiaperchangeState extends State<DiaperEdit> {
+=======
+class _DiaperchangeState extends State<Diaperchange> {
+  late DiaperProvider diaperProvider;
+  Crud crud = Crud();
+>>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
   late DateTime startDate;
   late String status;
   late String note;
   late TextEditingController noteController;
   late DiaperProvider diaperProvider;
 
+<<<<<<< HEAD
   @override
   void didChangeDependencies() {
     diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
+=======
+>>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
   @override
   void initState() {
     super.initState();
     startDate = widget.entryData.startDate;
     status = widget.entryData.status;
-    note = widget.entryData.note ?? '';
+    note = widget.entryData.note;
     noteController = TextEditingController(text: note);
+  }
+
+  @override
+  void didChangeDependencies() {
+    diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
+    super.didChangeDependencies();
   }
 
   @override
@@ -73,7 +95,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
+                    const SizedBox(width: 85),
                     Text(
                       "Diaper",
                       style: TextStyle(
@@ -82,16 +104,19 @@ class _DiaperchangeState extends State<DiaperEdit> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 80),
+                    const SizedBox(width: 80),
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.changeId != null) {
                           diaperProvider
                               .deleteDiaperRecord(widget.entryData.changeId!);
                         }
+<<<<<<< HEAD
                         Navigator.pop(context);
+=======
+>>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
                       },
-                      child: Text(
+                      child: const Text(
                         "Delete",
                         style: TextStyle(color: Colors.red),
                       ),
@@ -103,7 +128,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                 ),
                 ListView.separated(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   separatorBuilder: (BuildContext context, int index) {
                     return const Column(
                       children: [
@@ -134,7 +159,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                               Text(
                                 DateFormat('dd MMM yyyy  HH:mm')
                                     .format(startDate),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -184,8 +209,8 @@ class _DiaperchangeState extends State<DiaperEdit> {
                               ),
                             ),
                             Text(
-                              '${status ?? 'None'}',
-                              style: TextStyle(
+                              status ?? 'None',
+                              style: const TextStyle(
                                 fontSize: 14.0,
                               ),
                             ),
@@ -206,7 +231,7 @@ class _DiaperchangeState extends State<DiaperEdit> {
                                   });
                                 },
 
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "note",
                                 ),
                               ),
@@ -215,11 +240,11 @@ class _DiaperchangeState extends State<DiaperEdit> {
                         );
 
                       default:
-                        return SizedBox();
+                        return const SizedBox();
                     }
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 RoundButton(
                     onpressed: () {
                       if (widget.entryData.changeId != null) {
