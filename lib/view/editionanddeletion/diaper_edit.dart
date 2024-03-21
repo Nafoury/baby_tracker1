@@ -15,22 +15,22 @@ import 'package:provider/provider.dart';
 
 import '../../provider/diaper_provider.dart';
 
-class Diaperchange extends StatefulWidget {
+class DiaperEdit extends StatefulWidget {
   final DiaperData entryData;
 
   final Function(DateTime)? onDateStratTimeChanged;
 
-  const Diaperchange({
+  const DiaperEdit({
     super.key,
     required this.entryData,
     this.onDateStratTimeChanged,
   });
 
   @override
-  _DiaperchangeState createState() => _DiaperchangeState();
+  _DiaperEditState createState() => _DiaperEditState();
 }
 
-class _DiaperchangeState extends State<Diaperchange> {
+class _DiaperEditState extends State<DiaperEdit> {
   late DiaperProvider diaperProvider;
   Crud crud = Crud();
   late DateTime startDate;
