@@ -1,27 +1,27 @@
+import 'dart:ffi';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/diaperData.dart';
-import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/diaper_provider.dart';
 
-
-class DiaperEdit extends StatefulWidget {
+class Diaperchange extends StatefulWidget {
   final DiaperData entryData;
 
   final Function(DateTime)? onDateStratTimeChanged;
 
-<<<<<<< HEAD
-  DiaperEdit({
-=======
   const Diaperchange({
     super.key,
->>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
     required this.entryData,
     this.onDateStratTimeChanged,
   });
@@ -30,28 +30,14 @@ class DiaperEdit extends StatefulWidget {
   _DiaperchangeState createState() => _DiaperchangeState();
 }
 
-<<<<<<< HEAD
-class _DiaperchangeState extends State<DiaperEdit> {
-=======
 class _DiaperchangeState extends State<Diaperchange> {
   late DiaperProvider diaperProvider;
   Crud crud = Crud();
->>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
   late DateTime startDate;
   late String status;
   late String note;
   late TextEditingController noteController;
-  late DiaperProvider diaperProvider;
 
-<<<<<<< HEAD
-  @override
-  void didChangeDependencies() {
-    diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
-    super.didChangeDependencies();
-  }
-
-=======
->>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
   @override
   void initState() {
     super.initState();
@@ -111,10 +97,6 @@ class _DiaperchangeState extends State<Diaperchange> {
                           diaperProvider
                               .deleteDiaperRecord(widget.entryData.changeId!);
                         }
-<<<<<<< HEAD
-                        Navigator.pop(context);
-=======
->>>>>>> fc7aa2fe89c1cf0e18503a7a61c3435a4a260c41
                       },
                       child: const Text(
                         "Delete",
