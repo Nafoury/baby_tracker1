@@ -1,14 +1,18 @@
+import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/feedingBottle.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/view/charts/nursingchart.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
+import 'package:baby_tracker/view/summary/solidsDataTable.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:baby_tracker/view/charts/bottlechart.dart';
 import 'package:baby_tracker/view/subTrackingPages/bottleView.dart';
+import 'package:provider/provider.dart';
 
 class FeedingTracking extends StatefulWidget {
   const FeedingTracking({Key? key});
@@ -80,17 +84,13 @@ class _FeedingTracking extends State<FeedingTracking> {
                                   alignment: selectedbutton == 0
                                       ? Alignment.centerLeft
                                       : selectedbutton == 1
-                                          ? Alignment.centerLeft +
-                                              const Alignment(0.7, 0)
+                                          ? Alignment.center
                                           : (selectedbutton == 2
-                                              ? Alignment.centerRight -
-                                                  const Alignment(0.7, 0)
-                                              : (selectedbutton == 3
-                                                  ? Alignment.centerRight
-                                                  : Alignment.centerLeft)),
+                                              ? Alignment.centerRight
+                                              : Alignment.centerRight),
                                   duration: const Duration(milliseconds: 200),
                                   child: Container(
-                                    width: (media.width * 0.3) - 30,
+                                    width: (media.width * 0.4) - 35,
                                     height: 40,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
@@ -179,31 +179,6 @@ class _FeedingTracking extends State<FeedingTracking> {
                                           ),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedbutton = 3;
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                            child: Text(
-                                              "Summary",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: selectedbutton == 3
-                                                      ? Tcolor.white
-                                                      : Tcolor.gray,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 )
@@ -214,29 +189,7 @@ class _FeedingTracking extends State<FeedingTracking> {
                         const SizedBox(
                           height: 20,
                         ),
-                        if (selectedbutton == 0)
-                          FutureBuilder(
-                            future: solidsController.retrieveSolidsData(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else if (snapshot.hasData) {
-                                final List<SolidsData> solidsRecords =
-                                    snapshot.data!;
-                                final List<Map<String, dynamic>>
-                                    solidsDataAsMap = solidsRecords
-                                        .map((solids) => solids.toJson())
-                                        .toList();
-                                return BarChartSample5(
-                                    solidsData: solidsDataAsMap);
-                              }
-
-                              return Container();
-                            },
-                          ),
+                        if (selectedbutton == 0) LineChartSample3(),
                         if (selectedbutton == 1)
                           FutureBuilder(
                             future: bottleController.retrieveBottleData(),
@@ -262,7 +215,18 @@ class _FeedingTracking extends State<FeedingTracking> {
                               return Container(); // You can replace this with an appropriate widget.
                             },
                           ),
-                        if (selectedbutton == 2) LineChartSample3(),
+                        if (selectedbutton == 2)
+                          Consumer<SolidsProvider>(
+                            builder: (context, solidProvider, child) {
+                              List<SolidsData> solidsRecords =
+                                  solidProvider.solidsRecords;
+                              return Column(
+                                children: [
+                                  SolidsDataTable(solidsRecords: solidsRecords)
+                                ],
+                              );
+                            },
+                          ),
                       ])
                 ])))));
   }

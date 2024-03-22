@@ -95,7 +95,7 @@ class SleepController {
       bool isOnline = (connectivityResult != ConnectivityResult.none);
 
       if (isOnline) {
-        var response = await crud.postrequest(linkDeleteRecord, {
+        var response = await crud.postrequest(linkDeletesleep, {
           "sleep_id": sleepId.toString(),
         });
         if (response['status'] == 'success') {

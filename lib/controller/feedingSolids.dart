@@ -75,4 +75,68 @@ class SolidsController {
       return []; // Return an empty list in case of an error
     }
   }
+
+  Future<bool> deleteRecord(int solidId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteSolids, {
+          "solid_id": solidId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> editRecord(SolidsData solidsData) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkUpdateSolids, {
+          "date": solidsData.date.toString(),
+          "fruits": solidsData.fruits.toString(),
+          "veg": solidsData.veg.toString(),
+          "protein": solidsData.protein.toString(),
+          "grains": solidsData.grains.toString(),
+          "dairy": solidsData.dairy.toString(),
+          "note": solidsData.note,
+          "solid_id": solidsData.solidId.toString(),
+        });
+        // Print the response for debugging
+        print('Server response: $response');
+
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
 }

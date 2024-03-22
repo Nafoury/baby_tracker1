@@ -4,7 +4,7 @@ import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:baby_tracker/provider/nursingDataProvider.dart';
-import 'package:baby_tracker/provider/solidsDataProvider.dart';
+import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/provider/vaccine_provider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
@@ -19,7 +19,6 @@ import 'package:baby_tracker/view/tracking/mainTracking.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:baby_tracker/models/diaperData.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
@@ -45,7 +44,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => BottleDataProvider()),
-        ChangeNotifierProvider(create: (context) => SolidsDataProvider()),
+        ChangeNotifierProvider(create: (context) => SolidsProvider()),
         ChangeNotifierProvider(create: (context) => NursingDataProvider()),
         ChangeNotifierProvider(create: (context) => MedicationsProvider()),
         ChangeNotifierProvider(create: (context) => VaccineProvider()),

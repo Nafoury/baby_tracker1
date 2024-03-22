@@ -1,7 +1,8 @@
+import 'package:baby_tracker/models/sleepData.dart';
 import 'package:flutter/material.dart';
 
 class SleepHeatmap extends StatelessWidget {
-  final List<Map<String, dynamic>> sleepData;
+  final List<SleepData> sleepData;
 
   const SleepHeatmap({Key? key, required this.sleepData}) : super(key: key);
 
@@ -60,22 +61,23 @@ class SleepHeatmap extends StatelessWidget {
 
                   // Calculate the total sleep minutes within the current hour
                   sleepData.forEach((sleep) {
-                    final DateTime sleepStart =
-                        DateTime.parse(sleep['start_date']);
-                    final DateTime sleepEnd = DateTime.parse(sleep['end_date']);
+                    final DateTime? sleepStart = sleep.startDate;
+                    final DateTime? sleepEnd = sleep.endDate;
 
-                    // Check if there's an overlap between the sleep record and the current hour
-                    if (sleepStart.isBefore(hourEnd) &&
-                        sleepEnd.isAfter(hourStart)) {
-                      final DateTime overlapStart =
-                          sleepStart.isAfter(hourStart)
-                              ? sleepStart
-                              : hourStart;
-                      final DateTime overlapEnd =
-                          sleepEnd.isBefore(hourEnd) ? sleepEnd : hourEnd;
-                      final int overlapMinutes =
-                          overlapEnd.difference(overlapStart).inMinutes;
-                      totalSleepMinutes += overlapMinutes;
+                    if (sleepStart != null && sleepEnd != null) {
+                      // Check if there's an overlap between the sleep record and the current hour
+                      if (sleepStart.isBefore(hourEnd) &&
+                          sleepEnd.isAfter(hourStart)) {
+                        final DateTime overlapStart =
+                            sleepStart.isAfter(hourStart)
+                                ? sleepStart
+                                : hourStart;
+                        final DateTime overlapEnd =
+                            sleepEnd.isBefore(hourEnd) ? sleepEnd : hourEnd;
+                        final int overlapMinutes =
+                            overlapEnd.difference(overlapStart).inMinutes;
+                        totalSleepMinutes += overlapMinutes;
+                      }
                     }
                   });
 

@@ -3,8 +3,10 @@ import 'package:baby_tracker/common_widgets/activites.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/sleepData.dart';
+import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
+import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
@@ -36,8 +38,10 @@ class _HomeViewState extends State<HomeView> {
   late String dateOfBirthString = '';
   late List<DiaperData> diapersRecords = [];
   late List<SleepData> sleepRecords = [];
+  late List<SolidsData> solidsRecords = [];
   late DiaperProvider diaperProvider;
   late SleepProvider sleepProvider;
+  late SolidsProvider solidsProvider;
 
   Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
     try {
@@ -56,13 +60,27 @@ class _HomeViewState extends State<HomeView> {
   Future<void> fetchSleepRecords(SleepProvider sleepProvider) async {
     try {
       List<SleepData> record = await sleepProvider.getSleepRecords();
-      print('Fetched Medication Records: $record');
+      print('Fetched sleep Records: $record');
       setState(() {
         sleepRecords = record;
-        print('Fetched Medication Records: $record');
+        print('Fetched sleep Records: $record');
       });
     } catch (e) {
-      print('Error fetching medication records: $e');
+      print('Error fetching sleep records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchSolidsRecords(SolidsProvider solidsProvider) async {
+    try {
+      List<SolidsData> record = await solidsProvider.getSolidsRecords();
+      print('Fetched solids Records: $record');
+      setState(() {
+        solidsRecords = record;
+        print('Fetched solids Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching solids records: $e');
       // Handle error here
     }
   }
@@ -76,6 +94,8 @@ class _HomeViewState extends State<HomeView> {
     fetchMedicationRecords(diaperProvider);
     sleepProvider = Provider.of<SleepProvider>(context, listen: false);
     fetchSleepRecords(sleepProvider);
+    solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
+    fetchSolidsRecords(solidsProvider);
   }
 
   loadDataFromSharedPreferences() async {

@@ -1,48 +1,55 @@
+import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/models/solidsData.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
 class BarChartSample5 extends StatelessWidget {
-  final List<Map<String, dynamic>> solidsData;
+  final List<SolidsData> solidsData;
 
   const BarChartSample5({Key? key, required this.solidsData}) : super(key: key);
 
   static const double barWidth = 22;
+  static int touchedIndex = -2;
 
-  BarChartGroupData generateGroup(
-      int x, DateTime date, List<Map<String, dynamic>> data) {
+  BarChartGroupData generateGroup(int x, List<Map<String, dynamic>> data) {
+    final isTouched = touchedIndex == x;
+
+    // Colors for different categories
     final Map<String, Color> categoryColors = {
       'fruits': Colors.pink,
       'veg': Colors.green,
       'protein': Colors.brown.shade200,
       'grains': Colors.blue.shade100,
-      'dairy': Colors.black,
+      'dairy': Colors.cyan,
     };
 
     final List<BarChartRodData> rods = [];
-    double sum = 0;
+    double sum = 0; // Move the sum calculation outside the loop
+
+    for (var item in data) {
+      sum += item['fruits'] +
+          item['veg'] +
+          item['protein'] +
+          item['grains'] +
+          item['dairy'];
+    }
 
     final category = ['fruits', 'veg', 'protein', 'grains', 'dairy'];
     for (int i = 0; i < 5; i++) {
-      double categoryValue = 0.0;
-
-      // Iterate over the data and accumulate values for the current category
-      for (var item in data) {
-        categoryValue += item[category[i]].toDouble();
-      }
-
-      sum += categoryValue;
+      final categorySum = data.fold<double>(
+          0, (acc, item) => acc + (item[category[i]]?.toDouble() ?? 0));
 
       rods.add(BarChartRodData(
         toY: sum,
         width: barWidth,
-        borderRadius: BorderRadius.circular(7),
+        borderRadius:
+            isTouched ? BorderRadius.circular(7) : BorderRadius.circular(0),
         rodStackItems: [
           BarChartRodStackItem(
             0,
-            categoryValue,
-            categoryColors[
-                category[i]]!, // Use the corresponding color for the category
+            categorySum,
+            categoryColors[category[i]]!,
           ),
         ],
       ));
@@ -51,88 +58,81 @@ class BarChartSample5 extends StatelessWidget {
     return BarChartGroupData(
       x: x,
       groupVertically: true,
-      showingTooltipIndicators: [],
+      showingTooltipIndicators: isTouched ? [0] : [],
       barRods: rods,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, double> totalAmounts = {};
-    DateTime currentDate = DateTime.now();
+    Map<DateTime, List<Map<String, dynamic>>> groupedData = {};
 
-    for (var i = 7; i >= 0; i--) {
-      DateTime date = currentDate.subtract(Duration(days: i));
-      String dateStr = date.toLocal().toString().split(' ')[0];
-
-      // Initialize totalAmount for the date
-      totalAmounts[dateStr] = 0.0;
+    // Group data by date
+    for (var record in solidsData) {
+      if (record.date != null) {
+        String? dateStr = record.date!.toLocal().toString().split(' ')[0];
+        DateTime date = DateTime.parse(dateStr!);
+        date = DateTime(date.year, date.month, date.day);
+        groupedData[date] ??= [];
+        groupedData[date]!.add(record.toJson());
+      }
     }
 
     return AspectRatio(
       aspectRatio: 0.8,
       child: Padding(
-        padding: const EdgeInsets.only(top: 13),
+        padding: const EdgeInsets.only(top: 16),
         child: BarChart(
           BarChartData(
             alignment: BarChartAlignment.center,
             maxY: 80,
             minY: 0,
             groupsSpace: 12,
+            barTouchData: BarTouchData(
+              handleBuiltInTouches: false,
+              touchCallback: (FlTouchEvent event, barTouchResponse) {
+                // Your touch callback logic...
+              },
+            ),
             titlesData: FlTitlesData(
-              // Display dates on X-axis
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    DateTime date =
-                        DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                    return Text(
-                      date.day.toString(),
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.black12.withOpacity(0.5),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    );
-                  },
+                // Display dates on X-axis
+                bottomTitles: AxisTitles(
+                  drawBelowEverything: true,
+                  sideTitles: SideTitles(
+                    getTitlesWidget: (value, meta) {
+                      // Convert double value to DateTime
+                      DateTime date = groupedData.keys.toList()[value.toInt()];
+                      // Format the date using Intl library
+                      String formattedDate = DateFormat('MMM d').format(date);
+                      // Return a Text widget with the formatted date
+                      return Text(
+                        formattedDate,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 20,
-                  reservedSize: 40,
-                ),
-              ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false,
-                ),
-              ),
-            ),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false))),
             gridData: FlGridData(
-              show: false,
-              checkToShowHorizontalLine: (value) => value % 20 == 0,
-            ),
+                // Your grid data...
+                ),
             borderData: FlBorderData(
               show: false,
             ),
-            barGroups: totalAmounts.keys
+            barGroups: groupedData.entries
                 .toList()
                 .asMap()
                 .entries
                 .map(
                   (e) => generateGroup(
                     e.key,
-                    DateTime.parse(e.value),
-                    solidsData
-                        .where((data) =>
-                            DateFormat('yyyy-MM-dd').format(data['date']) ==
-                            e.value)
-                        .toList(),
+                    e.value.value,
                   ),
                 )
                 .toList(),

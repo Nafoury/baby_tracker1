@@ -1,9 +1,14 @@
+import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/sleepcontroller.dart';
 import 'package:baby_tracker/models/sleepData.dart';
+import 'package:baby_tracker/provider/sleep_provider.dart';
 import 'package:baby_tracker/view/charts/sleepchart.dart';
+import 'package:baby_tracker/view/home/sleeping_view.dart';
+import 'package:baby_tracker/view/summary/sleepDataTable.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class SleepTracking extends StatelessWidget {
   const SleepTracking({super.key});
@@ -50,23 +55,25 @@ class SleepTracking extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                FutureBuilder(
-                  future: sleepController.retrievesleepData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: Text("Loading.."));
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      final List<SleepData> sleepRecords = snapshot.data!;
-                      final List<Map<String, dynamic>> sleepData =
-                          sleepRecords.map((data) => data.toJson()).toList();
-                      return AspectRatio(
-                          aspectRatio: 3.7,
-                          child: SleepHeatmap(sleepData: sleepData));
-                    } else {
-                      return Center(child: Text('No sleep data available.'));
-                    }
+                Consumer<SleepProvider>(
+                  builder: (context, sleepProvider, child) {
+                    List<SleepData> sleepRecords = sleepProvider.sleepRecords;
+                    return Column(
+                      children: [
+                        SleepHeatmap(sleepData: sleepRecords),
+                        RoundButton(
+                            onpressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SleepingView(),
+                                ),
+                              );
+                            },
+                            title: "Add sleep"),
+                        SleepDataTable(sleepRecords: sleepRecords),
+                      ],
+                    );
                   },
                 ),
               ])),

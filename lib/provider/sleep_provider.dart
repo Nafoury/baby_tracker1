@@ -47,7 +47,7 @@ class SleepProvider extends ChangeNotifier {
     }
   }
 
-  Future deleteDiaperRecord(int sleepId) async {
+  Future deleteSleepRecord(int sleepId) async {
     final bool res = await sleepController.deleteRecord(sleepId);
     if (res) {
       _sleepRecords.removeWhere((element) => element.sleepId == sleepId);

@@ -6,6 +6,7 @@ import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:baby_tracker/common_widgets/addingactivites.dart';
@@ -20,6 +21,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'package:baby_tracker/view/summary/bottleSummary.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
+import 'package:provider/provider.dart';
 
 class FeedingView extends StatefulWidget {
   const FeedingView({Key? key});
@@ -49,6 +51,13 @@ class _FeedingViewState extends State<FeedingView> {
   int? dairy;
   SolidsController solidsController = SolidsController();
   NursingController nursingController = NursingController();
+  late SolidsProvider solidsProvider;
+
+  @override
+  void didChangeDependencies() {
+    solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -340,14 +349,15 @@ class _FeedingViewState extends State<FeedingView> {
                             SizedBox(height: 50),
                             RoundButton(
                               onpressed: () async {
-                                SolidsData solidsData = SolidsData(
+                                solidsProvider.addSolidsData(SolidsData(
                                     date: startDate,
                                     note: _note.text,
                                     dairy: dairy,
                                     fruits: fruit,
                                     grains: grains,
                                     protein: protein,
-                                    veg: veg);
+                                    veg: veg));
+
                                 int totalAmount = (fruit ?? 0) +
                                     (veg ?? 0) +
                                     (protein ?? 0) +
@@ -372,9 +382,6 @@ class _FeedingViewState extends State<FeedingView> {
                                   );
                                   return;
                                 }
-
-                                await solidsController.savebottlerData(
-                                    solidsData: solidsData);
 
                                 _note.clear();
                                 _fruit.clear();
