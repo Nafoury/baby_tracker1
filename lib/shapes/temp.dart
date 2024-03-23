@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/shapes/temp1.dart';
 
 class BubbleTemperatureIndicator extends StatelessWidget {
-  final int temperature;
+  final double temperature;
 
   const BubbleTemperatureIndicator({super.key, required this.temperature});
 
@@ -15,7 +15,7 @@ class BubbleTemperatureIndicator extends StatelessWidget {
         painter: BubblePainter(),
         child: Center(
           child: Text(
-            "$temperature °",
+            temperature.toStringAsFixed(1),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,

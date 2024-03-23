@@ -1,7 +1,7 @@
 class TempData {
   int? tempId;
   double? temp;
-  String? date;
+  DateTime? date;
   String? note;
   int? babyId;
 
@@ -10,7 +10,7 @@ class TempData {
   TempData.fromJson(Map<String, dynamic> json) {
     tempId = json['temp_id'];
     temp = json['temp'];
-    date = json['date'];
+    date = DateTime.parse(json['date']);
     note = json['note'];
     babyId = json['baby_id'];
   }

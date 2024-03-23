@@ -42,7 +42,9 @@ class SliderTemperature extends StatelessWidget {
                             max(0, min(1, newPotentialTemperature));
                       },
                       child: BubbleTemperatureIndicator(
-                        temperature: ((temperature.value * 5) + 37).floor(),
+                        // Adjusted to allow floating-point numbers
+                        temperature:
+                            ((temperature.value * 5) + 37.0), // Change here
                       ),
                     ),
                   ),

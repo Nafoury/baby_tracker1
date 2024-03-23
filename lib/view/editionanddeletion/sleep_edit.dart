@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:baby_tracker/common_widgets/addingactivites.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
@@ -112,103 +113,20 @@ class _SleepEditState extends State<SleepEdit> {
                 const SizedBox(
                   height: 30,
                 ),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Column(
-                      children: [
-                        SizedBox(height: 25),
-                        Divider(
-                          color: Colors.grey,
-                          height: 1,
-                        ),
-                      ],
-                    );
+                TrackingWidget(
+                  trackingType: TrackingType.Sleeping,
+                  startDate: startDate,
+                  endDate: endDate,
+                  controller: noteController,
+                  onDateTimeChanged:
+                      (DateTime newStartDate, DateTime newEndDate) {
+                    setState(() {
+                      startDate = newStartDate;
+                      endDate = newEndDate;
+                    });
                   },
-                  itemCount: 4,
-                  itemBuilder: (BuildContext context, int index) {
-                    switch (index) {
-                      case 0:
-                        return GestureDetector(
-                            onTap: () {
-                              _showDatePicker(context,
-                                  true); // Show date picker for start date
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Start Date & Time ",
-                                    style: TextStyle(
-                                      color: Tcolor.black,
-                                      fontSize: 13,
-                                    )),
-                                Text(
-                                  DateFormat('dd MMM yyyy  HH:mm')
-                                      .format(startDate!),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ));
-
-                      case 1:
-                        return GestureDetector(
-                          onTap: () {
-                            _showDatePicker(context,
-                                false); // Show date picker for start date
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("End Date & Time ",
-                                  style: TextStyle(
-                                    color: Tcolor.black,
-                                    fontSize: 13,
-                                  )),
-                              Text(
-                                DateFormat('dd MMM yyyy  HH:mm')
-                                    .format(endDate!),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      case 2:
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Duration "),
-                            Text(_formattedDuration(
-                                endDate!.difference(startDate!))),
-                          ],
-                        );
-                      case 3:
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                                child: TextField(
-                              controller: noteController,
-                              onChanged: (newNote) {
-                                setState(() {
-                                  note = newNote;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: "note",
-                                // Set your desired hint text
-                              ),
-                            ))
-                          ],
-                        );
-
-                      default:
-                        return SizedBox();
-                    }
+                  onNoteChanged: (String note) {
+                    noteController;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -229,69 +147,5 @@ class _SleepEditState extends State<SleepEdit> {
         ),
       ),
     );
-  }
-
-  void _showDatePicker(BuildContext context, bool isStartDate) {
-    DateTime? newStartDate = startDate;
-    DateTime? newEndDate = endDate;
-    DateTime? initialDateTime = isStartDate ? startDate : endDate;
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40)); // Previous date
-    DateTime maximumDateTime = DateTime.now(); // Current date
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext builderContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              height: 200,
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: initialDateTime ?? DateTime.now(),
-                    minimumDate: minimumDateTime,
-                    maximumDate: maximumDateTime,
-                    onDateTimeChanged: (DateTime? newDateTime) {
-                      setState(() {
-                        if (newDateTime != null) {
-                          if (isStartDate) {
-                            newStartDate = newDateTime;
-                          } else {
-                            newEndDate = newDateTime;
-                          }
-                        }
-                      });
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Done'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  String _formattedDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitHours = twoDigits(duration.inHours);
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds';
   }
 }

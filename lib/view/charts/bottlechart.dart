@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 
 class BottleChart extends StatelessWidget {
-  final List<Map<String, dynamic>> bottleRecords;
+  final List<BottleData> bottleRecords;
   const BottleChart({required this.bottleRecords});
 
   @override
@@ -29,7 +29,7 @@ class BottleChart extends StatelessWidget {
     double maxAmount = 0;
 
     for (var record in bottleRecords) {
-      double totalAmount = record['amount'] ?? 0.0;
+      double totalAmount = record.amount ?? 0.0;
       if (totalAmount > maxAmount) {
         maxAmount = totalAmount;
       }
@@ -52,9 +52,9 @@ class BottleChart extends StatelessWidget {
     }
 
     for (var record in bottleRecords) {
-      String? dateStr = record['date']?.toLocal().toString().split(' ')[0];
+      String? dateStr = record.startDate?.toLocal().toString().split(' ')[0];
       if (dateStr != null && totalAmounts.containsKey(dateStr)) {
-        double totalAmount = record['amount'] ?? 0.0;
+        double totalAmount = record.amount ?? 0.0;
         totalAmounts[dateStr] = totalAmounts[dateStr]! + totalAmount;
       }
     }

@@ -6,6 +6,7 @@ import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -52,10 +53,13 @@ class _FeedingViewState extends State<FeedingView> {
   SolidsController solidsController = SolidsController();
   NursingController nursingController = NursingController();
   late SolidsProvider solidsProvider;
+  late BottleDataProvider bottleDataProvider;
 
   @override
   void didChangeDependencies() {
     solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
+    bottleDataProvider =
+        Provider.of<BottleDataProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -294,15 +298,11 @@ class _FeedingViewState extends State<FeedingView> {
                                   );
                                   return;
                                 }
-
-                                BottleData bottleData = BottleData(
+                                bottleDataProvider.addBottleData(BottleData(
                                     startDate: startDate,
                                     amount: mlValue,
                                     note: _note.text,
-                                    babyId: sharedPref.getString("info_id"));
-                                await bottleController.savebottlerData(
-                                    bottleData: bottleData);
-
+                                    babyId: sharedPref.getString("info_id")));
                                 Navigator.of(context).pop();
                               },
                               title: "save feed",

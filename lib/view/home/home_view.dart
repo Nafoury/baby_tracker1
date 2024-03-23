@@ -2,11 +2,15 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/activites.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/sleepData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/models/tempData.dart';
+import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
+import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
@@ -39,9 +43,13 @@ class _HomeViewState extends State<HomeView> {
   late List<DiaperData> diapersRecords = [];
   late List<SleepData> sleepRecords = [];
   late List<SolidsData> solidsRecords = [];
+  late List<BottleData> bottleRecords = [];
+  late List<TempData> tempRecords = [];
   late DiaperProvider diaperProvider;
   late SleepProvider sleepProvider;
   late SolidsProvider solidsProvider;
+  late BottleDataProvider bottleDataProvider;
+  late TempProvider tempProvider;
 
   Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
     try {
@@ -85,6 +93,34 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  Future<void> fetchBottleData(BottleDataProvider bottleDataProvider) async {
+    try {
+      List<BottleData> record = await bottleDataProvider.getBottleRecords();
+      print('Fetched bottle Records: $record');
+      setState(() {
+        bottleRecords = record;
+        print('Fetched bottle Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching bottle records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchTempData(TempProvider tempProvider) async {
+    try {
+      List<TempData> record = await tempProvider.getTempRecords();
+      print('Fetched bottle Records: $record');
+      setState(() {
+        tempRecords = record;
+        print('Fetched bottle Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching bottle records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +132,9 @@ class _HomeViewState extends State<HomeView> {
     fetchSleepRecords(sleepProvider);
     solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
     fetchSolidsRecords(solidsProvider);
+    bottleDataProvider =
+        Provider.of<BottleDataProvider>(context, listen: false);
+    fetchBottleData(bottleDataProvider);
   }
 
   loadDataFromSharedPreferences() async {

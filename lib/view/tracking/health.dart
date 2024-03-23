@@ -1,10 +1,14 @@
 import 'package:baby_tracker/common_widgets/healthActivites.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
+import 'package:baby_tracker/models/tempData.dart';
+import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/shapes/temp3.dart';
 import 'package:baby_tracker/shapes/temp4.dart';
+import 'package:baby_tracker/view/subTrackingPages/addTemp.dart';
 import 'package:baby_tracker/view/subTrackingPages/addVaccine.dart';
 import 'package:baby_tracker/view/subTrackingPages/addmed.dart';
 import 'package:baby_tracker/view/summary/medicationsTable.dart';
+import 'package:baby_tracker/view/summary/temDataTable.dart';
 import 'package:baby_tracker/view/summary/vaccineTable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +16,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:baby_tracker/shapes/temp.dart';
 import 'package:baby_tracker/shapes/temp1.dart';
+import 'package:provider/provider.dart';
 
 class HealthTracking extends StatefulWidget {
   const HealthTracking({Key? key});
@@ -194,32 +199,23 @@ class _HealthTracking extends State<HealthTracking> {
                           height: 10,
                         ),
                         if (selectedbutton == 0)
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SliderTemperature(temperature),
-                                  Thermometer(temperature),
-                                ],
-                              ),
-                              HealthWidget(
-                                healthType: HealthType.Temp,
-                                startDate: startDate,
-                                controller: _note,
-                                onDateStratTimeChanged:
-                                    (DateTime newStartDate) {
-                                  setState(() {
-                                    startDate = newStartDate;
-                                  });
-                                },
-                                onNoteChanged: (String note) {
-                                  _note.text = note;
-                                },
-                              ),
-                              SizedBox(height: 30),
-                              RoundButton(
-                                  onpressed: () {}, title: "Save Temprature")
-                            ],
+                          Consumer<TempProvider>(
+                            builder: (context, tempProvider, child) {
+                              List<TempData> tempRecords =
+                                  tempProvider.tempRecords;
+                              return Column(children: [
+                                TempDataTable(tempRecords: tempRecords),
+                                RoundButton(
+                                    onpressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => AddTemp()),
+                                      );
+                                    },
+                                    title: "Add Temperture"),
+                              ]);
+                            },
                           ),
                         if (selectedbutton == 1)
                           Column(children: [

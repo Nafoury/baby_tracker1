@@ -1,32 +1,34 @@
+import 'package:baby_tracker/models/tempData.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
-import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/main.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 
-class BottleController {
+class TempController {
   Crud crud = Crud();
 
-  Future<bool> savebottlerData({
-    required BottleData bottleData,
+  Future<bool> saveTempData({
+    required TempData tempData,
   }) async {
     try {
       var response = await crud.postrequest(
-        linkBottleData,
+        linkAddTemp,
         {
-          "date": bottleData.startDate.toString(),
-          "amount": bottleData.amount.toString(),
-          "note": bottleData.note,
+          "date": tempData.date.toString(),
+          "temp": tempData.temp.toString(),
+          "note": tempData.note,
           "baby_id": sharedPref.getString("info_id")
         },
       );
+
       print(response); // Print the response to check its structure
       if (response['status'] == "success") {
-        if (response.containsKey('feed1_id')) {
-          String bottleId = response['feed1_id'].toString();
-          print('feedId: $bottleId');
-          bottleData.feed1Id = int.parse(bottleId);
-          print(bottleData.feed1Id);
+        if (response.containsKey('temp_id')) {
+          String tempId = response['temp_id'].toString();
+          print('ChangeId: $tempId');
+          tempData.tempId = int.parse(tempId);
+          print(tempData.tempId);
         } else {
           print("ID not found in the response"); // Check this print statement
         }
@@ -40,7 +42,7 @@ class BottleController {
     }
   }
 
-  Future<List<BottleData>> retrieveBottleData() async {
+  Future<List<TempData>> retrieveTempData() async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
@@ -49,21 +51,21 @@ class BottleController {
 
       if (isOnline) {
         var response = await crud.postrequest(
-            linkViewBottle, {"baby_id": sharedPref.getString("info_id")});
+            linkGetTemp, {"baby_id": sharedPref.getString("info_id")});
         print(response);
 
         if (response['status'] == "success" && response.containsKey('data')) {
           // Parse the data and return it
           List<dynamic> data = response['data'];
-          List<BottleData> bottleDataList =
-              data.map((item) => BottleData.fromMap(item)).toList();
-          return bottleDataList;
+          List<TempData> tempDataList =
+              data.map((item) => TempData.fromJson(item)).toList();
+          return tempDataList;
         } else {
-          print("Error: Failed to retrieve bottle data");
+          debugPrint("Error: Failed to retrieve bottle data");
           return []; // Return an empty list if there's an error
         }
       } else {
-        print("Error: No internet connection");
+        debugPrint("Error: No internet connection");
         return []; // Return an empty list if there's no internet connection
       }
     } catch (e) {
@@ -72,7 +74,7 @@ class BottleController {
     }
   }
 
-  Future<bool> deleteRecord(int bottleId) async {
+  Future<bool> deleteTemp(int tempId) async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
@@ -80,8 +82,8 @@ class BottleController {
       bool isOnline = (connectivityResult != ConnectivityResult.none);
 
       if (isOnline) {
-        var response = await crud.postrequest(linkDeleteBottle, {
-          "feed1_id": bottleId.toString(),
+        var response = await crud.postrequest(linkDeleteTemp, {
+          "temp_id": tempId.toString(),
         });
         if (response['status'] == 'success') {
           return true;
@@ -99,7 +101,7 @@ class BottleController {
     }
   }
 
-  Future<bool> editRecord(BottleData bottleData) async {
+  Future<bool> editDiaper(TempData tempData) async {
     try {
       // Check for internet connectivity
       ConnectivityResult connectivityResult =
@@ -107,11 +109,11 @@ class BottleController {
       bool isOnline = (connectivityResult != ConnectivityResult.none);
 
       if (isOnline) {
-        var response = await crud.postrequest(linkUpdateBottle, {
-          "date": bottleData.startDate.toString(),
-          "amount": bottleData.amount.toString(),
-          "note": bottleData.note,
-          "feed1_id": bottleData.feed1Id.toString(),
+        var response = await crud.postrequest(linkUpdateTemp, {
+          "date": tempData.date.toString(),
+          "temp": tempData.temp,
+          "note": tempData.note,
+          "temp_id": tempData.tempId.toString(),
         });
         // Print the response for debugging
         print('Server response: $response');

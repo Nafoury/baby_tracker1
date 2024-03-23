@@ -116,25 +116,32 @@ class SleepController {
 
   Future<bool> editRecord(SleepData sleepData) async {
     try {
-      Duration duration = sleepData.endDate!.difference(sleepData.startDate!);
+      if (sleepData.endDate != null && sleepData.startDate != null) {
+        // Calculate duration
+        Duration duration = sleepData.endDate!.difference(sleepData.startDate!);
 
-      ConnectivityResult connectivityResult =
-          await Connectivity().checkConnectivity();
-      bool isOnline = (connectivityResult != ConnectivityResult.none);
+        if (duration.inMilliseconds > 0) {
+          // Update duration in the SleepData object
+          sleepData.duration = duration.inMinutes;
 
-      if (duration.inMilliseconds > 0 && isOnline) {
-        var response = await crud.postrequest(linkUpdatesleep, {
-          "start_date": sleepData.startDate.toString(),
-          "end_date": sleepData.endDate.toString(),
-          "duration": duration.inMinutes.toString(),
-          "note": sleepData.note,
-          "sleep_id": sleepData.sleepId.toString(),
-        });
-        print('Server response: $response');
-        return response['status'] == 'success';
+          // Make the API call to update the record
+          var response = await crud.postrequest(linkUpdatesleep, {
+            "start_date": sleepData.startDate.toString(),
+            "end_date": sleepData.endDate.toString(),
+            "duration":
+                sleepData.duration.toString(), // Use the updated duration
+            "note": sleepData.note,
+            "sleep_id": sleepData.sleepId.toString(),
+          });
+
+          print('Server response: $response');
+          return response['status'] == 'success';
+        } else {
+          print('Invalid duration');
+          return false;
+        }
       } else {
-        print(
-            'Invalid duration or no internet connection. Cannot update data.');
+        print('Either start date or end date is null');
         return false;
       }
     } catch (e) {

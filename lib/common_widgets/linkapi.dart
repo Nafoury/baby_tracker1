@@ -1,4 +1,4 @@
-const String linkServerName = "http://192.168.1.3/babyphp";
+const String linkServerName = "http://192.168.1.2/babyphp";
 
 const String linksignup = "$linkServerName/auth/signup.php";
 
@@ -21,6 +21,8 @@ const String linkUpdateDiaper = "$linkServerName/diaper_change/update.php";
 
 const String linkBottleData = "$linkServerName/feeding/add.php";
 const String linkViewBottle = "$linkServerName/feeding/read.php";
+const String linkUpdateBottle = "$linkServerName/feeding/update.php";
+const String linkDeleteBottle = "$linkServerName/feeding/delete.php";
 
 const String linkAddSolids = "$linkServerName/feedSolids/add.php";
 const String linkViewSolids = "$linkServerName/feedSolids/view.php";
@@ -42,3 +44,8 @@ const String linkUpdateMed = "$linkServerName/med/update.php";
 
 const String linkAddWeight = "$linkServerName/momWeight/add.php";
 const String linkViewWeight = "$linkServerName/momWeight/view.php";
+
+const String linkAddTemp = "$linkServerName/temperature/add.php";
+const String linkGetTemp = "$linkServerName/temperature/update.php";
+const String linkDeleteTemp = "$linkServerName/temperature/delete.php";
+const String linkUpdateTemp = "$linkServerName/temperature/update.php";

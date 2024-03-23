@@ -3,9 +3,11 @@ import 'package:baby_tracker/controller/feedingBottle.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/view/charts/nursingchart.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
+import 'package:baby_tracker/view/summary/bottleDataTable.dart';
 import 'package:baby_tracker/view/summary/solidsDataTable.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
@@ -191,28 +193,32 @@ class _FeedingTracking extends State<FeedingTracking> {
                         ),
                         if (selectedbutton == 0) LineChartSample3(),
                         if (selectedbutton == 1)
-                          FutureBuilder(
-                            future: bottleController.retrieveBottleData(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else if (snapshot.hasData) {
-                                final List<BottleData> bottleRecords =
-                                    snapshot.data!;
-                                final List<Map<String, dynamic>>
-                                    bottleDatalist = bottleRecords
-                                        .map((bottls) => bottls.toJson())
-                                        .toList();
-                                return AspectRatio(
-                                    aspectRatio: 0.7,
-                                    child: BottleChart(
-                                        bottleRecords: bottleDatalist));
-                              }
-                              // Add a default return statement to handle other cases
-                              return Container(); // You can replace this with an appropriate widget.
+                          Consumer<BottleDataProvider>(
+                            builder: (context, bottleDataProvider, child) {
+                              List<BottleData> bottlesRecords =
+                                  bottleDataProvider.bottleRecords;
+                              return Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      'Overview',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  BottleChart(bottleRecords: bottlesRecords),
+                                  SizedBox(
+                                    height: 80,
+                                  ),
+                                  BottleDataTable(
+                                      bottleRecords: bottlesRecords),
+                                ],
+                              );
                             },
                           ),
                         if (selectedbutton == 2)

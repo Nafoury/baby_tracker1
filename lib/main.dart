@@ -5,6 +5,7 @@ import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
+import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/provider/vaccine_provider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
@@ -50,6 +51,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => VaccineProvider()),
         ChangeNotifierProvider(create: (context) => DiaperProvider()),
         ChangeNotifierProvider(create: (context) => SleepProvider()),
+        ChangeNotifierProvider(create: (context) => TempProvider()),
+
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
