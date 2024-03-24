@@ -1,4 +1,4 @@
-const String linkServerName = "http://192.168.1.2/babyphp";
+const String linkServerName = "http://192.168.1.7/babyphp";
 
 const String linksignup = "$linkServerName/auth/signup.php";
 
@@ -46,6 +46,6 @@ const String linkAddWeight = "$linkServerName/momWeight/add.php";
 const String linkViewWeight = "$linkServerName/momWeight/view.php";
 
 const String linkAddTemp = "$linkServerName/temperature/add.php";
-const String linkGetTemp = "$linkServerName/temperature/update.php";
+const String linkGetTemp = "$linkServerName/temperature/view.php";
 const String linkDeleteTemp = "$linkServerName/temperature/delete.php";
 const String linkUpdateTemp = "$linkServerName/temperature/update.php";

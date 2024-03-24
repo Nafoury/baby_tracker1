@@ -111,7 +111,7 @@ class TempController {
       if (isOnline) {
         var response = await crud.postrequest(linkUpdateTemp, {
           "date": tempData.date.toString(),
-          "temp": tempData.temp,
+          "temp": tempData.temp.toString(),
           "note": tempData.note,
           "temp_id": tempData.tempId.toString(),
         });

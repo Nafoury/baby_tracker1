@@ -4,6 +4,7 @@ import 'package:baby_tracker/models/tempData.dart';
 import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/shapes/temp3.dart';
 import 'package:baby_tracker/shapes/temp4.dart';
+import 'package:baby_tracker/view/charts/tempChart.dart';
 import 'package:baby_tracker/view/subTrackingPages/addTemp.dart';
 import 'package:baby_tracker/view/subTrackingPages/addVaccine.dart';
 import 'package:baby_tracker/view/subTrackingPages/addmed.dart';
@@ -35,6 +36,30 @@ class _HealthTracking extends State<HealthTracking> {
   String status = '';
   String status1 = '';
   final ValueNotifier<double> temperature = ValueNotifier(0.5);
+  late TempProvider tempProvider;
+  late List<TempData> tempRecords = [];
+
+  @override
+  void didChangeDependencies() {
+    tempProvider = Provider.of<TempProvider>(context, listen: false);
+    super.didChangeDependencies();
+    fetchTempRecords(tempProvider);
+  }
+
+  Future<void> fetchTempRecords(TempProvider tempProvider) async {
+    try {
+      List<TempData> records = await tempProvider.getTempRecords();
+      print('Fetched Medication Records: $records');
+      setState(() {
+        tempRecords = records;
+        print('Fetched Medication Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching medication records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -201,10 +226,10 @@ class _HealthTracking extends State<HealthTracking> {
                         if (selectedbutton == 0)
                           Consumer<TempProvider>(
                             builder: (context, tempProvider, child) {
-                              List<TempData> tempRecords =
-                                  tempProvider.tempRecords;
                               return Column(children: [
-                                TempDataTable(tempRecords: tempRecords),
+                                TempChart(
+                                  tempRecords: tempRecords,
+                                ),
                                 RoundButton(
                                     onpressed: () {
                                       Navigator.push(
@@ -214,6 +239,7 @@ class _HealthTracking extends State<HealthTracking> {
                                       );
                                     },
                                     title: "Add Temperture"),
+                                TempDataTable(tempRecords: tempRecords),
                               ]);
                             },
                           ),

@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 
 class WeightTracking extends StatelessWidget {
   const WeightTracking({super.key});
-
+  @override
   @override
   Widget build(BuildContext context) {
     MomController momController = MomController();

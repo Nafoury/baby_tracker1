@@ -44,12 +44,11 @@ class _HomeViewState extends State<HomeView> {
   late List<SleepData> sleepRecords = [];
   late List<SolidsData> solidsRecords = [];
   late List<BottleData> bottleRecords = [];
-  late List<TempData> tempRecords = [];
+
   late DiaperProvider diaperProvider;
   late SleepProvider sleepProvider;
   late SolidsProvider solidsProvider;
   late BottleDataProvider bottleDataProvider;
-  late TempProvider tempProvider;
 
   Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
     try {
@@ -99,20 +98,6 @@ class _HomeViewState extends State<HomeView> {
       print('Fetched bottle Records: $record');
       setState(() {
         bottleRecords = record;
-        print('Fetched bottle Records: $record');
-      });
-    } catch (e) {
-      print('Error fetching bottle records: $e');
-      // Handle error here
-    }
-  }
-
-  Future<void> fetchTempData(TempProvider tempProvider) async {
-    try {
-      List<TempData> record = await tempProvider.getTempRecords();
-      print('Fetched bottle Records: $record');
-      setState(() {
-        tempRecords = record;
         print('Fetched bottle Records: $record');
       });
     } catch (e) {
