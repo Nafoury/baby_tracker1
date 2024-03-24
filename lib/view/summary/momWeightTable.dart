@@ -1,4 +1,5 @@
 import 'package:baby_tracker/models/momweightData.dart';
+import 'package:baby_tracker/view/editionanddeletion/momweightData_edit_deletion.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -55,7 +56,16 @@ class WeightDataTable extends StatelessWidget {
 
           DataCell(
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MomWeightEdit(
+                      entryData: record,
+                    ),
+                  ),
+                );
+              },
               icon: Image.asset(
                 "assets/images/arroNext.png",
                 width: 20,

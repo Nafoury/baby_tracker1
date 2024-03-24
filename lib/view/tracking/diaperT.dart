@@ -4,6 +4,7 @@ import 'package:baby_tracker/controller/diapercontroller.dart';
 
 import 'package:baby_tracker/models/diaperData.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
+import 'package:baby_tracker/view/charts/solidschart.dart';
 
 import 'package:baby_tracker/view/home/diaper_change.dart';
 
@@ -77,6 +78,7 @@ class _SleepingViewState extends State<DiaperTracking> {
                   builder: (context, diaperProvider, child) {
                     List<DiaperData> diaperRecords =
                         diaperProvider.diaperRecords;
+
                     return AspectRatio(
                       aspectRatio: 1,
                       child: DiaperChart(diaperRecords: diaperRecords),

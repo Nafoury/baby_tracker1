@@ -226,9 +226,11 @@ class _FeedingTracking extends State<FeedingTracking> {
                             builder: (context, solidProvider, child) {
                               List<SolidsData> solidsRecords =
                                   solidProvider.solidsRecords;
+
                               return Column(
                                 children: [
-                                  SolidsDataTable(solidsRecords: solidsRecords)
+                                  SolidsChart(solidsRecords: solidsRecords),
+                                  SolidsDataTable(solidsRecords: solidsRecords),
                                 ],
                               );
                             },

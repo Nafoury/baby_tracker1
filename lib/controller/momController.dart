@@ -82,7 +82,7 @@ class MomController {
 
       if (isOnline) {
         var response = await crud.postrequest(linkDeleteWeight, {
-          "weight_id": weightId.toString(),
+          "mom_id": weightId.toString(),
         });
         if (response['status'] == 'success') {
           return true;
@@ -111,7 +111,7 @@ class MomController {
         var response = await crud.postrequest(linkUpdateWeight, {
           "date": momData.date.toString(),
           "weight": momData.weight.toString(),
-          "weight_id": momData.momId.toString(),
+          "mom_id": momData.momId.toString(),
         });
         // Print the response for debugging
         print('Server response: $response');

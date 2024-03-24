@@ -20,6 +20,7 @@ class WeightChart extends StatelessWidget {
 
     return SizedBox(
       height: 300,
+      width: 350,
       child: LineChart(LineChartData(
         borderData: FlBorderData(
           show: true,
@@ -33,7 +34,7 @@ class WeightChart extends StatelessWidget {
         titlesData: titlesData,
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            maxContentWidth: 100,
+            maxContentWidth: 50,
             tooltipBgColor: Colors.white,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((LineBarSpot touchedSpot) {
@@ -75,7 +76,7 @@ class WeightChart extends StatelessWidget {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 25,
+            reservedSize: 20,
             getTitlesWidget: (value, meta) {
               DateTime date =
                   DateTime.fromMillisecondsSinceEpoch(value.toInt());
