@@ -3,10 +3,12 @@ import 'package:baby_tracker/common_widgets/weightBalance.dart';
 import 'package:baby_tracker/controller/momController.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/momweightData.dart';
-import 'package:baby_tracker/view/charts/sleepchart.dart';
+import 'package:baby_tracker/provider/momWeightProvider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class WeightPage extends StatefulWidget {
   const WeightPage({super.key});
@@ -19,6 +21,14 @@ class _WeightPageState extends State<WeightPage> {
   double mlValue = 0.0;
   MomController momController = MomController();
   DateTime startDate = DateTime.now();
+  late MomWeightProvider momWeightProvider;
+
+  @override
+  void didChangeDependencies() {
+    momWeightProvider = Provider.of<MomWeightProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,12 +86,10 @@ class _WeightPageState extends State<WeightPage> {
               ),
               RoundButton(
                   onpressed: () {
-                    MomData momData = MomData(
+                    momWeightProvider.addWeightData(MomData(
                         date: startDate,
-                        weight: mlValue ?? 0.0,
-                        babyId: sharedPref.getString("info_id"));
-
-                    momController.saveweightData(momData: momData);
+                        weight: mlValue,
+                        babyId: sharedPref.getString("info_id")));
                   },
                   title: "Save Weight")
             ])))));

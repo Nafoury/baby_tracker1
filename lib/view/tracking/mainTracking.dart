@@ -127,7 +127,7 @@ class _TrackingPage extends State<TrackingPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => WeightTracking()));
+                              builder: (context) => MomWeightpage()));
                     },
                     child: Container(
                       decoration: BoxDecoration(

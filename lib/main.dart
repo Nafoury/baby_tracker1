@@ -3,6 +3,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/medications_provider.dart';
+import 'package:baby_tracker/provider/momWeightProvider.dart';
 import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/provider/tempProvider.dart';
@@ -52,6 +53,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => DiaperProvider()),
         ChangeNotifierProvider(create: (context) => SleepProvider()),
         ChangeNotifierProvider(create: (context) => TempProvider()),
+        ChangeNotifierProvider(create: (context) => MomWeightProvider()),
 
         // Add more providers if needed
       ],

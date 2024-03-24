@@ -44,6 +44,8 @@ const String linkUpdateMed = "$linkServerName/med/update.php";
 
 const String linkAddWeight = "$linkServerName/momWeight/add.php";
 const String linkViewWeight = "$linkServerName/momWeight/view.php";
+const String linkDeleteWeight = "$linkServerName/momWeight/delete.php";
+const String linkUpdateWeight = "$linkServerName/momWeight/update.php";
 
 const String linkAddTemp = "$linkServerName/temperature/add.php";
 const String linkGetTemp = "$linkServerName/temperature/view.php";

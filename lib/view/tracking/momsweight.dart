@@ -1,19 +1,49 @@
+import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/controller/momController.dart';
 import 'package:baby_tracker/models/momweightData.dart';
-import 'package:baby_tracker/view/charts/sleepchart.dart';
+import 'package:baby_tracker/provider/momWeightProvider.dart';
 import 'package:baby_tracker/view/charts/weightChartMom.dart';
 import 'package:baby_tracker/view/subTrackingPages/momweight.dart';
+import 'package:baby_tracker/view/summary/momWeightTable.dart';
 import 'package:flutter/material.dart';
-import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
-class WeightTracking extends StatelessWidget {
-  const WeightTracking({super.key});
+class MomWeightpage extends StatefulWidget {
+  const MomWeightpage({super.key});
+
   @override
+  State<MomWeightpage> createState() => _MomWeightpageState();
+}
+
+class _MomWeightpageState extends State<MomWeightpage> {
+  late MomWeightProvider momWeightProvider;
+  late List<MomData> weightRecords = [];
+
+  @override
+  void didChangeDependencies() {
+    momWeightProvider = Provider.of<MomWeightProvider>(context, listen: false);
+    super.didChangeDependencies();
+    fetchWeightRecords(momWeightProvider);
+  }
+
+  Future<void> fetchWeightRecords(MomWeightProvider momWeightProvider) async {
+    try {
+      List<MomData> records = await momWeightProvider.getWeightRecords();
+      print('Fetched Medication Records: $records');
+      setState(() {
+        weightRecords = records;
+        print('Fetched Medication Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching medication records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    MomController momController = MomController();
+    var media = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Tcolor.white,
         body: Padding(
@@ -48,35 +78,31 @@ class WeightTracking extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
-              FutureBuilder(
-                future: momController.retrieveWeightData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    final List<MomData> weightRecords = snapshot.data!;
-                    final List<Map<String, dynamic>> weightDataAsMap =
-                        weightRecords.map((weight) => weight.toJson()).toList();
-                    return AspectRatio(
-                        aspectRatio: 0.9,
-                        child: WeightChart(weightRecords: weightDataAsMap));
-                  }
-
-                  return Container();
+              Consumer<MomWeightProvider>(
+                builder: (context, momweightProvider, child) {
+                  return Column(children: [
+                    WeightChart(weightRecords: weightRecords),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    RoundButton(
+                        onpressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WeightPage()),
+                          );
+                        },
+                        title: "Add Weight"),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    WeightDataTable(weightRecords: weightRecords)
+                  ]);
                 },
               ),
-              RoundButton(
-                  onpressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WeightPage()),
-                    );
-                  },
-                  title: "Add weight")
             ])))));
   }
 }

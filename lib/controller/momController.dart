@@ -72,4 +72,63 @@ class MomController {
       return []; // Return an empty list in case of an error
     }
   }
+
+  Future<bool> deleteWeight(int weightId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteWeight, {
+          "weight_id": weightId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> editWeight(MomData momData) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkUpdateWeight, {
+          "date": momData.date.toString(),
+          "weight": momData.weight.toString(),
+          "weight_id": momData.momId.toString(),
+        });
+        // Print the response for debugging
+        print('Server response: $response');
+
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
 }
