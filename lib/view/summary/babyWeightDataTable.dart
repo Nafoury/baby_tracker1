@@ -1,11 +1,11 @@
-import 'package:baby_tracker/models/momweightData.dart';
-import 'package:baby_tracker/view/editionanddeletion/momweightData_edit_deletion.dart';
+import 'package:baby_tracker/models/babyWeight.dart';
+import 'package:baby_tracker/view/editionanddeletion/babyWeight_edit_deletion.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class WeightDataTable extends StatelessWidget {
-  final List<MomData> weightRecords;
-  const WeightDataTable({super.key, required this.weightRecords});
+class BabyWeightDataTable extends StatelessWidget {
+  final List<WeightData> weightRecords;
+  const BabyWeightDataTable({super.key, required this.weightRecords});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class WeightDataTable extends StatelessWidget {
       columns: [
         DataColumn(
             label: Text(
-              'Date & Time',
+              'Date',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
             ),
@@ -33,11 +33,11 @@ class WeightDataTable extends StatelessWidget {
           ),
         ),
       ],
-      rows: weightRecords.map((record) {
+      rows: weightRecords.map((records) {
         return DataRow(cells: [
           DataCell(
             Text(
-              DateFormat('dd MMM yy').format(record.date!),
+              DateFormat('dd MMM yy').format(records.date!),
               style: TextStyle(
                   color: Colors.black.withOpacity(0.4),
                   fontWeight: FontWeight.w600,
@@ -46,7 +46,7 @@ class WeightDataTable extends StatelessWidget {
           ),
 
           DataCell(Text(
-            '${record.weight.toString()} Kg',
+            '${records.weight.toString()} Kg',
             style: TextStyle(
                 color: Colors.black.withOpacity(0.4),
                 fontWeight: FontWeight.w600,
@@ -59,8 +59,8 @@ class WeightDataTable extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MomWeightEdit(
-                      entryData: record,
+                    builder: (context) => BabyWeightEdit(
+                      entryData: records,
                     ),
                   ),
                 );

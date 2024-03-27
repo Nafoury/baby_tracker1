@@ -23,7 +23,7 @@ class Activites extends StatelessWidget {
       color2 = Tcolor.primaryColor1.withOpacity(0.4);
     } else if (index == 1) {
       color1 = Tcolor.light2gray.withOpacity(0.3);
-      color2 = Tcolor.light2gray.withOpacity(0.3);
+      color2 = Tcolor.light1gray.withOpacity(0.3);
     } else if (index == 2) {
       color1 = Tcolor.pink1.withOpacity(0.2);
       color2 = Tcolor.pink2.withOpacity(0.2);

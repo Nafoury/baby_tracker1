@@ -8,6 +8,7 @@ import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/provider/vaccine_provider.dart';
+import 'package:baby_tracker/provider/weightProvider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
@@ -54,6 +55,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => SleepProvider()),
         ChangeNotifierProvider(create: (context) => TempProvider()),
         ChangeNotifierProvider(create: (context) => MomWeightProvider()),
+        ChangeNotifierProvider(create: (context) => WeightProvider()),
 
         // Add more providers if needed
       ],

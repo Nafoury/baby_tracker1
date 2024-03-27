@@ -191,7 +191,6 @@ class _FeedingTracking extends State<FeedingTracking> {
                         const SizedBox(
                           height: 20,
                         ),
-                        if (selectedbutton == 0) LineChartSample3(),
                         if (selectedbutton == 1)
                           Consumer<BottleDataProvider>(
                             builder: (context, bottleDataProvider, child) {

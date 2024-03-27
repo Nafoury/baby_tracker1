@@ -51,3 +51,8 @@ const String linkAddTemp = "$linkServerName/temperature/add.php";
 const String linkGetTemp = "$linkServerName/temperature/view.php";
 const String linkDeleteTemp = "$linkServerName/temperature/delete.php";
 const String linkUpdateTemp = "$linkServerName/temperature/update.php";
+
+const String linkAddBWeight = "$linkServerName/baby_weight/add.php";
+const String linkViewBWeight = "$linkServerName/baby_weight/view.php";
+const String linkDeleteBWeight = "$linkServerName/baby_weight/delete.php";
+const String linkUpdateBWeight = "$linkServerName/baby_weight/update.php";
