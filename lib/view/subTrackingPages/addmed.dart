@@ -97,7 +97,7 @@ class _AddMedState extends State<AddMed> {
                           note: _note.text,
                         ));
                       },
-                      title: "Save drug")
+                      title: "Save drug"),
                 ],
               ),
             ])))));

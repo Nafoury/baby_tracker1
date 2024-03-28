@@ -58,6 +58,8 @@ dependencies:
   syncfusion_flutter_charts: ^24.2.8
   animated_weight_picker: ^1.0.3
   flutter_heatmap_calendar: ^1.0.5
+  flutter_local_notifications: ^17.0.0
+  flutter_datetime_picker_plus: ^2.1.0
 
 dev_dependencies:
   flutter_test:

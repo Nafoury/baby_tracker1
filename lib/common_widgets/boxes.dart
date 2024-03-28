@@ -3,50 +3,124 @@ import 'package:flutter/material.dart';
 
 class Boxes extends StatelessWidget {
   final Map aobj;
-  const Boxes({super.key, required this.aobj});
+  final List<Map<String, dynamic>> weightboxes;
+  const Boxes({super.key, required this.aobj, required this.weightboxes});
 
   @override
   Widget build(BuildContext context) {
-    String birthWeight = aobj["birthWeight"] ?? "0";
-    String currentWeight = aobj["currentWeight"] ?? "0";
-    double change = double.parse(currentWeight) - double.parse(birthWeight);
-    var media = MediaQuery.of(context).size;
+    String birthWeight = aobj["weight"] ?? "0"; // Access "weight" directly
+    String date = aobj["date"] ?? ""; // Access "date" directly
+    String time = aobj["time"] ?? "";
+
     return Container(
       width: 100,
       decoration: BoxDecoration(
         color: Tcolor.gray.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(media.width * 0.06),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              aobj["time"].toString(),
+              time,
               style: TextStyle(
-                  color: Tcolor.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800),
+                color: Tcolor.black,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
             ),
             Text(
-              aobj["weight"].toString(),
+              birthWeight + " kg", // Display birth weight
               style: TextStyle(
-                  color: Tcolor.black,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600),
+                color: Tcolor.black,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Text(
-              aobj["date"].toString(),
+              date,
               style: TextStyle(
-                  color: Tcolor.gray,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500),
+                color: Tcolor.black,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildActivityDetails(Map<String, dynamic> data) {
+    if (data["time"] == "At birth") {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${data["weight"]} kg",
+            style: TextStyle(
+              color: Tcolor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            "${data["date"]}",
+            style: TextStyle(
+              color: Tcolor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+    } else if (data["time"] == "Current") {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${data["weight"]} kg",
+            style: TextStyle(
+              color: Tcolor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            "${data["date"]}",
+            style: TextStyle(
+              color: Tcolor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+    } else if (data["time"] == "Change") {
+      double birthWeight = double.parse(weightboxes[0]["weight"] ?? "0");
+      double currentWeight = double.parse(weightboxes[1]["weight"] ?? "0");
+      double change = currentWeight - birthWeight;
+      String changeString = change.toStringAsFixed(2);
+      String sign = change >= 0 ? "+" : "-";
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Change: $sign $changeString kg",
+            style: TextStyle(
+              color: Tcolor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return SizedBox();
   }
 }

@@ -44,11 +44,41 @@ class _GrowthTracking extends State<GrowthTracking> {
       print('Fetched Medication Records: $records');
       setState(() {
         weightRecords = records;
+        updateWeightBoxes(records);
         print('Fetched weight Records: $records');
       });
     } catch (e) {
       print('Error fetching baby weight records: $e');
       // Handle error here
+    }
+  }
+
+  void updateWeightBoxes(List<WeightData> records) {
+    if (records.isNotEmpty && records.length >= 2) {
+      // Sort records by date to ensure the latest records are at the end
+      records.sort((a, b) => a.date!.compareTo(b.date!));
+
+      // Get the latest two weight records
+      WeightData currentRecord = records.last;
+      WeightData previousRecord = records[records.length - 2];
+
+      // Calculate change and update weightboxes
+      double currentWeight = double.parse(currentRecord.weight.toString());
+      double previousWeight = double.parse(previousRecord.weight.toString());
+      double change = currentWeight - previousWeight;
+      String changeString = change.toStringAsFixed(2);
+      String sign = change >= 0 ? "+" : "-";
+
+      // Extract date part from the DateTime object
+      String currentDate = currentRecord.date.toString().split(" ")[0];
+
+      setState(() {
+        weightboxes[1]["weight"] = currentWeight.toString();
+        weightboxes[1]["date"] = currentDate; // Use extracted date without time
+        weightboxes[2]["weight"] = "$sign $changeString";
+
+        // Trigger rebuild of the UI
+      });
     }
   }
 
@@ -279,7 +309,9 @@ class _GrowthTracking extends State<GrowthTracking> {
                                   },
                                   itemBuilder: (context, index) {
                                     var aobj = weightboxes[index] as Map? ?? {};
-                                    return Boxes(aobj: aobj);
+                                    return Boxes(
+                                        aobj: aobj,
+                                        weightboxes: weightboxes.cast());
                                   },
                                 ),
                               ),
