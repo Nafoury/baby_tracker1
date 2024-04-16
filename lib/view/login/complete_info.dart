@@ -1,5 +1,7 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/babyinfo.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:provider/provider.dart';
 
 class Completeinfo extends StatefulWidget {
   const Completeinfo({super.key});
@@ -23,12 +26,21 @@ class _CompleteinfoState extends State<Completeinfo> {
   final _dateTextController = TextEditingController();
   final _babyheight = TextEditingController();
   final _babyweight = TextEditingController();
+  final _babyHead = TextEditingController();
   double? babyWeight;
   double? babyHeight;
-
   Crud crud = Crud();
   String? selectedValue;
   String? dropdownError;
+  late BabyProvider babyProvider;
+  BabyInfo babyInfo = BabyInfo();
+
+  @override
+  void didChangeDependencies() {
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
+
   final formkey = GlobalKey<FormState>();
 
   String? validateDropdown(String? value) {
@@ -38,53 +50,10 @@ class _CompleteinfoState extends State<Completeinfo> {
     return null;
   }
 
-  Future<void> addInfo() async {
-    double? babyWeight;
-    double? babyHeight;
-
-    if (_babyweight.text.isNotEmpty) {
-      babyWeight = double.tryParse(_babyweight.text);
-    }
-
-    if (_babyheight.text.isNotEmpty) {
-      babyHeight = double.tryParse(_babyheight.text);
-    }
-    var response = await crud.postrequest(linkAddinfo, {
-      "baby_name": _babynamecontroller.text,
-      "gender": selectedValue!,
-      "date_of_birth": DateFormat('yyyy-MM-dd')
-          .format(DateTime.parse(_dateTextController.text)),
-      "baby_weight": babyWeight != null ? babyWeight.toString() : '0.0',
-      "baby_height": babyHeight != null ? babyHeight.toString() : '0.0',
-      "id": sharedPref.getString("id")
-    });
-
-    if (response != null &&
-        response is Map<String, dynamic> &&
-        response.containsKey('status')) {
-      if (response['status'] == "success") {
-        String babyId = response['info_id'].toString();
-        await sharedPref.setString('baby_name', _babynamecontroller.text);
-        await sharedPref.setString(
-            'date_of_birth',
-            DateFormat('yyyy-MM-dd')
-                .format(DateTime.parse(_dateTextController.text)));
-        sharedPref.setString("info_id", babyId);
-        Get.offAllNamed("/mainTab");
-      } else {
-        print("Signup failed");
-        // Handle signup failure here
-      }
-    } else {
-      print("Invalid or null response");
-      // Handle null or invalid response here
-    }
-  }
-
   saveToSharedPreferences() async {
     sharedPref.setString('baby_name', _babynamecontroller.text);
     sharedPref.setString(
-      'date_of_birth',
+      babyInfo.dateOfBirth.toString(),
       DateFormat('yyyy-MM-dd').format(DateTime.parse(_dateTextController.text)),
     );
   }
@@ -127,7 +96,7 @@ class _CompleteinfoState extends State<Completeinfo> {
                           controller: _babynamecontroller,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return "password is required";
+                              return "name is required";
                             }
                             return null;
                           }),
@@ -230,16 +199,11 @@ class _CompleteinfoState extends State<Completeinfo> {
                         children: [
                           Expanded(
                             child: RoundTextFiled(
-                                hintext: "Baby Weight",
-                                icon: "assets/images/weight-scale.png",
-                                controller: _babyweight,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "baby weight is required";
-                                  }
-                                  return null;
-                                }),
+                              hintext: "Baby Weight",
+                              icon: "assets/images/weight-scale.png",
+                              controller: _babyweight,
+                              keyboardType: TextInputType.number,
+                            ),
                           ),
                           const SizedBox(
                             width: 8,
@@ -268,16 +232,44 @@ class _CompleteinfoState extends State<Completeinfo> {
                         children: [
                           Expanded(
                             child: RoundTextFiled(
-                                hintext: "Baby Height",
-                                icon: "assets/images/height_icon.png",
-                                controller: _babyheight,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "baby height is required";
-                                  }
-                                  return null;
-                                }),
+                              hintext: "Baby Height",
+                              icon: "assets/images/height_icon.png",
+                              controller: _babyheight,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Container(
+                              width: 45,
+                              height: 45,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: Tcolor.secondryG,
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Text(
+                                "CM",
+                                style: TextStyle(
+                                    color: Tcolor.white, fontSize: 12),
+                              )),
+                        ],
+                      ),
+                      SizedBox(
+                        height: media.width * 0.03,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundTextFiled(
+                              hintext: "Baby Head",
+                              icon: "assets/images/height_icon.png",
+                              controller: _babyHead,
+                              keyboardType: TextInputType.number,
+                            ),
                           ),
                           const SizedBox(
                             width: 8,
@@ -305,7 +297,19 @@ class _CompleteinfoState extends State<Completeinfo> {
                       RoundButton(
                         onpressed: () async {
                           if (formkey.currentState!.validate()) {
-                            await addInfo();
+                            babyProvider.addBabyData(BabyInfo(
+                              babyName: _babynamecontroller.text,
+                              gender: selectedValue,
+                              dateOfBirth:
+                                  DateTime.parse(_dateTextController.text),
+                              babyHeight: double.tryParse(_babyheight.text),
+                              babyWeight: double.tryParse(_babyweight.text),
+                              babyhead: double.tryParse(_babyHead.text),
+                            ));
+                            saveToSharedPreferences();
+                            String babyId = babyInfo.infoId.toString();
+                            sharedPref.setString("info_id", babyId);
+                            Get.offAllNamed("/mainTab");
                           }
                         },
                         title: "Next >",

@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:baby_tracker/Services/notifi_service.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/models/babyinfo.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/medications_provider.dart';
@@ -24,11 +27,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:baby_tracker/provider/sleep_provider.dart';
 
 late SharedPreferences sharedPref;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   sharedPref = await SharedPreferences.getInstance();
 
   bool isLoggedIn = sharedPref.getBool('isLoggedIn') ?? false;
@@ -56,7 +61,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => TempProvider()),
         ChangeNotifierProvider(create: (context) => MomWeightProvider()),
         ChangeNotifierProvider(create: (context) => WeightProvider()),
-
+        ChangeNotifierProvider(create: (context) => BabyProvider()),
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
@@ -85,6 +90,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/feedingTrack", page: () => FeedingTracking()),
         GetPage(name: "/trackingPage", page: () => TrackingPage()),
       ],
+      routes: {"login": (context) => LoginPage()},
     );
   }
 }

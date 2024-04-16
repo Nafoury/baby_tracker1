@@ -3,6 +3,7 @@ import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/diapercontroller.dart';
 
 import 'package:baby_tracker/models/diaperData.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
 
@@ -24,6 +25,7 @@ class DiaperTracking extends StatefulWidget {
 
 class _SleepingViewState extends State<DiaperTracking> {
   int selectButton = 0;
+  late BabyProvider babyProvider = BabyProvider();
   DiaperController diaperController = DiaperController();
 
   @override

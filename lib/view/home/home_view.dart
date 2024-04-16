@@ -2,10 +2,12 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/activites.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/models/babyinfo.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/sleepData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/models/tempData.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
@@ -15,6 +17,7 @@ import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
+import 'package:baby_tracker/view/profiles/mom_profile.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:baby_tracker/models/diaperData.dart';
@@ -44,22 +47,24 @@ class _HomeViewState extends State<HomeView> {
   late List<SleepData> sleepRecords = [];
   late List<SolidsData> solidsRecords = [];
   late List<BottleData> bottleRecords = [];
-
+  late List<BabyInfo> babyRecords = [];
+  BabyInfo babyInfo = BabyInfo();
   late DiaperProvider diaperProvider;
   late SleepProvider sleepProvider;
   late SolidsProvider solidsProvider;
   late BottleDataProvider bottleDataProvider;
+  late BabyProvider babyProvider;
 
   Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
     try {
       List<DiaperData> records = await diaperProvider.getMedicationRecords();
-      print('Fetched Medication Records: $records');
+      print('Fetched diapers Records: $records');
       setState(() {
         diapersRecords = records;
-        print('Fetched Medication Records: $records');
+        print('Fetched diapers Records: $records');
       });
     } catch (e) {
-      print('Error fetching medication records: $e');
+      print('Error fetching diapers records: $e');
       // Handle error here
     }
   }
@@ -106,6 +111,20 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  Future<void> fetchBabyData(BabyProvider babyProvider) async {
+    try {
+      List<BabyInfo> record = await babyProvider.getbabyRecords();
+      print('Fetched baby Records: $record');
+      setState(() {
+        babyRecords = record;
+        print('Fetched baby Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching baby records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -120,19 +139,19 @@ class _HomeViewState extends State<HomeView> {
     bottleDataProvider =
         Provider.of<BottleDataProvider>(context, listen: false);
     fetchBottleData(bottleDataProvider);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    fetchBabyData(babyProvider);
   }
 
   loadDataFromSharedPreferences() async {
     sharedPref = await SharedPreferences.getInstance();
-    dateOfBirthString = sharedPref.getString('date_of_birth') ?? '';
-    if (dateOfBirthString.isEmpty) {
-      dateOfBirthString = '2012-11-13';
-      await sharedPref.setString('date_of_birth', dateOfBirthString);
-    }
+    dateOfBirthString =
+        sharedPref.getString(babyInfo.dateOfBirth.toString()) ?? '';
     setState(() {
       firstName = sharedPref.getString('first_name') ?? '';
       babyname = sharedPref.getString('baby_name') ?? '';
       print('Date of Birth String: $dateOfBirthString');
+      print('baby name: $babyname');
       calculateWeeks(); // Calculate weeks initially after setting the dateOfBirthString
     });
   }
@@ -302,7 +321,13 @@ class _HomeViewState extends State<HomeView> {
                             minRadius: 20,
                             maxRadius: 20,
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MomProfile()),
+                                );
+                              },
                               icon: Image.asset(
                                 "assets/images/profile.png",
                                 width: innerWidth * 0.16,

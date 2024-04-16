@@ -6,6 +6,9 @@ const String linklogin = "$linkServerName/auth/login.php";
 
 const String linkAddinfo = "$linkServerName/completeinfo/add.php";
 const String linkViewinfo = "$linkServerName/completeinfo/view.php";
+const String linkDeleteinfo = "$linkServerName/completeinfo/delete.php";
+const String linkUpdateinfo = "$linkServerName/completeinfo/edit.php";
+const String linkActiveBaby = "$linkServerName/completeinfo/baby_is_Active.php";
 
 const String linkaddsleep = "$linkServerName/sleep_records/add.php";
 const String linkviewsleep = "$linkServerName/sleep_records/view.php";

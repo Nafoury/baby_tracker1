@@ -6,7 +6,7 @@ class DiaperData {
   final DateTime startDate;
   final String status;
   final String note;
-  final String? infoid;
+  final int? infoid;
 
   DiaperData({
     this.changeId,
@@ -20,7 +20,7 @@ class DiaperData {
         startDate = DateTime.parse(map['start_date']),
         status = map['status'],
         note = map['note'],
-        infoid = map['infoid'];
+        infoid = map['baby_id'];
 
   // Method to convert to a map
   Map<String, dynamic> toMap() {
@@ -29,7 +29,7 @@ class DiaperData {
       'start_date': startDate.toIso8601String(),
       'status': status,
       'note': note,
-      'infoid': infoid,
+      'baby_id': infoid,
     };
   }
 }

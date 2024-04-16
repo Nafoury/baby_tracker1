@@ -190,10 +190,12 @@ class _DiaperChangeState extends State<DiaperChange> {
                                   );
                                   return;
                                 }
+
                                 diaperProvider.addDiaperData(DiaperData(
-                                    startDate: startDate,
-                                    note: _note.text,
-                                    status: status));
+                                  startDate: startDate,
+                                  note: _note.text,
+                                  status: status,
+                                ));
 
                                 setState(() {
                                   startDate = DateTime.now();

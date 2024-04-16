@@ -1,3 +1,5 @@
+import 'package:baby_tracker/models/babyinfo.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/crud.dart';
@@ -7,35 +9,44 @@ import 'package:flutter/cupertino.dart';
 
 class DiaperController {
   Crud crud = Crud();
+  BabyInfo babyInfo = BabyInfo();
 
   Future<bool> saveDiaperData({
     required DiaperData diaperData,
   }) async {
     try {
-      var response = await crud.postrequest(
-        linkdiaperchange,
-        {
-          "start_date": diaperData.startDate.toString(),
-          "status": diaperData.status,
-          "note": diaperData.note,
-          "baby_id": sharedPref.getString("info_id")
-        },
-      );
+      // Retrieve the info_id of the activated baby from shared preferences
+      String? infoId = sharedPref.getString("info_id");
 
-      print(response); // Print the response to check its structure
-      if (response['status'] == "success") {
-        if (response.containsKey('change_id')) {
-          String changeId = response['change_id'].toString();
-          print('ChangeId: $changeId');
-          diaperData.changeId = int.parse(changeId);
-          print(diaperData.changeId);
+      if (infoId != null) {
+        var response = await crud.postrequest(
+          linkdiaperchange,
+          {
+            "start_date": diaperData.startDate.toString(),
+            "status": diaperData.status,
+            "note": diaperData.note,
+            "baby_id": infoId, // Use the info_id of the activated baby
+          },
+        );
+
+        print('Server Response: $response');
+        if (response['status'] == "success") {
+          if (response.containsKey('change_id')) {
+            String changeId = response['change_id'].toString();
+            print('ChangeId: $changeId');
+            diaperData.changeId = int.parse(changeId);
+            print(diaperData.changeId);
+          } else {
+            print("ID not found in the response"); // Check this print statement
+          }
         } else {
-          print("ID not found in the response"); // Check this print statement
+          print("addiyion fail");
         }
+        return true; // Assuming you want to return a boolean indicating success
       } else {
-        print("addiyion fail");
+        print("Error: info_id is null");
+        return false; // Return false if info_id is null
       }
-      return true; // Assuming you want to return a boolean indicating success
     } catch (e) {
       print("Error: $e");
       return false; // Return false in case of an error
@@ -44,29 +55,37 @@ class DiaperController {
 
   Future<List<DiaperData>> retrieveDiaperData() async {
     try {
-      // Check for internet connectivity
-      ConnectivityResult connectivityResult =
-          await Connectivity().checkConnectivity();
-      bool isOnline = (connectivityResult != ConnectivityResult.none);
+      // Retrieve the info_id of the activated baby from shared preferences
+      String? infoId = sharedPref.getString("info_id");
 
-      if (isOnline) {
-        var response = await crud.postrequest(
-            linkdiaperview, {"baby_id": sharedPref.getString("info_id")});
-        print(response);
+      if (infoId != null) {
+        // Check for internet connectivity
+        ConnectivityResult connectivityResult =
+            await Connectivity().checkConnectivity();
+        bool isOnline = (connectivityResult != ConnectivityResult.none);
 
-        if (response['status'] == "success" && response.containsKey('data')) {
-          // Parse the data and return it
-          List<dynamic> data = response['data'];
-          List<DiaperData> diaperDataList =
-              data.map((item) => DiaperData.fromMap(item)).toList();
-          return diaperDataList;
+        if (isOnline) {
+          var response =
+              await crud.postrequest(linkdiaperview, {"baby_id": infoId});
+          print(response);
+
+          if (response['status'] == "success" && response.containsKey('data')) {
+            // Parse the data and return it
+            List<dynamic> data = response['data'];
+            List<DiaperData> diaperDataList =
+                data.map((item) => DiaperData.fromMap(item)).toList();
+            return diaperDataList;
+          } else {
+            debugPrint("Error: Failed to retrieve diaper data");
+            return []; // Return an empty list if there's an error
+          }
         } else {
-          debugPrint("Error: Failed to retrieve bottle data");
-          return []; // Return an empty list if there's an error
+          debugPrint("Error: No internet connection");
+          return []; // Return an empty list if there's no internet connection
         }
       } else {
-        debugPrint("Error: No internet connection");
-        return []; // Return an empty list if there's no internet connection
+        print("Error: info_id is null");
+        return []; // Return an empty list if info_id is null
       }
     } catch (e) {
       print("Error: $e");

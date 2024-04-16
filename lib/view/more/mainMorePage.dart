@@ -1,3 +1,4 @@
+import 'package:baby_tracker/view/more/face_day.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 
@@ -49,26 +50,32 @@ class _MorePage extends State<MorePage> {
                           ),
                         ]),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => FaceAday()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/face.png",
+                              width: 80,
+                              height: 100,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Face_A_Day",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            )
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/face.png",
-                            width: 80,
-                            height: 100,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Face_A_Day",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
-                          )
-                        ]),
                   ),
                   Container(
                     decoration: BoxDecoration(
