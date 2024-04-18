@@ -1,5 +1,5 @@
-const String linkServerName = "http://192.168.1.7/babyphp";
-
+const String linkServerName = "http://192.168.1.8/babyphp";
+const String linkImageFile = "http://192.168.1.8/babyphp/upload";
 const String linksignup = "$linkServerName/auth/signup.php";
 
 const String linklogin = "$linkServerName/auth/login.php";
@@ -59,3 +59,8 @@ const String linkAddBWeight = "$linkServerName/baby_weight/add.php";
 const String linkViewBWeight = "$linkServerName/baby_weight/view.php";
 const String linkDeleteBWeight = "$linkServerName/baby_weight/delete.php";
 const String linkUpdateBWeight = "$linkServerName/baby_weight/update.php";
+
+const String linkAddFaceImage = "$linkServerName/faceDay/add.php";
+const String linkReadFaceImage = "$linkServerName/faceDay/read.php";
+const String linkDeleteFaceImage = "$linkServerName/faceDay/delete.php";
+const String linkUpdateFaceImage = "$linkServerName/faceDay/edit.php";

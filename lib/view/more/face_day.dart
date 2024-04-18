@@ -1,4 +1,6 @@
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/controller/faceDayController.dart';
+import 'package:baby_tracker/models/faceModel.dart';
 import 'package:baby_tracker/view/more/fac_days1.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +9,7 @@ class FaceAday extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FaceDayController faceDayController = new FaceDayController();
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: Padding(
@@ -44,13 +47,30 @@ class FaceAday extends StatelessWidget {
                 Container(
                   height: MediaQuery.of(context).size.height *
                       0.9, // Adjust the percentage as needed
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                    ),
-                    itemCount: 90, // or however many days you want to display
-                    itemBuilder: (context, index) {
-                      return DayItem(index + 1);
+                  child: FutureBuilder<List<FaceData>>(
+                    future: faceDayController.retrievefaceData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        List<FaceData> faceDataList = snapshot.data ?? [];
+                        return GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                          ),
+                          itemCount: 30, // or however many items you want
+                          itemBuilder: (context, index) {
+                            return DayItem(
+                              faceData: index < faceDataList.length
+                                  ? faceDataList[index]
+                                  : FaceData(), // Use empty FaceData if index exceeds list length
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
