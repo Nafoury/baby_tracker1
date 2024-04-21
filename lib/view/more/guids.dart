@@ -3,23 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:baby_tracker/view/more/ActivityItem.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 
-class Activities extends StatefulWidget {
-  const Activities({Key? key}) : super(key: key);
+class Guids extends StatefulWidget {
+  const Guids({Key? key}) : super(key: key);
 
   @override
-  _ActivitiesState createState() => _ActivitiesState();
+  _GuidsState createState() => _GuidsState();
 }
 
-class _ActivitiesState extends State<Activities> {
+class _GuidsState extends State<Guids> {
   int selectedButtonIndex = 0;
   List<String> buttonNames = [
-    "Baby Care",
-    "Bottle Feeding",
-    "Crying",
-    "Mild Illnesses",
-    "Sleeping",
-    "Feeding",
-    "Mental Health"
+    "0-6 Months",
+    "5-8 Months",
+    "9-12 Months",
+    "13-18 Months",
+    "19-24 Months"
   ];
 
   List<List<List<ActivityItem>>> subtitleLists = [
@@ -27,29 +25,19 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Babycare basics",
-          imageUrl: "assets/images/mum_handle.jpeg",
+          subtitle: "play activites for baby's first months",
+          imageUrl: "assets/images/baby_care.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "changing your baby's diaper",
+          subtitle: "6 ways to talk with your baby",
           imageUrl: "assets/images/diaper.jpg",
-          relatedArticle: "Learn How to Change a Diaper",
+          relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "Burbing",
+          subtitle: "early sensory experiences",
           imageUrl: "assets/images/baby_buring.jpg",
           relatedArticle: "Best burping positions",
-        ),
-        ActivityItem(
-          subtitle: "What is cradle cap?",
-          imageUrl: "assets/images/cardle_cap1.png",
-          relatedArticle: "What Is Cradle Cap?",
-        ),
-        ActivityItem(
-          subtitle: "Bathing your newborn",
-          imageUrl: "assets/images/bathing.gif",
-          relatedArticle: "When to bath newborns",
         ),
       ],
     ],
@@ -57,28 +45,13 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Choosing the best baby bottles and nipples",
+          subtitle: "Ideas for play with your baby",
           imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How to Choose Bottles and Nipples",
+          relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "9 simple tips for bottle feeding",
+          subtitle: "3D objects",
           imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How to bottle feed your baby",
-        ),
-        ActivityItem(
-          subtitle: "Is your baby a slow or a fast feeder?",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Long Should Bottle-Feeding Take?",
-        ),
-        ActivityItem(
-          subtitle: "How much milk does my baby need?",
-          imageUrl: "assets/images/cradle_cap.png",
-          relatedArticle: "How Much Should My Baby Eat?",
-        ),
-        ActivityItem(
-          subtitle: "Suck,smallow,breathe-what it means",
-          imageUrl: "assets/images/bathin_baby.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
       ],
@@ -87,23 +60,13 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Baby led or routin led?",
+          subtitle: "Conversation with your baby",
           imageUrl: "assets/images/baby_care.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "How much crying is normal?",
+          subtitle: "Rolling a ball",
           imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "How to soothe a crying baby",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with crying",
-          imageUrl: "assets/images/cradle_cap.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
       ],
@@ -111,23 +74,18 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Your baby's first fever",
+          subtitle: "Using signs",
           imageUrl: "assets/images/baby_care.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "Ear infections: what you need to know",
+          subtitle: "Getting ready to walk",
           imageUrl: "assets/images/sleep_act.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "Dealing with diarrhea",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with colic",
-          imageUrl: "assets/images/cradle_cap.png",
+          subtitle: "Time to read",
+          imageUrl: "assets/images/sleep_act.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
       ],
@@ -135,61 +93,18 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Developing a consistent sleep routine",
+          subtitle: "Exploring new activities",
           imageUrl: "assets/images/baby_care.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "How much sleep does my baby need?",
+          subtitle: "Running around",
           imageUrl: "assets/images/sleep_act.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
         ActivityItem(
-          subtitle: "when will my baby sleep through the night?",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "Establishing good sleep habits",
-          imageUrl: "assets/images/cradle_cap.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-      ],
-    ],
-    [
-      [
-        ActivityItem(
-          subtitle: "How do I know my baby is getting enough?",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "when do I feed my baby?",
+          subtitle: "Retaining their attention",
           imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "4 tips for breastfeedin in public",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-      ],
-    ],
-    [
-      [
-        ActivityItem(
-          subtitle: "Top tips for the first 6 weeks",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with new parent stress",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "Postpartum depression explained",
-          imageUrl: "assets/images/burbing.png",
           relatedArticle: "How Do I Handle My Baby?",
         ),
       ],
@@ -220,7 +135,7 @@ class _ActivitiesState extends State<Activities> {
                   ),
                   SizedBox(width: 75),
                   Text(
-                    "Guides",
+                    "Activites",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -369,16 +284,12 @@ class _ActivitiesState extends State<Activities> {
       case 0:
         return Alignment.centerLeft;
       case 1:
-        return Alignment.centerLeft + const Alignment(0.3, 0);
+        return Alignment.centerLeft + const Alignment(0.5, 0);
       case 2:
-        return Alignment.centerLeft + const Alignment(0.7, 0);
-      case 3:
         return Alignment.center;
+      case 3:
+        return Alignment.centerRight - const Alignment(0.5, 0);
       case 4:
-        return Alignment.centerRight - const Alignment(0.7, 0);
-      case 5:
-        return Alignment.centerRight - const Alignment(0.3, 0);
-      case 6:
         return Alignment.centerRight;
 
       default:

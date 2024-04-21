@@ -1,5 +1,8 @@
 import 'package:baby_tracker/view/more/activities.dart';
 import 'package:baby_tracker/view/more/face_day.dart';
+import 'package:baby_tracker/view/more/guids.dart';
+import 'package:baby_tracker/view/more/toothPage1.dart';
+import 'package:baby_tracker/view/more/toothPgae.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 
@@ -30,26 +33,32 @@ class _MorePage extends State<MorePage> {
             Expanded(
               child: GridView(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Guids()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/activities.png",
+                              width: 90,
+                              height: 90,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Activites",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            ),
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/activities.png",
-                            width: 100,
-                            height: 90,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Activites",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
-                          ),
-                        ]),
                   ),
                   InkWell(
                     onTap: () {
@@ -88,8 +97,8 @@ class _MorePage extends State<MorePage> {
                         children: [
                           Image.asset(
                             "assets/images/milestone.png",
-                            width: 100,
-                            height: 100,
+                            width: 90,
+                            height: 90,
                             fit: BoxFit.contain,
                           ),
                           Text(
@@ -128,26 +137,29 @@ class _MorePage extends State<MorePage> {
                           ]),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade100,
+                  InkWell(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/teeth.png",
+                              width: 90,
+                              height: 90,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              "Teeth",
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            ),
+                          ]),
                     ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/teeth.png",
-                            width: 90,
-                            height: 90,
-                            fit: BoxFit.contain,
-                          ),
-                          Text(
-                            "Teeth",
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
-                          ),
-                        ]),
                   ),
                   Container(
                     decoration: BoxDecoration(
