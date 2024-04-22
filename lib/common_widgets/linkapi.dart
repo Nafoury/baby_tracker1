@@ -64,3 +64,8 @@ const String linkAddFaceImage = "$linkServerName/faceDay/add.php";
 const String linkReadFaceImage = "$linkServerName/faceDay/read.php";
 const String linkDeleteFaceImage = "$linkServerName/faceDay/delete.php";
 const String linkUpdateFaceImage = "$linkServerName/faceDay/edit.php";
+
+const String linkAddTooth = "$linkServerName/baby_teeth/add.php";
+const String linkUpdateTooth = "$linkServerName/baby_teeth/update.php";
+const String linkReadTooth = "$linkServerName/baby_teeth/read.php";
+const String linkDeleteTooth = "$linkServerName/baby_teeth/delete.php";
