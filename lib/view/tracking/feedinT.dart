@@ -1,13 +1,17 @@
 import 'package:baby_tracker/common_widgets/round_button.dart';
+import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/controller/feedingBottle.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:baby_tracker/models/bottleData.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
+import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/view/charts/nursingchart.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
 import 'package:baby_tracker/view/summary/bottleDataTable.dart';
+import 'package:baby_tracker/view/summary/nursingDataTabe.dart';
 import 'package:baby_tracker/view/summary/solidsDataTable.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
@@ -27,6 +31,7 @@ class _FeedingTracking extends State<FeedingTracking> {
   int selectedbutton = 0;
   BottleController bottleController = BottleController();
   SolidsController solidsController = SolidsController();
+  NursingController nursingController = NursingController();
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +196,34 @@ class _FeedingTracking extends State<FeedingTracking> {
                         const SizedBox(
                           height: 20,
                         ),
+                        if (selectedbutton == 0)
+                          Consumer<NursingDataProvider>(
+                            builder: (context, nursingDataProvider, child) {
+                              List<NusringData> nursingRecords =
+                                  nursingDataProvider.nursingRecords;
+                              return Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      'Overview',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  SizedBox(
+                                    height: 80,
+                                  ),
+                                  NursingDataTable(
+                                      nursingRecords: nursingRecords)
+                                ],
+                              );
+                            },
+                          ),
                         if (selectedbutton == 1)
                           Consumer<BottleDataProvider>(
                             builder: (context, bottleDataProvider, child) {

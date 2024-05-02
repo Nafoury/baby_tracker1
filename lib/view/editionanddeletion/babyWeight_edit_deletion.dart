@@ -58,7 +58,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -72,7 +72,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                       ),
                     ),
                     Text(
-                      "Add Weight",
+                      "Edit Weight",
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 14,
@@ -89,7 +89,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                       },
                       child: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red.shade200),
                       ),
                     )
                   ],

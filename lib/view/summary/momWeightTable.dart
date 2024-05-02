@@ -9,12 +9,29 @@ class WeightDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (weightRecords == null || weightRecords!.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: 150),
+        child: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/weigh_scale.png',
+                height: 90,
+                width: 90,
+              ),
+              Text("There's no mum's weight data available")
+            ],
+          ),
+        ),
+      );
+    }
     return DataTable(
       columnSpacing: 45,
       columns: [
         DataColumn(
             label: Text(
-              'Date & Time',
+              'Date',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
             ),

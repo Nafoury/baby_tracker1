@@ -51,6 +51,7 @@ class BalanceWeight extends StatelessWidget {
               onChange: (newValue) {
                 // newValue is the newly selected weight
                 onWeightChanged(double.parse(newValue!));
+                selectedValue = newValue;
               },
             ),
           ],

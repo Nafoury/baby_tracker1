@@ -29,7 +29,6 @@ class _BabyProfileEditAndDeletionState
   late TextEditingController heightController;
   late String head;
   late TextEditingController headController;
-
   late BabyProvider babyProvider;
 
   @override
@@ -157,15 +156,52 @@ class _BabyProfileEditAndDeletionState
                       ),
                       onPressed: () {
                         if (widget.babyInfo.infoId != null) {
-                          babyProvider
-                              .deleteBabyRecord(widget.babyInfo.infoId!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Deletion"),
+                                content: Text(
+                                    "Are you sure you want to delete the baby"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      await babyProvider.deleteBabyRecord(
+                                          widget.babyInfo.infoId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Durations.medium1,
+                                          backgroundColor:
+                                              Tcolor.gray.withOpacity(0.4),
+                                          content: Text(
+                                              "Record was successfully deleted."),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+
+                                      // Go back to the previous page
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         }
                       },
                       child: Text(
                         'Delete a child',
                         style: TextStyle(
                             fontSize: 15,
-                            color: Colors.red.shade300,
+                            color: Colors.red.shade200,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -177,12 +213,22 @@ class _BabyProfileEditAndDeletionState
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        babyProvider.editBabyRecord(BabyInfo(
+                          babyName: nameController.text,
+                          gender: status,
+                          dateOfBirth: startDate,
+                          babyHeight: double.tryParse(height),
+                          babyWeight: double.tryParse(weight),
+                          babyhead: double.tryParse(head),
+                          infoId: widget.babyInfo.infoId!,
+                        ));
+                      },
                       child: Text(
                         'Edit a child',
                         style: TextStyle(
                             fontSize: 15,
-                            color: Colors.red.shade300,
+                            color: Colors.blue.shade300,
                             fontWeight: FontWeight.w500),
                       ),
                     ),

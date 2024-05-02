@@ -25,8 +25,20 @@ class _AddVaccineState extends State<AddVaccine> {
 
   @override
   void didChangeDependencies() {
-    vaccineProvider = Provider.of<VaccineProvider>(context, listen: false);
+    vaccineProvider = Provider.of<VaccineProvider>(context, listen: true);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkVaccineDiaperData(DateTime startDate) async {
+    List<VaccineData> existingData = await vaccineProvider.getVaccineRecords();
+    bool duplicateExists = existingData.any((vaccine) =>
+        vaccine.type == status &&
+        vaccine.date!.year == startDate.year &&
+        vaccine.date!.month == startDate.month &&
+        vaccine.date!.day == startDate.day &&
+        vaccine.date!.hour == startDate.hour &&
+        vaccine.date!.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -91,9 +103,89 @@ class _AddVaccineState extends State<AddVaccine> {
                   SizedBox(height: 30),
                   RoundButton(
                       onpressed: () async {
-                        vaccineProvider.addVaccineRecord(VaccineData(
-                            date: startDate, type: status, note: _note1.text));
-                        Navigator.of(context).pop();
+                        if (status.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png",
+                                    height: 60, width: 60),
+                                content: Text(
+                                  "Vaccine can't be empty",
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
+                        bool exisitngData =
+                            await _checkVaccineDiaperData(startDate);
+                        if (exisitngData) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png"),
+                                content: Text(
+                                  'Vaccine data of the same type, date, and hour already exists.',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          vaccineProvider.addVaccineRecord(VaccineData(
+                              date: startDate,
+                              type: status,
+                              note: _note1.text));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/check.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                  'Vaccine Data was successfully added',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          setState(() {
+                            startDate = DateTime.now();
+                            _note1.clear();
+                            status = '';
+                          });
+                        }
                       },
                       title: "Save Vaccine")
                 ],

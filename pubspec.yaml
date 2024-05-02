@@ -63,6 +63,9 @@ dependencies:
   timezone: ^0.9.2
   flutter_timezone: ^1.0.8
   image_picker: ^1.1.0
+ 
+  
+  
 
 dev_dependencies:
   flutter_test:
@@ -142,6 +145,18 @@ flutter:
     - assets/images/mum_handle.jpeg
     - assets/images/teeth_jaw.jpg
     - assets/images/calendar.png
+    - assets/images/check.png
+    - assets/images/warning.png
+    - assets/images/change.png
+    - assets/images/pillow.png
+    - assets/images/diaper.png
+    - assets/images/measure.png
+    - assets/images/weigh_scale.png
+    - assets/images/bottledata.png
+    - assets/images/baby_food.png
+    - assets/images/temperature.png
+    - assets/images/injection.png
+    - assets/images/meds.png
 
 
 

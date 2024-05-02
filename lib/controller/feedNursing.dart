@@ -17,7 +17,7 @@ class NursingController {
           "left_duration": nusringData.leftDuration,
           "date": nusringData.date.toString(),
           "nursing_side": nusringData.nursingSide,
-          "starting_breast": nusringData.startingBreast,
+          "starting_side": nusringData.startingBreast,
           "right_duration": nusringData.rightDuration,
           "baby_id": sharedPref.getString("info_id")
         },
@@ -71,6 +71,68 @@ class NursingController {
     } catch (e) {
       print("Error: $e");
       return []; // Return an empty list in case of an error
+    }
+  }
+
+  Future<bool> deleteRecord(int nursingId) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkDeleteNursing, {
+          "feed_id": nursingId.toString(),
+        });
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+      }
+      return false;
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> editRecord(NusringData nusringData) async {
+    try {
+      // Check for internet connectivity
+      ConnectivityResult connectivityResult =
+          await Connectivity().checkConnectivity();
+      bool isOnline = (connectivityResult != ConnectivityResult.none);
+
+      if (isOnline) {
+        var response = await crud.postrequest(linkUpdateNursing, {
+          "left_duration": nusringData.leftDuration,
+          "date": nusringData.date.toString(),
+          "nursing_side": nusringData.nursingSide,
+          "starting_side": nusringData.startingBreast,
+          "right_duration": nusringData.rightDuration,
+          "feed_id": nusringData.feedId.toString(),
+        });
+        // Print the response for debugging
+        print('Server response: $response');
+
+        if (response['status'] == 'success') {
+          return true;
+        }
+        return false;
+      } else {
+        // Handle the case where there is no internet connection
+        print('No internet connection. Cannot update data.');
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the update process
+      print("Error: $e");
+      return false;
     }
   }
 }

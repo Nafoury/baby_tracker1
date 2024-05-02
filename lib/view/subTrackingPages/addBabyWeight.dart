@@ -23,7 +23,7 @@ class _WeightPageState extends State<BabyWeightPage> {
 
   @override
   void didChangeDependencies() {
-    weightProvider = Provider.of<WeightProvider>(context, listen: false);
+    weightProvider = Provider.of<WeightProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 

@@ -15,6 +15,23 @@ class SolidsDataTable extends StatelessWidget {
     return Consumer<SolidsProvider>(
       builder: (context, solidsProvider, child) {
         List<SolidsData> solidsRecords = solidsProvider.solidsRecords;
+        if (solidsRecords == null || solidsRecords!.isEmpty) {
+          return Padding(
+            padding: EdgeInsets.only(top: 150),
+            child: Center(
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/images/baby_food.png',
+                    height: 90,
+                    width: 90,
+                  ),
+                  Text("There's no solids data available")
+                ],
+              ),
+            ),
+          );
+        }
         return DataTable(
           columnSpacing: 10,
           columns: [

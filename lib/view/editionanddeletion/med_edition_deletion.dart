@@ -1,17 +1,16 @@
 import 'dart:ffi';
 import 'package:baby_tracker/common_widgets/crud.dart';
-import 'package:baby_tracker/common_widgets/linkapi.dart';
-import 'package:baby_tracker/common_widgets/round_button.dart';
 
+import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/medData.dart';
 import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:provider/provider.dart';
 
 class MediciationEdit extends StatefulWidget {
@@ -48,7 +47,7 @@ class _MediciationEditState extends State<MediciationEdit> {
   @override
   void didChangeDependencies() {
     medicationsProvider =
-        Provider.of<MedicationsProvider>(context, listen: false);
+        Provider.of<MedicationsProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -67,11 +66,11 @@ class _MediciationEditState extends State<MediciationEdit> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Get.offAllNamed("/mainTab");
+                        Navigator.pop(context);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
@@ -80,16 +79,14 @@ class _MediciationEditState extends State<MediciationEdit> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
                     Text(
-                      "Mediciation",
+                      "Edit Mediciation",
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 48),
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.medId != null) {
@@ -100,7 +97,7 @@ class _MediciationEditState extends State<MediciationEdit> {
                       },
                       child: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red.shade200),
                       ),
                     )
                   ],

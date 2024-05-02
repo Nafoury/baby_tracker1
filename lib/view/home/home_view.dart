@@ -1,29 +1,24 @@
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/activites.dart';
-import 'package:baby_tracker/common_widgets/crud.dart';
-import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/babyinfo.dart';
 import 'package:baby_tracker/models/bottleData.dart';
+import 'package:baby_tracker/models/diaperData.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/sleepData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/models/tempData.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
+import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
-import 'package:baby_tracker/provider/tempProvider.dart';
 import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:baby_tracker/view/home/feeding_view.dart';
 import 'package:baby_tracker/view/home/sleeping_view.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:baby_tracker/view/profiles/mom_profile.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
-import 'package:baby_tracker/models/diaperData.dart';
-import 'package:baby_tracker/view/main_tab/main_tab.dart';
-import 'package:baby_tracker/common_widgets/crud.dart';
-import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baby_tracker/view/login/complete_info.dart';
@@ -44,41 +39,61 @@ class _HomeViewState extends State<HomeView> {
   late String firstName = '';
   late String dateOfBirthString = '';
   late List<DiaperData> diapersRecords = [];
-  late List<SleepData> sleepRecords = [];
   late List<SolidsData> solidsRecords = [];
   late List<BottleData> bottleRecords = [];
   late List<BabyInfo> babyRecords = [];
+  late List<TempData> tempRecords = [];
+  late List<SleepData> sleepRecords = [];
+  late List<NusringData> nursingRecords = [];
   BabyInfo babyInfo = BabyInfo();
   late DiaperProvider diaperProvider;
+  late BabyProvider babyProvider;
   late SleepProvider sleepProvider;
   late SolidsProvider solidsProvider;
   late BottleDataProvider bottleDataProvider;
-  late BabyProvider babyProvider;
+  late NursingDataProvider nursingDataProvider;
 
-  Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
+  Future<void> fetchNursingData(NursingDataProvider nursingDataProvider) async {
+    try {
+      List<NusringData> record = await nursingDataProvider.getNursingRecords();
+
+      print('Fetched baby Records: $record');
+      setState(() {
+        nursingRecords = record;
+        print('Fetched baby Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching baby records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchBabyData(BabyProvider babyProvider) async {
+    try {
+      List<BabyInfo> record = await babyProvider.getbabyRecords();
+
+      print('Fetched baby Records: $record');
+      setState(() {
+        babyRecords = record;
+        print('Fetched baby Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching baby records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchDiaperRecords(DiaperProvider diaperProvider) async {
     try {
       List<DiaperData> records = await diaperProvider.getMedicationRecords();
       print('Fetched diapers Records: $records');
       setState(() {
         diapersRecords = records;
         print('Fetched diapers Records: $records');
+        updatestatusBoxes();
       });
     } catch (e) {
       print('Error fetching diapers records: $e');
-      // Handle error here
-    }
-  }
-
-  Future<void> fetchSleepRecords(SleepProvider sleepProvider) async {
-    try {
-      List<SleepData> record = await sleepProvider.getSleepRecords();
-      print('Fetched sleep Records: $record');
-      setState(() {
-        sleepRecords = record;
-        print('Fetched sleep Records: $record');
-      });
-    } catch (e) {
-      print('Error fetching sleep records: $e');
       // Handle error here
     }
   }
@@ -111,17 +126,69 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  Future<void> fetchBabyData(BabyProvider babyProvider) async {
+  Future<void> fetchSleepRecords(SleepProvider sleepProvider) async {
     try {
-      List<BabyInfo> record = await babyProvider.getbabyRecords();
-      print('Fetched baby Records: $record');
+      List<SleepData> record = await sleepProvider.getSleepRecords();
+      print('Fetched sleep Records: $record');
       setState(() {
-        babyRecords = record;
-        print('Fetched baby Records: $record');
+        sleepRecords = record;
+        print('Fetched sleep Records: $record');
+        updateSleepBoxes();
       });
     } catch (e) {
-      print('Error fetching baby records: $e');
+      print('Error fetching sleep records: $e');
       // Handle error here
+    }
+  }
+
+  void updatestatusBoxes() {
+    if (diapersRecords.isNotEmpty) {
+      DiaperData diaperData = diapersRecords.last;
+
+      String status = diaperData.status;
+      String dateTimeString = diaperData.startDate.toString();
+
+      // Splitting the date and time parts
+      List<String> dateTimeParts = dateTimeString.split(" ");
+      String datePart = dateTimeParts[0]; // Date part remains unchanged
+      String timePart = dateTimeParts[1]; // Time part to be modified
+
+      // Splitting the time string by ":" to get hours, minutes, and seconds
+      List<String> timeParts = timePart.split(":");
+      // Constructing the time string with only hours and minutes
+      String modifiedTime = "${timeParts[0]}:${timeParts[1]}";
+
+      // Joining the modified time with the date part
+      String updatedDateTimeString = "$datePart $modifiedTime";
+
+      setState(() {
+        todaySleepArr[1]["status"] = status;
+        todaySleepArr[1]["time"] =
+            updatedDateTimeString; // Assigning the updated date and time string
+      });
+    }
+  }
+
+  void updateSleepBoxes() {
+    if (sleepRecords.isNotEmpty) {
+      SleepData sleepData = sleepRecords.last;
+      String startTime1 = sleepData.startDate.toString().substring(6, 16);
+      // Extracting time from start and end DateTime objects
+      String startTime =
+          sleepData.startDate.toString().split(" ")[1].substring(0, 5);
+      String endTime =
+          sleepData.endDate.toString().split(" ")[1].substring(0, 5);
+      String durationString =
+          sleepData.duration != null ? '${sleepData.duration!}' : 'Unknown';
+
+      setState(() {
+        todaySleepArr[0]["Start"] = startTime;
+        todaySleepArr[0]["End"] = endTime;
+        todaySleepArr[0]["duration"] =
+            durationString.toString(); // Update duration to show in minutes
+        todaySleepArr[0]["time"] =
+            startTime1; // Also setting the time separately
+      });
     }
   }
 
@@ -130,17 +197,20 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     loadDataFromSharedPreferences();
     startWeekUpdateTimer();
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    fetchBabyData(babyProvider);
     diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
-    fetchMedicationRecords(diaperProvider);
-    sleepProvider = Provider.of<SleepProvider>(context, listen: false);
-    fetchSleepRecords(sleepProvider);
+    fetchDiaperRecords(diaperProvider);
     solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
     fetchSolidsRecords(solidsProvider);
     bottleDataProvider =
         Provider.of<BottleDataProvider>(context, listen: false);
     fetchBottleData(bottleDataProvider);
-    babyProvider = Provider.of<BabyProvider>(context, listen: false);
-    fetchBabyData(babyProvider);
+    sleepProvider = Provider.of<SleepProvider>(context, listen: false);
+    fetchSleepRecords(sleepProvider);
+    nursingDataProvider =
+        Provider.of<NursingDataProvider>(context, listen: false);
+    fetchNursingData(nursingDataProvider);
   }
 
   loadDataFromSharedPreferences() async {
@@ -231,6 +301,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: Padding(

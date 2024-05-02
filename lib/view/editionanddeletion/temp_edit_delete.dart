@@ -10,6 +10,7 @@ import 'package:baby_tracker/shapes/temp4.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -54,6 +55,18 @@ class _TempEditState extends State<TempEdit> {
     super.didChangeDependencies();
   }
 
+  Future<bool> _checkDuplicateTempData(DateTime startDate) async {
+    List<TempData> existingData = await tempProvider.getTempRecords();
+    bool duplicateExists = existingData.any((temp) =>
+        temp.temp == temperature.value &&
+        temp.date!.year == startDate.year &&
+        temp.date!.month == startDate.month &&
+        temp.date!.day == startDate.day &&
+        temp.date!.hour == startDate.hour &&
+        temp.date!.minute == startDate.minute);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildTrackingInfo();
@@ -63,49 +76,84 @@ class _TempEditState extends State<TempEdit> {
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Get.offAllNamed("/mainTab");
-                      },
-                      icon: Image.asset(
-                        "assets/images/back_Navs.png",
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.fitHeight,
-                      ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      // Get.offAllNamed("/mainTab");
+                    },
+                    icon: Image.asset(
+                      "assets/images/back_Navs.png",
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.fitHeight,
                     ),
-                    Text(
-                      "Tempreture",
-                      style: TextStyle(
-                        color: Tcolor.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  ),
+                  Text(
+                    "Tempreture",
+                    style: TextStyle(
+                      color: Tcolor.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        if (widget.entryData.tempId != null) {
-                          tempProvider
-                              .deleteTempRecord(widget.entryData.tempId!);
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    )
-                  ],
-                ),
-                Column(
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (widget.entryData.tempId != null) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Confirm Deletion"),
+                              content: Text(
+                                  "Are you sure you want to delete this record?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    tempProvider.deleteTempRecord(
+                                        widget.entryData.tempId!);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration: Durations.medium1,
+                                        backgroundColor:
+                                            Tcolor.gray.withOpacity(0.4),
+                                        content: Text(
+                                            "Record was successfully deleted."),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+
+                                    // Go back to the previous page
+                                  },
+                                  child: Text("Delete"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red.shade200),
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
                   children: [
                     Row(
                       children: [
@@ -128,20 +176,72 @@ class _TempEditState extends State<TempEdit> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                RoundButton(
-                    onpressed: () {
-                      if (widget.entryData.tempId != null) {
+              ),
+              SizedBox(height: 20),
+              RoundButton(
+                  onpressed: () async {
+                    if (widget.entryData.tempId != null) {
+                      bool duplicateExists =
+                          await _checkDuplicateTempData(date!);
+                      if (duplicateExists) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/warning.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content: Text(
+                                  "Diaper data of the same type, date, and hour already exists."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      } else {
                         tempProvider.editTempRecord(TempData(
                             date: date,
                             temp: temperature.value,
                             note: note,
                             tempId: widget.entryData.tempId));
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/change.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content:
+                                  Text("Diaper Data was successfully updated."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
-                    },
-                    title: "Save changes")
-              ],
-            ),
+                    }
+                  },
+                  title: "Save changes"),
+            ],
           ),
         ),
       ),

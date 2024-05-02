@@ -23,6 +23,23 @@ class _DiaperDataTableState extends State<DiaperDataTable> {
     return Consumer<DiaperProvider>(
       builder: (context, diaperProvider, child) {
         List<DiaperData> diaperRecords = diaperProvider.diaperRecords;
+        if (diaperRecords == null || diaperRecords!.isEmpty) {
+          return Padding(
+            padding: EdgeInsets.only(top: 150),
+            child: Center(
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/images/diaper.png',
+                    height: 90,
+                    width: 90,
+                  ),
+                  Text("There's no diaper data available")
+                ],
+              ),
+            ),
+          );
+        }
         return DataTable(
           columnSpacing: 22,
           columns: [

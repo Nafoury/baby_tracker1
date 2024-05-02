@@ -10,6 +10,8 @@ class TempChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<TempData> chartData = [];
+    TempData tempData;
+    late DateTime selectedDate;
 
     // Convert temperature data
     tempRecords.forEach((tempData) {
@@ -32,7 +34,7 @@ class TempChart extends StatelessWidget {
         : DateTime.now();
 
     // Adjust the axis range to include all data points
-    double hourInterval = 4;
+    double hourInterval = 2;
     DateTimeAxis primaryXAxis = DateTimeAxis(
       dateFormat: DateFormat.Hm(),
       intervalType: DateTimeIntervalType.hours,
@@ -41,24 +43,26 @@ class TempChart extends StatelessWidget {
       maximum: DateTime(maxDate.year, maxDate.month, maxDate.day, 23, 59),
     );
 
-    return Container(
-      height: 400,
-      child: SfCartesianChart(
-        primaryXAxis: primaryXAxis,
-        primaryYAxis: NumericAxis(
-          minimum: 37,
-          maximum: 42,
-          interval: 1,
-        ),
-        series: <CartesianSeries>[
-          ScatterSeries<TempData, DateTime>(
-            dataSource: chartData,
-            xValueMapper: (TempData temp, _) => temp.date,
-            yValueMapper: (TempData temp, _) => temp.temp,
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(
+        height: 400,
+        child: SfCartesianChart(
+          primaryXAxis: primaryXAxis,
+          primaryYAxis: NumericAxis(
+            minimum: 37,
+            maximum: 42,
+            interval: 1,
           ),
-        ],
+          series: <CartesianSeries>[
+            ScatterSeries<TempData, DateTime>(
+              dataSource: chartData,
+              xValueMapper: (TempData temp, _) => temp.date,
+              yValueMapper: (TempData temp, _) => temp.temp,
+            ),
+          ],
+        ),
       ),
-    );
+    ]);
   }
 
   // Function to convert temperature

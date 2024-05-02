@@ -64,7 +64,9 @@ class _MomProfileState extends State<MomProfile> {
                       fontWeight: FontWeight.w700),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     'Close',
                     style: TextStyle(color: Colors.blue.shade200),

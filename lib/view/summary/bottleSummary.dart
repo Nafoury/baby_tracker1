@@ -126,13 +126,14 @@ class FeedingSummaryTable extends StatelessWidget {
 
   Duration _parseDuration(String durationString) {
     List<String> parts = durationString.split(':');
-    int minutes = int.parse(parts[0]);
-    int seconds = int.parse(parts[1]);
-    return Duration(minutes: minutes, seconds: seconds);
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    int seconds = int.parse(parts[2]);
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
   }
 
   String _formatDuration(Duration? duration) {
     if (duration == null) return '0:00';
-    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    return '${duration.inMinutes}m${(duration.inSeconds % 60).toString().padLeft(1, '0')}s';
   }
 }

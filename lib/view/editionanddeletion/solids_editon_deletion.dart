@@ -2,16 +2,14 @@ import 'dart:ffi';
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/models/diaperData.dart';
-import 'package:baby_tracker/models/medData.dart';
+
 import 'package:baby_tracker/models/solidsData.dart';
-import 'package:baby_tracker/models/vaccineData.dart';
-import 'package:baby_tracker/provider/medications_provider.dart';
+
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:baby_tracker/provider/vaccine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
@@ -70,8 +68,19 @@ class _SolidsEditState extends State<SolidsEdit> {
 
   @override
   void didChangeDependencies() {
-    solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
+    solidsProvider = Provider.of<SolidsProvider>(context, listen: true);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkDuplicateSolidsData(DateTime startDate) async {
+    List<SolidsData> existingData = await solidsProvider.getSolidsRecords();
+    bool duplicateExists = existingData.any((solids) =>
+        solids.date!.year == startDate.year &&
+        solids.date!.month == startDate.month &&
+        solids.date!.day == startDate.day &&
+        solids.date!.hour == startDate.hour &&
+        solids.date!.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -83,54 +92,87 @@ class _SolidsEditState extends State<SolidsEdit> {
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Get.offAllNamed("/mainTab");
-                      },
-                      icon: Image.asset(
-                        "assets/images/back_Navs.png",
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.fitHeight,
-                      ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      // Get.offAllNamed("/mainTab");
+                    },
+                    icon: Image.asset(
+                      "assets/images/back_Navs.png",
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.fitHeight,
                     ),
-                    SizedBox(width: 85),
-                    Text(
-                      "Solids",
-                      style: TextStyle(
-                        color: Tcolor.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  ),
+                  Text(
+                    "Edit Solids",
+                    style: TextStyle(
+                      color: Tcolor.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
-                    SizedBox(width: 70),
-                    TextButton(
-                      onPressed: () {
-                        if (widget.entryData.solidId != null) {
-                          solidsProvider
-                              .deleteSolidsRecord(widget.entryData.solidId!);
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                ListView.separated(
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (widget.entryData.solidId != null) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Confirm Deletion"),
+                              content: Text(
+                                  "Are you sure you want to delete this record?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    solidsProvider.deleteSolidsRecord(
+                                        widget.entryData.solidId!);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration: Durations.medium1,
+                                        backgroundColor:
+                                            Tcolor.gray.withOpacity(0.4),
+                                        content: Text(
+                                            "Record was successfully deleted."),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+
+                                    // Go back to the previous page
+                                  },
+                                  child: Text("Delete"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red.shade200),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: ListView.separated(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     separatorBuilder: (BuildContext context, int index) {
@@ -419,26 +461,80 @@ class _SolidsEditState extends State<SolidsEdit> {
                           return SizedBox();
                       }
                     }),
-                SizedBox(height: 20),
-                RoundButton(
-                    onpressed: () {
-                      solidsProvider.editSolidsRecord(SolidsData(
-                          date: startDate,
-                          fruits: int.parse(fruitController
-                              .text), // Retrieve value from controller
-                          grains: int.parse(grainController
-                              .text), // Retrieve value from controller
-                          veg: int.parse(vegController
-                              .text), // Retrieve value from controller
-                          protein: int.parse(proteinController
-                              .text), // Retrieve value from controller
-                          dairy: int.parse(dairyController.text), //
-                          note: note,
-                          solidId: widget.entryData.solidId));
-                    },
-                    title: "Save changes")
-              ],
-            ),
+              ),
+              SizedBox(height: 60),
+              RoundButton(
+                  onpressed: () async {
+                    if (widget.entryData.solidId != null) {
+                      bool duplicateExists =
+                          await _checkDuplicateSolidsData(startDate!);
+                      if (duplicateExists) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/warning.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content: Text(
+                                  "Solids data of the same amount, date, and hour already exists."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      } else {
+                        solidsProvider.editSolidsRecord(SolidsData(
+                            date: startDate,
+                            fruits: int.parse(fruitController
+                                .text), // Retrieve value from controller
+                            grains: int.parse(grainController
+                                .text), // Retrieve value from controller
+                            veg: int.parse(vegController
+                                .text), // Retrieve value from controller
+                            protein: int.parse(proteinController
+                                .text), // Retrieve value from controller
+                            dairy: int.parse(dairyController.text), //
+                            note: note,
+                            solidId: widget.entryData.solidId));
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/change.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content:
+                                  Text("Solids Data was successfully updated."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  },
+                  title: "Save changes"),
+            ],
           ),
         ),
       ),

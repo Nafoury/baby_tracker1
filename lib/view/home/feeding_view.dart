@@ -8,18 +8,16 @@ import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:baby_tracker/common_widgets/addingactivites.dart';
-import 'package:baby_tracker/common_widgets/babybottle.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:baby_tracker/common_widgets/volumebottle.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/controller/feedingBottle.dart';
-import 'dart:convert';
-import 'package:intl/intl.dart';
-import 'dart:math' as math;
 import 'package:baby_tracker/view/summary/bottleSummary.dart';
 import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:provider/provider.dart';
@@ -55,12 +53,53 @@ class _FeedingViewState extends State<FeedingView> {
   late SolidsProvider solidsProvider;
   late BottleDataProvider bottleDataProvider;
 
+  Future<void> fetchBottleData(BottleDataProvider bottleDataProvider) async {
+    try {
+      List<BottleData> record = await bottleDataProvider.getBottleRecords();
+      print('Fetched bottle Records: $record');
+      setState(() {
+        bottleRecords = record;
+        print('Fetched bottle Records: $record');
+      });
+    } catch (e) {
+      print('Error fetching bottle records: $e');
+      // Handle error here
+    }
+  }
+
   @override
   void didChangeDependencies() {
-    solidsProvider = Provider.of<SolidsProvider>(context, listen: false);
-    bottleDataProvider =
-        Provider.of<BottleDataProvider>(context, listen: false);
+    solidsProvider = Provider.of<SolidsProvider>(context, listen: true);
+    bottleDataProvider = Provider.of<BottleDataProvider>(context, listen: true);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkDuplicateBottleData(DateTime startDate) async {
+    List<BottleData> existingData = await bottleDataProvider.getBottleRecords();
+    bool duplicateExists = existingData.any((bottle) =>
+        bottle.amount == mlValue &&
+        bottle.startDate!.year == startDate.year &&
+        bottle.startDate!.month == startDate.month &&
+        bottle.startDate!.day == startDate.day &&
+        bottle.startDate!.hour == startDate.hour &&
+        bottle.startDate!.minute == startDate.minute);
+    return duplicateExists;
+  }
+
+  Future<bool> _checkDuplicateSolidsData(DateTime startDate) async {
+    List<SolidsData> existingData = await solidsProvider.getSolidsRecords();
+    bool duplicateExists = existingData.any((solids) =>
+        solids.fruits == fruit &&
+        solids.veg == veg &&
+        solids.protein == protein &&
+        solids.grains == grains &&
+        solids.dairy == dairy &&
+        solids.date!.year == startDate.year &&
+        solids.date!.month == startDate.month &&
+        solids.date!.day == startDate.day &&
+        solids.date!.hour == startDate.hour &&
+        solids.date!.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -258,16 +297,16 @@ class _FeedingViewState extends State<FeedingView> {
                       ),
                       if (selectedbutton == 0) RoundButton1(),
                       if (selectedbutton == 1)
-                        Column(
-                          children: [
-                            BabyBottleSelector(
-                                onMlValueChanged: (double value) {
-                              setState(() {
-                                mlValue = value;
-                              });
-                            }),
-                            SizedBox(height: 20),
-                            TrackingWidget(
+                        Column(children: [
+                          BabyBottleSelector(onMlValueChanged: (double value) {
+                            setState(() {
+                              mlValue = value;
+                            });
+                          }),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: TrackingWidget(
                               trackingType: TrackingType.Feeding,
                               feedingSubtype: FeedingSubtype.bottle,
                               controller: _note,
@@ -281,83 +320,150 @@ class _FeedingViewState extends State<FeedingView> {
                                 _note.text = note;
                               },
                             ),
-                            SizedBox(height: 90),
-                            RoundButton(
-                              onpressed: () async {
-                                if (mlValue.isEqual(0)) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title:
-                                            Text('You have to fill the bottle'),
-                                        content:
-                                            Text("Liquied amount is required"),
-                                      );
-                                    },
-                                  );
-                                  return;
-                                }
+                          ),
+                          SizedBox(height: 90),
+                          RoundButton(
+                            onpressed: () async {
+                              if (mlValue.isEqual(0)) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Image.asset(
+                                          "assets/images/warning.png",
+                                          height: 60,
+                                          width: 60),
+                                      content: Text(
+                                        "liquied amount can't be empty",
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.normal),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("OK"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                return;
+                              }
+                              bool duplicateExists =
+                                  await _checkDuplicateBottleData(startDate);
+                              if (duplicateExists) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Image.asset(
+                                          height: 50,
+                                          width: 50,
+                                          "assets/images/warning.png"),
+                                      content: Text(
+                                        'Bottle data of the same amount, date, and hour already exists.',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.normal),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("OK"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                return;
+                              } else {
                                 bottleDataProvider.addBottleData(BottleData(
                                     startDate: startDate,
                                     amount: mlValue,
                                     note: _note.text,
                                     babyId: sharedPref.getString("info_id")));
-                                Navigator.of(context).pop();
-                              },
-                              title: "save feed",
-                            )
-                          ],
-                        ),
+
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Image.asset(
+                                        "assets/images/check.png",
+                                        height: 60,
+                                        width: 60,
+                                      ),
+                                      content: Text(
+                                        'Bottle Data was successfully added',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.normal),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("OK"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                setState(() {
+                                  startDate = DateTime.now();
+                                  _note.clear();
+                                  mlValue = 0;
+                                });
+                              }
+                            },
+                            title: "Save Feed",
+                          ),
+                        ]),
                       if (selectedbutton == 2)
                         Column(
                           children: [
-                            TrackingWidget(
-                                trackingType: TrackingType.Feeding,
-                                feedingSubtype: FeedingSubtype.solids,
-                                startDate: startDate,
-                                controller: _note,
-                                controller1: _fruit,
-                                controller2: _veg,
-                                controller3: _grain,
-                                controller4: _protein,
-                                controller5: _dairy,
-                                onDateStratTimeChanged:
-                                    (DateTime newStartDate) {
-                                  setState(() {
-                                    startDate = newStartDate;
-                                  });
-                                },
-                                onNoteChanged: (String note) {
-                                  _note.text = note;
-                                },
-                                onDairyChanged: (int value) {
-                                  dairy = value;
-                                },
-                                onFruitChanged: (int value) {
-                                  fruit = value;
-                                },
-                                onGrainsChanged: (int value) {
-                                  grains = value;
-                                },
-                                onProteinChanged: (int value) {
-                                  protein = value;
-                                },
-                                onVegChanged: (int value) {
-                                  veg = value;
-                                }),
+                            Padding(
+                              padding: EdgeInsets.all(5),
+                              child: TrackingWidget(
+                                  trackingType: TrackingType.Feeding,
+                                  feedingSubtype: FeedingSubtype.solids,
+                                  startDate: startDate,
+                                  controller: _note,
+                                  controller1: _fruit,
+                                  controller2: _veg,
+                                  controller3: _grain,
+                                  controller4: _protein,
+                                  controller5: _dairy,
+                                  onDateStratTimeChanged:
+                                      (DateTime newStartDate) {
+                                    setState(() {
+                                      startDate = newStartDate;
+                                    });
+                                  },
+                                  onNoteChanged: (String note) {
+                                    _note.text = note;
+                                  },
+                                  onDairyChanged: (int value) {
+                                    dairy = value;
+                                  },
+                                  onFruitChanged: (int value) {
+                                    fruit = value;
+                                  },
+                                  onGrainsChanged: (int value) {
+                                    grains = value;
+                                  },
+                                  onProteinChanged: (int value) {
+                                    protein = value;
+                                  },
+                                  onVegChanged: (int value) {
+                                    veg = value;
+                                  }),
+                            ),
                             SizedBox(height: 50),
                             RoundButton(
                               onpressed: () async {
-                                solidsProvider.addSolidsData(SolidsData(
-                                    date: startDate,
-                                    note: _note.text,
-                                    dairy: dairy,
-                                    fruits: fruit,
-                                    grains: grains,
-                                    protein: protein,
-                                    veg: veg));
-
                                 int totalAmount = (fruit ?? 0) +
                                     (veg ?? 0) +
                                     (protein ?? 0) +
@@ -370,6 +476,10 @@ class _FeedingViewState extends State<FeedingView> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
+                                        title: Image.asset(
+                                            height: 70,
+                                            width: 70,
+                                            "assets/images/warning.png"),
                                         content: Text(
                                           "Total amount should be between 15g and 700g.",
                                           style: TextStyle(
@@ -382,16 +492,81 @@ class _FeedingViewState extends State<FeedingView> {
                                   );
                                   return;
                                 }
+                                bool duplicateExists =
+                                    await _checkDuplicateSolidsData(startDate);
+                                if (duplicateExists) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Image.asset(
+                                            height: 50,
+                                            width: 50,
+                                            "assets/images/warning.png"),
+                                        content: Text(
+                                          'Solids data of the same amount, date, and hour already exists.',
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.normal),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  return;
+                                } else {
+                                  solidsProvider.addSolidsData(SolidsData(
+                                      date: startDate,
+                                      note: _note.text,
+                                      dairy: dairy,
+                                      fruits: fruit,
+                                      grains: grains,
+                                      protein: protein,
+                                      veg: veg));
 
-                                _note.clear();
-                                _fruit.clear();
-                                _veg.clear();
-                                _grain.clear();
-                                _protein.clear();
-                                _dairy.clear();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Image.asset(
+                                          "assets/images/check.png",
+                                          height: 60,
+                                          width: 60,
+                                        ),
+                                        content: Text(
+                                          'Solids Data was successfully added',
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.normal),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  setState(() {
+                                    _note.clear();
+                                    _fruit.clear();
+                                    _veg.clear();
+                                    _grain.clear();
+                                    _protein.clear();
+                                    _dairy.clear();
+                                  });
+                                }
                               },
-                              title: "Save feed",
-                            )
+                              title: "Save Feed",
+                            ),
                           ],
                         ),
                       if (selectedbutton == 3)

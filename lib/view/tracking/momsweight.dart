@@ -6,6 +6,7 @@ import 'package:baby_tracker/view/charts/weightChartMom.dart';
 import 'package:baby_tracker/view/subTrackingPages/momweight.dart';
 import 'package:baby_tracker/view/summary/momWeightTable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -46,63 +47,60 @@ class _MomWeightpageState extends State<MomWeightpage> {
     var media = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Tcolor.white,
-        body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-                child: SafeArea(
-                    child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Get.offAllNamed("/mainTab");
-                    },
-                    icon: Image.asset(
-                      "assets/images/back_Navs.png",
-                      width: 25,
-                      height: 25,
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 70,
-                  ),
-                  Text(
-                    "Mom's weight",
-                    style: TextStyle(
-                        color: Tcolor.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ],
+        body: SingleChildScrollView(
+            child: SafeArea(
+                child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Image.asset(
+                  "assets/images/back_Navs.png",
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.fitHeight,
+                ),
               ),
               SizedBox(
-                height: 20,
+                width: 70,
               ),
-              Consumer<MomWeightProvider>(
-                builder: (context, momweightProvider, child) {
-                  return Column(children: [
-                    WeightChart(weightRecords: weightRecords),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    RoundButton(
-                        onpressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WeightPage()),
-                          );
-                        },
-                        title: "Add Weight"),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    WeightDataTable(weightRecords: weightRecords)
-                  ]);
-                },
+              Text(
+                "Mom's weight",
+                style: TextStyle(
+                    color: Tcolor.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700),
               ),
-            ])))));
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Consumer<MomWeightProvider>(
+            builder: (context, momweightProvider, child) {
+              return Column(children: [
+                WeightChart(weightRecords: weightRecords),
+                SizedBox(
+                  height: 40,
+                ),
+                RoundButton(
+                    onpressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WeightPage()),
+                      );
+                    },
+                    title: "Add Weight"),
+                SizedBox(
+                  height: 40,
+                ),
+                WeightDataTable(weightRecords: weightRecords)
+              ]);
+            },
+          ),
+        ]))));
   }
 }

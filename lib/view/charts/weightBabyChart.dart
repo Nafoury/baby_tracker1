@@ -1,121 +1,88 @@
 import 'package:baby_tracker/models/babyWeight.dart';
-
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
-class WeightBabyChart extends StatelessWidget {
+class WeightChart extends StatelessWidget {
   final List<WeightData> weightRecords;
-  const WeightBabyChart({required this.weightRecords});
+
+  const WeightChart({required this.weightRecords});
 
   @override
   Widget build(BuildContext context) {
-    List<FlSpot> spots = [];
+    final Map<DateTime, List<WeightData>> monthlyData =
+        _groupDataByMonth(weightRecords);
 
-    // Convert weightRecords into FlSpot objects
-    for (int i = 0; i < weightRecords.length; i++) {
-      double x = i.toDouble(); // x-coordinate representing time
-      double y = weightRecords[i].weight!; // Parse weight as double
-      spots.add(FlSpot(x, y));
-    }
+    // Combine all data into a single list, including placeholder entries for missing months
+    final List<WeightData> allData = _createCompleteMonthlyData(monthlyData);
 
-    return SizedBox(
-      height: 300,
-      width: 500,
-      child: LineChart(LineChartData(
-        borderData: FlBorderData(
-          show: true,
-          border: const Border(
-            left: BorderSide(color: Colors.black),
-            top: BorderSide(color: Colors.transparent),
-            bottom: BorderSide(color: Colors.black),
-            right: BorderSide(color: Colors.transparent),
+    return Center(
+      child: Container(
+        width: 350,
+        height: 350,
+        child: SfCartesianChart(
+          legend: Legend(isVisible: false),
+          primaryXAxis: DateTimeAxis(
+            dateFormat: DateFormat.M(),
+            interval: 1,
+            minimum: DateTime(DateTime.now().year, 1, 1), // Minimum date
+            maximum: DateTime(DateTime.now().year, 12, 31), // Maximum date
+            majorGridLines: MajorGridLines(width: 1), // Hide grid lines
           ),
-        ),
-        titlesData: titlesData,
-        lineTouchData: LineTouchData(
-          touchTooltipData: LineTouchTooltipData(
-            maxContentWidth: 50,
-            tooltipBgColor: Colors.white,
-            getTooltipItems: (touchedSpots) {
-              return touchedSpots.map((LineBarSpot touchedSpot) {
-                final textStyle = TextStyle(
-                  color: touchedSpot.bar.gradient?.colors[0] ??
-                      touchedSpot.bar.color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                );
-                return LineTooltipItem(
-                  ' ${touchedSpot.y.toStringAsFixed(1)}',
-                  textStyle,
-                );
-              }).toList();
-            },
+          primaryYAxis: NumericAxis(
+            minimum: 0,
+            maximum: 20,
+            interval: 5,
           ),
-          handleBuiltInTouches: true,
-          getTouchLineStart: (data, index) => 0,
-        ),
-        lineBarsData: [
-          LineChartBarData(
-            color: Colors.blue.shade400,
-            spots: spots,
-            isCurved: true,
-            isStrokeCapRound: true,
-            barWidth: 3,
-            belowBarData: BarAreaData(
-              show: false,
+          series: <CartesianSeries>[
+            ScatterSeries<WeightData, DateTime>(
+              dataSource: allData,
+              xValueMapper: (WeightData data, _) => data.date!,
+              yValueMapper: (WeightData data, _) => data.weight,
+              markerSettings: MarkerSettings(
+                isVisible: true,
+                height: 8,
+                width: 8,
+                shape: DataMarkerType.circle,
+                color: Colors.blue,
+              ),
+              dataLabelSettings: DataLabelSettings(isVisible: true),
             ),
-            dotData: const FlDotData(show: true),
-          ),
-        ],
-      )),
+          ],
+        ),
+      ),
     );
   }
 
-  FlTitlesData get titlesData => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 20,
-            getTitlesWidget: (value, meta) {
-              DateTime date =
-                  DateTime.fromMillisecondsSinceEpoch(value.toInt());
-              return Text(
-                date.day.toString(),
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.black12.withOpacity(0.5),
-                  fontWeight: FontWeight.w700,
-                ),
-              );
-            },
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 23,
-            interval: 50,
-            getTitlesWidget: (value, meta) {
-              return Text(
-                value.toString(),
-                style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.black12.withOpacity(0.4),
-                    fontWeight: FontWeight.w700),
-              );
-            },
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
+  Map<DateTime, List<WeightData>> _groupDataByMonth(List<WeightData> data) {
+    final Map<DateTime, List<WeightData>> groupedData = {};
+
+    // Populate the lists with actual data
+    for (var record in data) {
+      final monthStart = DateTime(record.date!.year, record.date!.month, 1);
+      groupedData.update(
+        monthStart,
+        (existingData) => [...existingData, record],
+        ifAbsent: () => [record],
       );
+    }
+
+    return groupedData;
+  }
+
+  // Create a complete list of WeightData objects with placeholders for missing months
+  List<WeightData> _createCompleteMonthlyData(
+      Map<DateTime, List<WeightData>> monthlyData) {
+    final List<WeightData> allData = [];
+
+    for (var month = 1; month <= 12; month++) {
+      final monthStart = DateTime(DateTime.now().year, month, 1);
+      final existingData = monthlyData[monthStart] ?? [];
+
+      // Add existing data
+      allData.addAll(existingData);
+    }
+
+    return allData;
+  }
 }

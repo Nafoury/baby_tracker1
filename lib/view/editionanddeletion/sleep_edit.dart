@@ -73,7 +73,7 @@ class _SleepEditState extends State<SleepEdit> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -86,16 +86,14 @@ class _SleepEditState extends State<SleepEdit> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    const SizedBox(width: 85),
                     Text(
-                      "Sleep",
+                      "Edit Sleep",
                       style: TextStyle(
                         color: Tcolor.black,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(width: 80),
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.sleepId != null) {
@@ -103,9 +101,9 @@ class _SleepEditState extends State<SleepEdit> {
                               .deleteSleepRecord(widget.entryData.sleepId!);
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red.shade200),
                       ),
                     )
                   ],

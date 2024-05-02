@@ -50,10 +50,12 @@ class _MainTabState extends State<MainTab> {
                 selectedicon: "assets/images/home_icon.png",
                 isActive: selectTab == 0,
                 onTap: () {
-                  setState(() {
-                    selectTab = 0;
-                    currenttab = const HomeView();
-                  });
+                  if (mounted) {
+                    setState(() {
+                      selectTab = 0;
+                      currenttab = const HomeView();
+                    });
+                  }
                 },
               ),
             ),
@@ -63,10 +65,12 @@ class _MainTabState extends State<MainTab> {
                 selectedicon: "assets/images/tracking_icon.png",
                 isActive: selectTab == 1,
                 onTap: () {
-                  setState(() {
-                    selectTab = 1;
-                    currenttab = const TrackingPage();
-                  });
+                  if (mounted) {
+                    setState(() {
+                      selectTab = 1;
+                      currenttab = const TrackingPage();
+                    });
+                  }
                 },
               ),
             ),
@@ -76,10 +80,12 @@ class _MainTabState extends State<MainTab> {
                 selectedicon: "assets/images/more_ square1.png",
                 isActive: selectTab == 2,
                 onTap: () {
-                  setState(() {
-                    selectTab = 2;
-                    currenttab = const MorePage();
-                  });
+                  if (mounted) {
+                    setState(() {
+                      selectTab = 2;
+                      currenttab = const MorePage();
+                    });
+                  }
                 },
               ),
             ),

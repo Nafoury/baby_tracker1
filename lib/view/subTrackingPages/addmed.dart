@@ -43,8 +43,21 @@ class _AddMedState extends State<AddMed> {
   @override
   void didChangeDependencies() {
     medicationsProvider =
-        Provider.of<MedicationsProvider>(context, listen: false);
+        Provider.of<MedicationsProvider>(context, listen: true);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkMedicationDiaperData(DateTime startDate) async {
+    List<MedData> existingData =
+        await medicationsProvider.getMedicationRecords();
+    bool duplicateExists = existingData.any((med) =>
+        med.type == status &&
+        med.date!.year == startDate.year &&
+        med.date!.month == startDate.month &&
+        med.date!.day == startDate.day &&
+        med.date!.hour == startDate.hour &&
+        med.date!.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -109,11 +122,90 @@ class _AddMedState extends State<AddMed> {
                   SizedBox(height: 30),
                   RoundButton(
                       onpressed: () async {
-                        medicationsProvider.addMedicationRecord(MedData(
-                          date: startDate,
-                          type: status,
-                          note: _note.text,
-                        ));
+                        if (status.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png",
+                                    height: 60, width: 60),
+                                content: Text(
+                                  "Medication type can't be empty",
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
+                        bool existingData =
+                            await _checkMedicationDiaperData(startDate);
+                        if (existingData) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png"),
+                                content: Text(
+                                  'Medication data of the same type, date, and hour already exists.',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          medicationsProvider.addMedicationRecord(MedData(
+                            date: startDate,
+                            type: status,
+                            note: _note.text,
+                          ));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/check.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                  'Vaccine Data was successfully added',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          setState(() {
+                            startDate = DateTime.now();
+                            _note.clear();
+                            status = '';
+                          });
+                        }
                       },
                       title: "Save drug"),
                   SizedBox(height: 30),

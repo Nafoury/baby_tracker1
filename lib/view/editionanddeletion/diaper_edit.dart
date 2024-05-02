@@ -1,9 +1,11 @@
 import 'dart:ffi';
+
 import 'package:baby_tracker/common_widgets/crud.dart';
 import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/diaperData.dart';
+import 'package:baby_tracker/view/home/diaper_change.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
@@ -37,6 +39,7 @@ class _DiaperEditState extends State<DiaperEdit> {
   late String status;
   late String note;
   late TextEditingController noteController;
+  bool deleteData = true;
 
   @override
   void initState() {
@@ -51,6 +54,18 @@ class _DiaperEditState extends State<DiaperEdit> {
   void didChangeDependencies() {
     diaperProvider = Provider.of<DiaperProvider>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkDuplicateDiaperData(DateTime startDate) async {
+    List<DiaperData> existingData = await diaperProvider.getMedicationRecords();
+    bool duplicateExists = existingData.any((diaper) =>
+        diaper.status == status &&
+        diaper.startDate.year == startDate.year &&
+        diaper.startDate.month == startDate.month &&
+        diaper.startDate.day == startDate.day &&
+        diaper.startDate.hour == startDate.hour &&
+        diaper.startDate.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -92,15 +107,52 @@ class _DiaperEditState extends State<DiaperEdit> {
                     ),
                     const SizedBox(width: 80),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (widget.entryData.changeId != null) {
-                          diaperProvider
-                              .deleteDiaperRecord(widget.entryData.changeId!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Deletion"),
+                                content: Text(
+                                    "Are you sure you want to delete this record?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      await diaperProvider.deleteDiaperRecord(
+                                          widget.entryData.changeId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Durations.medium1,
+                                          backgroundColor:
+                                              Tcolor.gray.withOpacity(0.4),
+                                          content: Text(
+                                              "Record was successfully deleted."),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+
+                                      // Go back to the previous page
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red.shade200),
                       ),
                     )
                   ],
@@ -228,16 +280,67 @@ class _DiaperEditState extends State<DiaperEdit> {
                 ),
                 const SizedBox(height: 20),
                 RoundButton(
-                    onpressed: () {
+                    onpressed: () async {
                       if (widget.entryData.changeId != null) {
-                        diaperProvider.editDiaperRecord(DiaperData(
-                            startDate: startDate,
-                            note: note,
-                            status: status,
-                            changeId: widget.entryData.changeId!));
+                        bool duplicateExists =
+                            await _checkDuplicateDiaperData(startDate);
+                        if (duplicateExists) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/warning.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Diaper data of the same type, date, and hour already exists."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          diaperProvider.editDiaperRecord(DiaperData(
+                              startDate: startDate,
+                              note: note,
+                              status: status,
+                              changeId: widget.entryData.changeId!));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/change.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Diaper Data was successfully updated."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
                     },
-                    title: "Save changes")
+                    title: "Save changes"),
               ],
             ),
           ),

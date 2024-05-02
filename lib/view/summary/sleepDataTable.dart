@@ -93,6 +93,7 @@ class SleepDataTable extends StatelessWidget {
   }
 
   String _parseDuration(String durationString) {
+    print(durationString);
     int totalMinutes = int.parse(durationString);
 
     // Calculate hours, minutes, and seconds

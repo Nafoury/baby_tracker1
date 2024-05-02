@@ -89,6 +89,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/diaperchnage", page: () => DiaperChange()),
         GetPage(name: "/feedingTrack", page: () => FeedingTracking()),
         GetPage(name: "/trackingPage", page: () => TrackingPage()),
+        GetPage(name: "/diaperchange", page: () => DiaperChange()),
+        GetPage(name: "/trackingPage", page: () => TrackingPage()),
       ],
       routes: {"login": (context) => LoginPage()},
     );

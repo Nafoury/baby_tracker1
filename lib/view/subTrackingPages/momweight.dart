@@ -4,6 +4,7 @@ import 'package:baby_tracker/controller/momController.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/momweightData.dart';
 import 'package:baby_tracker/provider/momWeightProvider.dart';
+import 'package:baby_tracker/view/tracking/momsweight.dart';
 
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
@@ -29,12 +30,22 @@ class _WeightPageState extends State<WeightPage> {
     super.didChangeDependencies();
   }
 
+  Future<bool> _checkDuplicateWeightData(DateTime date) async {
+    List<MomData> existingData = await momWeightProvider.getWeightRecords();
+    bool duplicateExists = existingData.any((weight) =>
+        weight.weight == mlValue &&
+        weight.date!.year == date.year &&
+        weight.date!.month == date.month &&
+        weight.date!.day == date.day);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Tcolor.white,
         body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: SingleChildScrollView(
                 child: SafeArea(
                     child: Column(children: [
@@ -43,7 +54,11 @@ class _WeightPageState extends State<WeightPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Get.offAllNamed("/mainTab");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MomWeightpage()),
+                      );
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
@@ -85,13 +100,92 @@ class _WeightPageState extends State<WeightPage> {
                 height: 20,
               ),
               RoundButton(
-                  onpressed: () {
+                onpressed: () async {
+                  if (mlValue.isEqual(0)) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Image.asset("assets/images/warning.png",
+                              height: 50, width: 50),
+                          content: Text(
+                            "Weight can't be zero",
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
+                  bool duplicateExists =
+                      await _checkDuplicateWeightData(startDate);
+                  if (duplicateExists) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Image.asset("assets/images/warning.png"),
+                          content: Text(
+                            'Weight data of the same weight and date already exists.',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  } else {
                     momWeightProvider.addWeightData(MomData(
                         date: startDate,
                         weight: mlValue,
                         babyId: sharedPref.getString("info_id")));
-                  },
-                  title: "Save Weight")
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Image.asset(
+                            "assets/images/check.png",
+                            height: 60,
+                            width: 60,
+                          ),
+                          content: Text(
+                            'Weight Data was successfully added',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    setState(() {
+                      startDate = DateTime.now();
+                      mlValue = 0;
+                    });
+                  }
+                },
+                title: "Save Weight",
+              ),
             ])))));
   }
 }

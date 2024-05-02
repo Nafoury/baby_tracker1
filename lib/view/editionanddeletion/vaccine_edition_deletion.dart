@@ -1,20 +1,13 @@
 import 'dart:ffi';
 import 'package:baby_tracker/common_widgets/crud.dart';
-import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/main.dart';
-import 'package:baby_tracker/models/diaperData.dart';
-import 'package:baby_tracker/models/medData.dart';
 import 'package:baby_tracker/models/vaccineData.dart';
-import 'package:baby_tracker/provider/medications_provider.dart';
 import 'package:baby_tracker/provider/vaccine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 
 class VaccineEdit extends StatefulWidget {
@@ -54,6 +47,18 @@ class _VaccineEditState extends State<VaccineEdit> {
     super.didChangeDependencies();
   }
 
+  Future<bool> _checkVaccineDiaperData(DateTime startDate) async {
+    List<VaccineData> existingData = await vaccineProvider.getVaccineRecords();
+    bool duplicateExists = existingData.any((vaccine) =>
+        vaccine.type == type &&
+        vaccine.date!.year == startDate.year &&
+        vaccine.date!.month == startDate.month &&
+        vaccine.date!.day == startDate.day &&
+        vaccine.date!.hour == startDate.hour &&
+        vaccine.date!.minute == startDate.minute);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildTrackingInfo();
@@ -69,11 +74,11 @@ class _VaccineEditState extends State<VaccineEdit> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Get.offAllNamed("/mainTab");
+                        Navigator.pop(context);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
@@ -82,16 +87,14 @@ class _VaccineEditState extends State<VaccineEdit> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
                     Text(
-                      "Vaccine",
+                      "Edit Vaccine",
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 48),
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.vaccineId != null) {
@@ -102,7 +105,7 @@ class _VaccineEditState extends State<VaccineEdit> {
                       },
                       child: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red.shade200),
                       ),
                     )
                   ],

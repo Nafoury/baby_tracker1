@@ -24,12 +24,24 @@ class _AddTempState extends State<AddTemp> {
   DateTime startDate = DateTime.now();
   final _note = TextEditingController();
 
-  final ValueNotifier<double> temperature = ValueNotifier(0.5);
+  ValueNotifier<double> temperature = ValueNotifier(0.5);
 
   @override
   void didChangeDependencies() {
     tempProvider = Provider.of<TempProvider>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  Future<bool> _checkDuplicateDiaperData(DateTime startDate) async {
+    List<TempData> existingData = await tempProvider.getTempRecords();
+    bool duplicateExists = existingData.any((temp) =>
+        temp.temp == temperature.value &&
+        temp.date!.year == startDate.year &&
+        temp.date!.month == startDate.month &&
+        temp.date!.day == startDate.day &&
+        temp.date!.hour == startDate.hour &&
+        temp.date!.minute == startDate.minute);
+    return duplicateExists;
   }
 
   @override
@@ -90,12 +102,71 @@ class _AddTempState extends State<AddTemp> {
                   ),
                   SizedBox(height: 30),
                   RoundButton(
-                      onpressed: () {
-                        tempProvider.addTempRecord(TempData(
-                          date: startDate,
-                          note: _note.text,
-                          temp: temperature.value,
-                        ));
+                      onpressed: () async {
+                        bool duplicateExists =
+                            await _checkDuplicateDiaperData(startDate);
+                        if (duplicateExists) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/warning.png",
+                                  height: 40,
+                                  width: 40,
+                                ),
+                                content: Text(
+                                  'Temp data of the same temparture, date, and hour already exists.',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          tempProvider.addTempRecord(TempData(
+                            date: startDate,
+                            note: _note.text,
+                            temp: temperature.value,
+                          ));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/check.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                  'Temparture was successfully added',
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          setState(() {
+                            startDate = DateTime.now();
+                            _note.clear();
+                            temperature = ValueNotifier(0.5);
+                          });
+                        }
                       },
                       title: "Save Temprature")
                 ],

@@ -385,7 +385,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 275, // Adjust the width as needed
+                        width: 260, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -429,7 +429,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 233, // Adjust the width as needed
+                        width: 215, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -473,7 +473,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 205, // Adjust the width as needed
+                        width: 190, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -517,7 +517,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 270, // Adjust the width as needed
+                        width: 255, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -561,7 +561,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 280, // Adjust the width as needed
+                        width: 265, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,

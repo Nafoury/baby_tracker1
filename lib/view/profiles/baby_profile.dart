@@ -27,7 +27,7 @@ class _BabyProfileState extends State<BabyProfile> {
 
   @override
   void didChangeDependencies() {
-    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 

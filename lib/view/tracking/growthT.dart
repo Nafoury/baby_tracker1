@@ -6,6 +6,7 @@ import 'package:baby_tracker/controller/feedingSolids.dart';
 import 'package:baby_tracker/models/babyWeight.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/weightProvider.dart';
 import 'package:baby_tracker/view/charts/solidschart.dart';
 import 'package:baby_tracker/view/charts/weightBabyChart.dart';
@@ -29,7 +30,10 @@ class GrowthTracking extends StatefulWidget {
 class _GrowthTracking extends State<GrowthTracking> {
   int selectedbutton = 0;
   late WeightProvider weightProvider;
+  late BabyProvider babyProvider;
   late List<WeightData> weightRecords = [];
+  double birthweight = 0;
+  bool birthWeightCalculated = false;
 
   @override
   void didChangeDependencies() {
@@ -54,8 +58,36 @@ class _GrowthTracking extends State<GrowthTracking> {
   }
 
   void updateWeightBoxes(List<WeightData> records) {
-    if (records.isNotEmpty && records.length >= 2) {
-      // Sort records by date to ensure the latest records are at the end
+    // Check if birth weight has been calculated and at least one record exists
+    if (!birthWeightCalculated && records.isNotEmpty) {
+      records.sort((a, b) => a.date!.compareTo(b.date!));
+      WeightData firstRecord = records.first;
+
+      // Calculate difference between birth weight and current weight
+      double currentWeight = double.parse(firstRecord.weight.toString());
+      double birthWeight = double.parse(birthweight.toString());
+
+      double birthToCurrentDifference = currentWeight - birthWeight;
+      String birthToCurrentDifferenceString =
+          birthToCurrentDifference.toStringAsFixed(2);
+      String birthToCurrentSign = birthToCurrentDifference >= 0 ? "+" : "-";
+
+      // Extract date part from the DateTime object
+      String currentDate = firstRecord.date.toString().split(" ")[0];
+
+      setState(() {
+        weightboxes[1]["weight"] = currentWeight.toString();
+        weightboxes[1]["date"] = currentDate;
+        weightboxes[2]["weight"] =
+            "$birthToCurrentSign $birthToCurrentDifferenceString";
+      });
+
+      // Mark birth weight as calculated
+      birthWeightCalculated = true;
+    }
+
+    // Check if there are at least two records to calculate change
+    if (records.length >= 2) {
       records.sort((a, b) => a.date!.compareTo(b.date!));
 
       // Get the latest two weight records
@@ -65,6 +97,7 @@ class _GrowthTracking extends State<GrowthTracking> {
       // Calculate change and update weightboxes
       double currentWeight = double.parse(currentRecord.weight.toString());
       double previousWeight = double.parse(previousRecord.weight.toString());
+
       double change = currentWeight - previousWeight;
       String changeString = change.toStringAsFixed(2);
       String sign = change >= 0 ? "+" : "-";
@@ -74,10 +107,9 @@ class _GrowthTracking extends State<GrowthTracking> {
 
       setState(() {
         weightboxes[1]["weight"] = currentWeight.toString();
-        weightboxes[1]["date"] = currentDate; // Use extracted date without time
+        weightboxes[1]["date"] = currentDate;
         weightboxes[2]["weight"] = "$sign $changeString";
-
-        // Trigger rebuild of the UI
+        weightboxes[2]["date"] = currentDate;
       });
     }
   }
@@ -293,53 +325,80 @@ class _GrowthTracking extends State<GrowthTracking> {
                           height: 20,
                         ),
                         if (selectedbutton == 0)
-                          Consumer<WeightProvider>(
-                              builder: (context, weightProvider, child) {
-                            return Column(children: [
-                              SizedBox(
-                                height: media.width * 0.3,
-                                child: ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: weightboxes.length,
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return SizedBox(
-                                        width:
-                                            20); // Adjust the width as needed
-                                  },
-                                  itemBuilder: (context, index) {
-                                    var aobj = weightboxes[index] as Map? ?? {};
-                                    return Boxes(
-                                        aobj: aobj,
-                                        weightboxes: weightboxes.cast());
-                                  },
-                                ),
+                          Column(
+                            children: [
+                              Consumer<BabyProvider>(
+                                builder: (context, babyProvider, _) {
+                                  if (babyProvider.babyRecords.isNotEmpty) {
+                                    // Extract birthdate and weight at birth
+                                    String birthdate = babyProvider
+                                        .babyRecords.first.dateOfBirth!
+                                        .toString();
+                                    birthweight = babyProvider
+                                        .babyRecords.first.babyWeight!
+                                        .toDouble();
+
+                                    // Update "At birth" box with birthdate and weight at birth
+                                    weightboxes[0]["date"] =
+                                        birthdate.toString().split(" ")[0];
+                                    weightboxes[0]["weight"] =
+                                        birthweight.toString();
+                                  }
+                                  // Return the UI components
+                                  return SizedBox(); // Return a placeholder widget if needed
+                                },
                               ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              WeightBabyChart(
-                                weightRecords: weightRecords,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              RoundButton(
-                                  onpressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              BabyWeightPage()),
-                                    );
-                                  },
-                                  title: "Add Weight"),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              BabyWeightDataTable(weightRecords: weightRecords)
-                            ]);
-                          })
+                              Consumer<WeightProvider>(
+                                  builder: (context, weightProvider, child) {
+                                return Column(children: [
+                                  SizedBox(
+                                    height: media.width * 0.3,
+                                    child: ListView.separated(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: weightboxes.length,
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return SizedBox(
+                                            width:
+                                                20); // Adjust the width as needed
+                                      },
+                                      itemBuilder: (context, index) {
+                                        var aobj =
+                                            weightboxes[index] as Map? ?? {};
+                                        return Boxes(
+                                            aobj: aobj,
+                                            weightboxes: weightboxes.cast());
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  WeightChart(
+                                    weightRecords: weightRecords,
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  RoundButton(
+                                      onpressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BabyWeightPage()),
+                                        );
+                                      },
+                                      title: "Add Weight"),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  BabyWeightDataTable(
+                                      weightRecords: weightRecords)
+                                ]);
+                              })
+                            ],
+                          )
                       ])
                 ])))));
   }

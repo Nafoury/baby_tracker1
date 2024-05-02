@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/models/nursingData.dart';
+import 'package:provider/provider.dart';
 
 class RoundButton1 extends StatefulWidget {
   const RoundButton1({
@@ -34,6 +36,8 @@ class _RoundButton1State extends State<RoundButton1> {
   DateTime dateTime = DateTime.now();
   NursingController nursingController = NursingController();
   late DateTime startDate1;
+  late NursingDataProvider nursingDataProvider;
+  late List<NusringData> nursingRecors = [];
 
   @override
   void initState() {
@@ -51,12 +55,19 @@ class _RoundButton1State extends State<RoundButton1> {
   }
 
   @override
+  void didChangeDependencies() {
+    nursingDataProvider =
+        Provider.of<NursingDataProvider>(context, listen: true);
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
           width: 300,
-          height: 300,
+          height: 400,
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               color: Tcolor.primaryColor1.withOpacity(0.4)),
@@ -313,7 +324,6 @@ class _RoundButton1State extends State<RoundButton1> {
       isTimerLRunning = false;
       isTimerRRunning = false;
 
-      // Add null checks before accessing startTimeL and startTimeR
       elapsedTimeL = startTimeL != null
           ? DateTime.now().difference(startTimeL!)
           : Duration.zero;
@@ -325,29 +335,43 @@ class _RoundButton1State extends State<RoundButton1> {
       timerR.cancel();
     });
 
-    // Determine the breast side and nursing side based on the first button clicked
-    String breastSide = isButtonLTapped ? 'L' : 'R';
-    String nursingSide = isButtonLTapped ? 'L' : 'R';
+    // Determine the starting breast side and nursing side based on the sequence of button presses
+    String startSide = '';
+    String breastSide = '';
 
-    // If both buttons are clicked, update nursing side to 'both' and use the first clicked side as the starting breast
     if (isButtonLTapped && isButtonRTapped) {
-      nursingSide = 'both';
-      breastSide = isButtonLTapped ? 'L' : 'R';
+      // If both buttons were tapped, determine the sequence
+      if (startTimeL != null && startTimeR != null) {
+        // If both start times are available, check which one comes first
+        if (startTimeL!.isBefore(startTimeR!)) {
+          startSide = 'L';
+          breastSide = 'R';
+        } else {
+          startSide = 'R';
+          breastSide = 'L';
+        }
+      } else if (startTimeL != null) {
+        startSide = 'L';
+        breastSide = 'R';
+      } else if (startTimeR != null) {
+        startSide = 'R';
+        breastSide = 'L';
+      }
+    } else if (isButtonLTapped) {
+      startSide = 'L';
+      breastSide = 'L';
+    } else if (isButtonRTapped) {
+      startSide = 'R';
+      breastSide = 'R';
     }
-
-    // Create an instance of NusringData based on the last active button
-    NusringData nursingData = NusringData(
-      leftDuration: isButtonLTapped ? _formatDuration(elapsedTimeL) : '0',
+    nursingDataProvider.addNursingData(NusringData(
+      leftDuration: _formatDuration(elapsedTimeL),
       date: startDate1,
-      nursingSide: nursingSide,
-      startingBreast: breastSide,
-      rightDuration: isButtonRTapped ? _formatDuration(elapsedTimeR) : '0',
-      babyId:
-          sharedPref.getString("info_id"), // Replace with the actual baby ID
-    );
-
-    // Save the nursing data using NursingController
-    await nursingController.savenursingData(nusringData: nursingData);
+      nursingSide: breastSide,
+      startingBreast: startSide,
+      rightDuration: _formatDuration(elapsedTimeR),
+      babyId: sharedPref.getString("info_id"),
+    ));
   }
 
   void _resetTimer() {
@@ -364,9 +388,10 @@ class _RoundButton1State extends State<RoundButton1> {
 
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitHours = twoDigits(duration.inHours);
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$twoDigitMinutes:$twoDigitSeconds';
+    return '$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds';
   }
 
   void _showStartDatePicker(BuildContext context, DateTime initialDateTime) {

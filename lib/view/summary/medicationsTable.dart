@@ -42,10 +42,27 @@ class _MediciationRecordsTableState extends State<MediciationRecordsTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (medicationRecords.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: 90),
+        child: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/meds.png',
+                height: 90,
+                width: 90,
+              ),
+              Text("There's no medications data available")
+            ],
+          ),
+        ),
+      );
+    }
     return Consumer<MedicationsProvider>(
       builder: (context, medicationsProvider, child) {
         return DataTable(
-          columnSpacing: 22,
+          columnSpacing: 24,
           columns: [
             DataColumn(
               label: Text(

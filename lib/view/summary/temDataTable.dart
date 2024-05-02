@@ -12,8 +12,25 @@ class TempDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (tempRecords.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: 90),
+        child: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/temperature.png',
+                height: 90,
+                width: 90,
+              ),
+              Text("There's no Temprature data available")
+            ],
+          ),
+        ),
+      );
+    }
     return DataTable(
-      columnSpacing: 2,
+      columnSpacing: 7,
       columns: [
         DataColumn(
           label: Text(

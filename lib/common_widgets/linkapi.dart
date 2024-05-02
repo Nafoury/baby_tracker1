@@ -1,5 +1,5 @@
-const String linkServerName = "http://192.168.1.8/babyphp";
-const String linkImageFile = "http://192.168.1.8/babyphp/upload";
+const String linkServerName = "http://192.168.1.10/babyphp";
+const String linkImageFile = "http://192.168.1.10/babyphp/upload";
 const String linksignup = "$linkServerName/auth/signup.php";
 
 const String linklogin = "$linkServerName/auth/login.php";
@@ -34,6 +34,8 @@ const String linkDeleteSolids = "$linkServerName/feedSolids/delete.php";
 
 const String linkAddNursing = "$linkServerName/feedNursing/add.php";
 const String linkViewNursing = "$linkServerName/feedNursing/view.php";
+const String linkDeleteNursing = "$linkServerName/feedNursing/delete.php";
+const String linkUpdateNursing = "$linkServerName/feedNursing/update.php";
 
 const String linkAddvaccine = "$linkServerName/vaccines/add.php";
 const String linkViewvaccine = "$linkServerName/vaccines/read.php";

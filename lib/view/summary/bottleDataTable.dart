@@ -15,6 +15,23 @@ class BottleDataTable extends StatelessWidget {
     return Consumer<BottleDataProvider>(
       builder: (context, bottleProvider, child) {
         List<BottleData> bottleRecords = bottleProvider.bottleRecords;
+        if (bottleRecords == null || bottleRecords!.isEmpty) {
+          return Padding(
+            padding: EdgeInsets.only(top: 150),
+            child: Center(
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/images/bottledata.png',
+                    height: 90,
+                    width: 90,
+                  ),
+                  Text("There's no bottle data available")
+                ],
+              ),
+            ),
+          );
+        }
         return DataTable(
           columnSpacing: 22,
           columns: [

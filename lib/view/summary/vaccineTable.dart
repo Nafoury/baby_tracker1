@@ -40,10 +40,27 @@ class _VaccineRecordsTableState extends State<VaccineRecordsTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (vaccineRecords.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: 90),
+        child: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/injection.png',
+                height: 90,
+                width: 90,
+              ),
+              Text("There's no vaccine data available")
+            ],
+          ),
+        ),
+      );
+    }
     return Consumer<VaccineProvider>(
       builder: (context, vaccineProvider, child) {
         return DataTable(
-          columnSpacing: 10,
+          columnSpacing: 18,
           columns: [
             DataColumn(
               label: Text(

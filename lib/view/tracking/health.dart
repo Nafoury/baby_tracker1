@@ -1,9 +1,6 @@
-import 'package:baby_tracker/common_widgets/healthActivites.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/tempData.dart';
 import 'package:baby_tracker/provider/tempProvider.dart';
-import 'package:baby_tracker/shapes/temp3.dart';
-import 'package:baby_tracker/shapes/temp4.dart';
 import 'package:baby_tracker/view/charts/tempChart.dart';
 import 'package:baby_tracker/view/subTrackingPages/addTemp.dart';
 import 'package:baby_tracker/view/subTrackingPages/addVaccine.dart';
@@ -15,8 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
-import 'package:baby_tracker/shapes/temp.dart';
-import 'package:baby_tracker/shapes/temp1.dart';
 import 'package:provider/provider.dart';
 
 class HealthTracking extends StatefulWidget {
@@ -246,6 +241,9 @@ class _HealthTracking extends State<HealthTracking> {
                         if (selectedbutton == 1)
                           Column(children: [
                             VaccineRecordsTable(),
+                            SizedBox(
+                              height: 30,
+                            ),
                             RoundButton(
                                 onpressed: () {
                                   Navigator.push(
@@ -260,6 +258,9 @@ class _HealthTracking extends State<HealthTracking> {
                           Column(
                             children: [
                               MediciationRecordsTable(),
+                              SizedBox(
+                                height: 60,
+                              ),
                               RoundButton(
                                   onpressed: () {
                                     Navigator.push(

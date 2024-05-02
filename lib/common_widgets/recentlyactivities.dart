@@ -10,7 +10,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Fetch the duration dynamically from activityData
-    String activityDuration = activityData["duration"].toString();
+    String activityDuration = activityData["time"].toString();
 
     // Widget for displaying the duration
     Widget durationWidget = Text(
@@ -73,12 +73,29 @@ class TodaySleepScheduleRow extends StatelessWidget {
           ),
           SizedBox(
             height: 35,
-            child: IconButton(
-              onPressed: () {},
-              icon: Image.asset(
-                "assets/images/more_vertical3.png",
-                width: 25,
-                height: 25,
+            child: PopupMenuButton(
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    child: Text('Edit'),
+                    value: 'edit',
+                  ),
+                  PopupMenuItem(
+                    child: Text('Delete'),
+                    value: 'delete',
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                if (value == 'edit') {
+                  // Handle edit action
+                } else if (value == 'delete') {
+                  // Handle delete action
+                }
+              },
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.black,
               ),
             ),
           ),
@@ -94,7 +111,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Start: ${data["HH:mm"]}", //showing the hours am or pm
+            "Start: ${data["Start"]}", //showing the hours am or pm
             style: TextStyle(
               color: Tcolor.black,
               fontSize: 14,
@@ -102,7 +119,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
             ),
           ),
           Text(
-            "End: ${data["HH:mm"]}", //showing the hours am or pm
+            "End: ${data["End"]}", //showing the hours am or pm
             style: TextStyle(
               color: Tcolor.black,
               fontSize: 14,
@@ -110,7 +127,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
             ),
           ),
           Text(
-            "Duration: ${data["duration"]} minutes", //here calculating the duration between strat and end date
+            "Duration: ${data["duration"]} minutes", //here calculating the duration between start and end date
             style: TextStyle(
               color: Tcolor.black,
               fontSize: 14,
