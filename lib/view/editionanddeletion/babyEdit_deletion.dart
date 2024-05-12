@@ -2,6 +2,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/babyinfo.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
+import 'package:baby_tracker/view/login/complete_info.dart';
 import 'package:baby_tracker/view/profiles/baby_Profile1.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class _BabyProfileEditAndDeletionState
 
   @override
   void didChangeDependencies() {
-    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -66,24 +67,20 @@ class _BabyProfileEditAndDeletionState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        "assets/images/back_Navs.png",
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.fitHeight,
-                      ),
+                    SizedBox(
+                      width: 35,
                     ),
                     Text(
-                      "Child",
+                      "Edit Child",
                       style: TextStyle(
                           color: Tcolor.black,
                           fontSize: 14,
                           fontWeight: FontWeight.w700),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       child: Text(
                         'Close',
                         style: TextStyle(color: Colors.blue.shade200),
@@ -123,15 +120,16 @@ class _BabyProfileEditAndDeletionState
                   ],
                 ),
                 TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (widget.babyInfo.infoId != null) {
-                        babyProvider.makeBabyActive(widget.babyInfo.infoId!);
+                        await babyProvider
+                            .makeBabyActive(widget.babyInfo.infoId!);
                       }
                     },
                     child: Text('Make Active ')),
                 BabyProfile1(
                   nameController: nameController,
-                  selectedValue: status,
+                  selectedValue: status.toString(),
                   weightController1: weightController,
                   heightController: heightController,
                   headController: headController,
@@ -140,6 +138,11 @@ class _BabyProfileEditAndDeletionState
                     setState(() {
                       startDate = newStartDate;
                       print(startDate);
+                    });
+                  },
+                  onStatusChanged: (String? value) {
+                    setState(() {
+                      status = value.toString();
                     });
                   },
                 ),
@@ -154,7 +157,7 @@ class _BabyProfileEditAndDeletionState
                           ),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (widget.babyInfo.infoId != null) {
                           showDialog(
                             context: context,
@@ -182,12 +185,20 @@ class _BabyProfileEditAndDeletionState
                                           backgroundColor:
                                               Tcolor.gray.withOpacity(0.4),
                                           content: Text(
-                                              "Record was successfully deleted."),
+                                              "Baby was successfully deleted."),
                                         ),
                                       );
-                                      Navigator.of(context).pop();
-
-                                      // Go back to the previous page
+                                      List<BabyInfo> babies =
+                                          babyProvider.babyRecords;
+                                      if (babies.length == 0) {
+                                        // If the list becomes empty after deletion, navigate to the "Complete Info" page
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Completeinfo()),
+                                        );
+                                      }
                                     },
                                     child: Text("Delete"),
                                   ),
@@ -213,16 +224,88 @@ class _BabyProfileEditAndDeletionState
                           ),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        if (nameController.text.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png",
+                                    height: 60, width: 60),
+                                content: Text(
+                                  "name can't be empty",
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
+                        if (status.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png",
+                                    height: 60, width: 60),
+                                content: Text(
+                                  "Gender can't be empty",
+                                  style: TextStyle(fontStyle: FontStyle.normal),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
+
                         babyProvider.editBabyRecord(BabyInfo(
                           babyName: nameController.text,
                           gender: status,
                           dateOfBirth: startDate,
-                          babyHeight: double.tryParse(height),
-                          babyWeight: double.tryParse(weight),
-                          babyhead: double.tryParse(head),
+                          babyHeight: double.tryParse(heightController.text),
+                          babyWeight: double.tryParse(weightController.text),
+                          babyhead: double.tryParse(headController.text),
                           infoId: widget.babyInfo.infoId!,
                         ));
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/change.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content:
+                                  Text("Baby Data was successfully updated."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       child: Text(
                         'Edit a child',

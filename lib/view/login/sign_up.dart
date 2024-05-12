@@ -30,6 +30,14 @@ class _SignupState extends State<Signup> {
   bool isvisible = false;
   final formkey = GlobalKey<FormState>();
 
+  signupFirebase() async {
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _emailTextController.text,
+            password: _passwordTextController.text)
+        .then((value) => {Get.offAllNamed("/completeinfo")});
+  }
+
   signUp() async {
     var response = await crud.postrequest(linksignup, {
       "first_name": _firstname.text,
@@ -142,33 +150,6 @@ class _SignupState extends State<Signup> {
                   ),
                   SizedBox(
                     height: media.width * 0.04,
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            ischeck = !ischeck;
-                          });
-                        },
-                        icon: Icon(
-                          ischeck
-                              ? Icons.check_box_outlined
-                              : Icons.check_box_outline_blank,
-                          color: Tcolor.gray,
-                          size: 20,
-                        ),
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            "By continuing you accept our Privacy Policy and Term of Use",
-                            style: TextStyle(color: Tcolor.gray, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                   SizedBox(
                     height: media.width * 0.4,

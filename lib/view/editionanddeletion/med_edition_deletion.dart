@@ -51,6 +51,19 @@ class _MediciationEditState extends State<MediciationEdit> {
     super.didChangeDependencies();
   }
 
+  Future<bool> _checkMedDuplicateData(DateTime startDate) async {
+    List<MedData> existingData =
+        await medicationsProvider.getMedicationRecords();
+    bool duplicateExists = existingData.any((medication) =>
+        medication.type == type &&
+        medication.date!.year == startDate.year &&
+        medication.date!.month == startDate.month &&
+        medication.date!.day == startDate.day &&
+        medication.date!.hour == startDate.hour &&
+        medication.date!.minute == startDate.minute);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildTrackingInfo();
@@ -90,10 +103,47 @@ class _MediciationEditState extends State<MediciationEdit> {
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.medId != null) {
-                          medicationsProvider
-                              .deleteMedicationRecord(widget.entryData.medId!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Deletion"),
+                                content: Text(
+                                    "Are you sure you want to delete this record?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      medicationsProvider
+                                          .deleteMedicationRecord(
+                                              widget.entryData.medId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Durations.medium1,
+                                          backgroundColor:
+                                              Tcolor.gray.withOpacity(0.4),
+                                          content: Text(
+                                              "Record was successfully deleted."),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+
+                                      // Go back to the previous page
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         }
-                        Navigator.pop(context);
                       },
                       child: Text(
                         "Delete",
@@ -232,15 +282,65 @@ class _MediciationEditState extends State<MediciationEdit> {
                 ),
                 SizedBox(height: 20),
                 RoundButton(
-                    onpressed: () {
+                    onpressed: () async {
                       if (widget.entryData.medId != null) {
-                        medicationsProvider.editMedicationRecord(MedData(
-                            date: startDate,
-                            type: type,
-                            note: note,
-                            medId: widget.entryData.medId!));
+                        bool duplicateExists =
+                            await _checkMedDuplicateData(startDate!);
+                        if (duplicateExists) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/warning.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Medication of the same type, date, and hour already exists."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          medicationsProvider.editMedicationRecord(MedData(
+                              date: startDate,
+                              type: type,
+                              note: note,
+                              medId: widget.entryData.medId!));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/change.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Medication Data was successfully updated."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
-                      Navigator.pop(context);
                     },
                     title: "Save changes")
               ],

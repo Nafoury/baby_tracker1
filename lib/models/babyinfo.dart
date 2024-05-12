@@ -7,6 +7,7 @@ class BabyInfo {
   double? babyHeight;
   double? babyhead;
   int? completeInfoUserAuthorization;
+  int? isActive;
 
   BabyInfo(
       {this.infoId,
@@ -16,6 +17,7 @@ class BabyInfo {
       this.babyWeight,
       this.babyhead,
       this.babyHeight,
+      this.isActive,
       this.completeInfoUserAuthorization});
 
   BabyInfo.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class BabyInfo {
     babyHeight = double.parse(json['baby_height'].toString());
     babyhead = double.parse(json['baby_head'].toString());
     completeInfoUserAuthorization = json['complete_info_user_authorization'];
+    isActive = json['active'];
   }
 
   Map<String, dynamic> toJson() {

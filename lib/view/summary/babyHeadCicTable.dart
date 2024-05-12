@@ -1,15 +1,17 @@
+import 'package:baby_tracker/models/babyHead.dart';
 import 'package:baby_tracker/models/babyWeight.dart';
+import 'package:baby_tracker/view/editionanddeletion/babyHeadEdit_Deletion.dart';
 import 'package:baby_tracker/view/editionanddeletion/babyWeight_edit_deletion.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class BabyWeightDataTable extends StatelessWidget {
-  final List<WeightData> weightRecords;
-  const BabyWeightDataTable({super.key, required this.weightRecords});
+class BabyHeadDataTable extends StatelessWidget {
+  final List<MeasureData> measureRecords;
+  const BabyHeadDataTable({super.key, required this.measureRecords});
 
   @override
   Widget build(BuildContext context) {
-    if (weightRecords.isEmpty) {
+    if (measureRecords.isEmpty) {
       return Padding(
         padding: EdgeInsets.only(top: 150),
         child: Center(
@@ -38,7 +40,7 @@ class BabyWeightDataTable extends StatelessWidget {
             numeric: true),
         DataColumn(
             label: Text(
-              'Weight',
+              'Measure',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
             ),
@@ -50,7 +52,7 @@ class BabyWeightDataTable extends StatelessWidget {
           ),
         ),
       ],
-      rows: weightRecords.map((records) {
+      rows: measureRecords.map((records) {
         return DataRow(cells: [
           DataCell(
             Text(
@@ -63,7 +65,7 @@ class BabyWeightDataTable extends StatelessWidget {
           ),
 
           DataCell(Text(
-            '${records.weight.toString()} Kg',
+            '${records.measure.toString()} cm',
             style: TextStyle(
                 color: Colors.black.withOpacity(0.4),
                 fontWeight: FontWeight.w600,
@@ -76,7 +78,7 @@ class BabyWeightDataTable extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BabyWeightEdit(
+                    builder: (context) => BabyHeadEdit(
                       entryData: records,
                     ),
                   ),

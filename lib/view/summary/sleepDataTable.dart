@@ -10,6 +10,23 @@ class SleepDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (sleepRecords.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: 150),
+        child: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/pillow.png',
+                height: 90,
+                width: 90,
+              ),
+              Text("There's no sleep data available")
+            ],
+          ),
+        ),
+      );
+    }
     return DataTable(
       columnSpacing: 22,
       columns: [

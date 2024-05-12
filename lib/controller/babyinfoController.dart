@@ -78,27 +78,26 @@ class BabyInfoController {
     }
   }
 
+  // Inside the function responsible for deleting a baby
   Future<bool> deleteBaby(int infoId) async {
     try {
-      // Check for internet connectivity
-      ConnectivityResult connectivityResult =
-          await Connectivity().checkConnectivity();
-      bool isOnline = (connectivityResult != ConnectivityResult.none);
+      // Send request to delete the baby
+      var response = await crud
+          .postrequest(linkDeleteinfo, {"info_id": infoId.toString()});
 
-      if (isOnline) {
-        var response = await crud
-            .postrequest(linkDeleteinfo, {"info_id": infoId.toString()});
-        if (response['status'] == 'success') {
-          return true;
+      if (response['status'] == 'success') {
+        // If deletion is successful
+        if (response.containsKey('activate_next') &&
+            response['activate_next'] == true) {
+          // If the next baby is activated
+          // Update local state to reflect the change
+          // Optionally, you can refresh the baby list
         }
-        return false;
-      } else {
-        // Handle the case where there is no internet connection
-        print('No internet connection. Cannot update data.');
+        return true;
       }
       return false;
     } catch (e) {
-      // Handle any exceptions that might occur during the update process
+      // Handle any exceptions
       print("Error: $e");
       return false;
     }
@@ -113,13 +112,13 @@ class BabyInfoController {
 
       if (isOnline) {
         var response = await crud.postrequest(linkUpdateinfo, {
-          "baby_name": babyInfo.babyName,
+          "baby_name": babyInfo.babyName.toString(),
           "date_of_birth": babyInfo.dateOfBirth.toString(),
-          "gender": babyInfo.gender,
-          "baby_weight": babyInfo.babyWeight,
-          "baby_height": babyInfo.babyHeight,
-          "baby_head": babyInfo.babyhead,
-          "info_id": babyInfo.infoId,
+          "gender": babyInfo.gender.toString(),
+          "baby_weight": babyInfo.babyWeight.toString(),
+          "baby_height": babyInfo.babyHeight.toString(),
+          "baby_head": babyInfo.babyhead.toString(),
+          "info_id": babyInfo.infoId.toString()
         });
         // Print the response for debugging
         print('Server response: $response');

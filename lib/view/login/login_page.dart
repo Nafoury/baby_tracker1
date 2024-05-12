@@ -4,6 +4,7 @@ import 'package:baby_tracker/common_widgets/linkapi.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/view/home/home_view.dart';
 import 'package:baby_tracker/view/login/sign_up.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/common_widgets/round_textfiled.dart';
@@ -25,6 +26,14 @@ class _LoginPageState extends State<LoginPage> {
   final formkey = GlobalKey<FormState>();
 
   Crud crud = Crud();
+
+  signin() async {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _emailTextController.text,
+            password: _passwordTextController.text)
+        .then((value) => {Get.offAllNamed("/mainTab")});
+  }
 
   login() async {
     var response = await crud.postrequest(linklogin, {
@@ -123,10 +132,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(
                     height: media.width * 0.04,
-                  ),
-                  Text(
-                    "Forget your password?",
-                    style: TextStyle(color: Tcolor.gray, fontSize: 12),
                   ),
                   SizedBox(
                     height: media.width * 0.4,

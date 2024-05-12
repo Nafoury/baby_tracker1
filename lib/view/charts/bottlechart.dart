@@ -2,33 +2,79 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/models/bottleData.dart';
 
-class BottleChart extends StatelessWidget {
+class BottleChart extends StatefulWidget {
   final List<BottleData> bottleRecords;
   const BottleChart({required this.bottleRecords});
 
   @override
+  _BottleChartState createState() => _BottleChartState();
+}
+
+class _BottleChartState extends State<BottleChart> {
+  late DateTime currentDate;
+
+  @override
+  void initState() {
+    super.initState();
+    currentDate = DateTime.now();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double maxY = calculateMaxY();
-    return Container(
-      height: 400,
-      child: BarChart(
-        BarChartData(
-          minY: 0,
-          maxY: maxY,
-          titlesData: titlesData,
-          borderData: borderData,
-          barGroups: generateBarGroups(),
-          gridData: const FlGridData(show: true, drawVerticalLine: false),
-          alignment: BarChartAlignment.spaceAround,
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  currentDate = currentDate.subtract(Duration(days: 7));
+                });
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 20,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (currentDate.isBefore(DateTime.now())) {
+                    currentDate = currentDate.add(Duration(days: 7));
+                  }
+                });
+              },
+              icon: Icon(
+                Icons.arrow_forward,
+                size: 20,
+              ),
+            ),
+          ],
         ),
-      ),
+        Container(
+          height: 400,
+          child: BarChart(
+            BarChartData(
+              minY: 0,
+              maxY: maxY,
+              titlesData: titlesData,
+              borderData: borderData,
+              barGroups: generateBarGroups(),
+              gridData: const FlGridData(show: true, drawVerticalLine: false),
+              alignment: BarChartAlignment.spaceAround,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   double calculateMaxY() {
     double maxAmount = 0;
 
-    for (var record in bottleRecords) {
+    for (var record in widget.bottleRecords) {
       double totalAmount = record.amount ?? 0.0;
       if (totalAmount > maxAmount) {
         maxAmount = totalAmount;
@@ -41,25 +87,32 @@ class BottleChart extends StatelessWidget {
 
   List<BarChartGroupData> generateBarGroups() {
     Map<String, double> totalAmounts = {};
-    DateTime currentDate = DateTime.now();
 
-    for (var i = 7; i >= 0; i--) {
-      DateTime date = currentDate.subtract(Duration(days: i));
+    // Calculate the start and end date for the current week
+    DateTime startDate =
+        currentDate.subtract(Duration(days: currentDate.weekday - 1));
+    DateTime endDate = startDate.add(Duration(days: 6));
+
+    // Initialize totalAmount for each day of the current week
+    for (var i = 0; i < 7; i++) {
+      DateTime date = startDate.add(Duration(days: i));
       String dateStr = date.toLocal().toString().split(' ')[0];
-
-      // Initialize totalAmount for the date
       totalAmounts[dateStr] = 0.0;
     }
 
-    for (var record in bottleRecords) {
-      String? dateStr = record.startDate?.toLocal().toString().split(' ')[0];
-      if (dateStr != null && totalAmounts.containsKey(dateStr)) {
+    // Update totalAmounts based on bottleRecords
+    for (var record in widget.bottleRecords) {
+      DateTime? recordDate = record.startDate;
+      if (recordDate != null &&
+          recordDate.isAfter(startDate) &&
+          recordDate.isBefore(endDate)) {
+        String dateStr = recordDate.toLocal().toString().split(' ')[0];
         double totalAmount = record.amount ?? 0.0;
         totalAmounts[dateStr] = totalAmounts[dateStr]! + totalAmount;
       }
     }
 
-    // Convert the map entries to BarChartGroupData
+    // Generate BarChartGroupData for each day of the current week
     List<BarChartGroupData> barGroups = totalAmounts.entries.map((entry) {
       return generateGroup(entry.key, entry.value);
     }).toList();

@@ -20,6 +20,16 @@ class _TeethWidgetState extends State<TeethWidget> {
   String choice2 = '';
   TeethController teethControlle = new TeethController();
 
+  Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
+    List<TeethData> existingData = await teethControlle.retrieveTeethData();
+    bool duplicateExists = existingData.any((teeth) =>
+        teeth.date == startDate &&
+        teeth.date!.year == startDate.year &&
+        teeth.date!.month == startDate.month &&
+        teeth.date!.day == startDate.day);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -208,7 +218,7 @@ class _TeethWidgetState extends State<TeethWidget> {
                               },
                             ),
                             SizedBox(
-                              height: 150,
+                              height: 300,
                             ),
                             RoundButton(
                                 onpressed: () {

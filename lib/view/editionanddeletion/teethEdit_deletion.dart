@@ -11,6 +11,7 @@ import 'package:baby_tracker/view/more/toothPgae.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class TeethEdit extends StatefulWidget {
@@ -51,49 +52,48 @@ class _TeethEditState extends State<TeethEdit> {
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Get.offAllNamed("/mainTab");
-                      },
-                      icon: Image.asset(
-                        "assets/images/back_Navs.png",
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.fitHeight,
-                      ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Image.asset(
+                      "assets/images/back_Navs.png",
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.fitHeight,
                     ),
-                    Text(
-                      "Teeth",
-                      style: TextStyle(
-                        color: Tcolor.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  ),
+                  Text(
+                    "Edit Teeth",
+                    style: TextStyle(
+                      color: Tcolor.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        if (widget.entryData.toothId != null) {
-                          teethController
-                              .deleteTeeth(widget.entryData.toothId!);
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    )
-                  ],
-                ),
-                TeethDropDown(
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (widget.entryData.toothId != null) {
+                        teethController.deleteTeeth(widget.entryData.toothId!);
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red.shade200),
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: TeethDropDown(
                   startDate: date,
                   choice1: choice1,
                   choice: choice,
@@ -113,24 +113,24 @@ class _TeethEditState extends State<TeethEdit> {
                     });
                   },
                 ),
-                SizedBox(height: 20),
-                RoundButton(
-                    onpressed: () {
-                      if (widget.entryData.toothId != null) {
-                        teethController.editTeeth(TeethData(
-                          date: date,
-                          upper: choice,
-                          lower: choice1,
-                          toothId: widget.entryData.toothId,
-                        ));
-                      }
-                      print(date);
-                      print(choice);
-                      print(choice1);
-                    },
-                    title: "Save changes")
-              ],
-            ),
+              ),
+              SizedBox(height: 20),
+              RoundButton(
+                  onpressed: () {
+                    if (widget.entryData.toothId != null) {
+                      teethController.editTeeth(TeethData(
+                        date: date,
+                        upper: choice,
+                        lower: choice1,
+                        toothId: widget.entryData.toothId,
+                      ));
+                    }
+                    print(date);
+                    print(choice);
+                    print(choice1);
+                  },
+                  title: "Save changes")
+            ],
           ),
         ),
       ),

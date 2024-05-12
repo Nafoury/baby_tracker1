@@ -47,7 +47,7 @@ class _VaccineEditState extends State<VaccineEdit> {
     super.didChangeDependencies();
   }
 
-  Future<bool> _checkVaccineDiaperData(DateTime startDate) async {
+  Future<bool> _checkVaccineDDuplicateData(DateTime startDate) async {
     List<VaccineData> existingData = await vaccineProvider.getVaccineRecords();
     bool duplicateExists = existingData.any((vaccine) =>
         vaccine.type == type &&
@@ -98,10 +98,46 @@ class _VaccineEditState extends State<VaccineEdit> {
                     TextButton(
                       onPressed: () {
                         if (widget.entryData.vaccineId != null) {
-                          vaccineProvider
-                              .deleteVaccineRecord(widget.entryData.vaccineId!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Deletion"),
+                                content: Text(
+                                    "Are you sure you want to delete this record?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      vaccineProvider.deleteVaccineRecord(
+                                          widget.entryData.vaccineId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Durations.medium1,
+                                          backgroundColor:
+                                              Tcolor.gray.withOpacity(0.4),
+                                          content: Text(
+                                              "Record was successfully deleted."),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+
+                                      // Go back to the previous page
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         }
-                        Navigator.pop(context);
                       },
                       child: Text(
                         "Delete",
@@ -207,12 +243,6 @@ class _VaccineEditState extends State<VaccineEdit> {
                                 ),
                               ),
                             ),
-                            Text(
-                              '${type ?? 'None'}',
-                              style: TextStyle(
-                                fontSize: 13.0,
-                              ),
-                            ),
                           ],
                         );
                       case 2:
@@ -242,13 +272,64 @@ class _VaccineEditState extends State<VaccineEdit> {
                 ),
                 SizedBox(height: 20),
                 RoundButton(
-                    onpressed: () {
+                    onpressed: () async {
                       if (widget.entryData.vaccineId != null) {
-                        vaccineProvider.editVaccineRecord(VaccineData(
-                            date: startDate,
-                            type: type,
-                            note: note,
-                            vaccineId: widget.entryData.vaccineId!));
+                        bool duplicateExists =
+                            await _checkVaccineDDuplicateData(startDate!);
+                        if (duplicateExists) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/warning.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Vaccine of the same type, date, and hour already exists."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          vaccineProvider.editVaccineRecord(VaccineData(
+                              date: startDate,
+                              type: type,
+                              note: note,
+                              vaccineId: widget.entryData.vaccineId!));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/change.png",
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                content: Text(
+                                    "Diaper Data was successfully updated."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
                     },
                     title: "Save changes")

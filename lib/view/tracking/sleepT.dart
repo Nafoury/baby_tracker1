@@ -15,10 +15,6 @@ class SleepTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SleepController sleepController = SleepController();
-    final List<List<int>> dummySleepData =
-        List.generate(7, (_) => List.filled(24, 0));
-    // Generate a 7x24 grid of zeros representing no sleep hours for each hour of the day for 7 days
     return Scaffold(
         backgroundColor: Tcolor.white,
         body: Padding(

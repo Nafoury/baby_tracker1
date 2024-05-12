@@ -53,11 +53,32 @@ class SleepHeatmap extends StatelessWidget {
                       DateTime.now().subtract(Duration(days: 6 - day));
                   int totalSleepMinutes = 0;
                   int totalMinutesInHour = 60;
+                  bool hasSleepData = false;
 
                   // Calculate the start and end time for the current hour
                   final DateTime hourStart = DateTime(currentDate.year,
                       currentDate.month, currentDate.day, hour);
                   final DateTime hourEnd = hourStart.add(Duration(hours: 1));
+
+                  // Check if there is sleep data for the current hour
+                  for (var sleep in sleepData) {
+                    final DateTime? sleepStart = sleep.startDate;
+                    final DateTime? sleepEnd = sleep.endDate;
+
+                    if (sleepStart != null && sleepEnd != null) {
+                      if (sleepStart.isBefore(hourEnd) &&
+                          sleepEnd.isAfter(hourStart)) {
+                        hasSleepData = true;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (!hasSleepData) {
+                    return Container(
+                      color: Colors.grey.shade300,
+                    );
+                  }
 
                   // Calculate the total sleep minutes within the current hour
                   sleepData.forEach((sleep) {
@@ -84,8 +105,11 @@ class SleepHeatmap extends StatelessWidget {
                   // Calculate the proportion of minutes slept in the current hour
                   double proportion = totalSleepMinutes / totalMinutesInHour;
 
-                  return Container(
-                    color: _getColorForSleepMinutes(proportion),
+                  return FractionallySizedBox(
+                    heightFactor: proportion,
+                    child: Container(
+                      color: _getColorForSleepMinutes(proportion),
+                    ),
                   );
                 },
               ),
@@ -131,12 +155,18 @@ class SleepHeatmap extends StatelessWidget {
   }
 
   Color _getColorForSleepMinutes(double proportion) {
-    if (proportion > 0) {
-      return Colors.green;
-    } else if (proportion > 3) {
-      return Colors.yellow;
+    if (proportion >= 1.0) {
+      return Colors.green.shade300; // Entire hour slept
+    } else if (proportion > 0.75) {
+      return Colors.lightGreen; // More than 45 minutes slept
+    } else if (proportion > 0.5) {
+      return Colors.yellow; // More than 30 minutes slept
+    } else if (proportion > 0.25) {
+      return Colors.orange; // More than 15 minutes slept
+    } else if (proportion > 0) {
+      return Colors.red.shade300; // Less than 15 minutes slept
     } else {
-      return Colors.grey.shade300;
+      return Colors.black; // No sleep during this hour
     }
   }
 }

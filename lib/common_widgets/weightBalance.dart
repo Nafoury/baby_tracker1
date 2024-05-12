@@ -9,16 +9,17 @@ class BalanceWeight extends StatelessWidget {
   final DateTime? startDate;
   final Function(DateTime) onStartDateChanged;
   final Function(double) onWeightChanged;
+  final Widget? suffix;
 
-  BalanceWeight({
-    Key? key,
-    required this.min,
-    required this.max,
-    this.selectedValue,
-    this.startDate,
-    required this.onStartDateChanged,
-    required this.onWeightChanged,
-  });
+  BalanceWeight(
+      {Key? key,
+      required this.min,
+      required this.max,
+      this.selectedValue,
+      this.startDate,
+      required this.onStartDateChanged,
+      required this.onWeightChanged,
+      this.suffix});
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class BalanceWeight extends StatelessWidget {
             ),
             SizedBox(height: 30),
             AnimatedWeightPicker(
+              suffix: suffix,
               selectedValueColor: Colors.blue.shade200,
               dialColor: Colors.blue.shade200,
               suffixTextColor: Colors.blue.shade200,

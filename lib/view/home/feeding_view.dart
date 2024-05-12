@@ -6,6 +6,7 @@ import 'package:baby_tracker/controller/feedNursing.dart';
 import 'package:baby_tracker/main.dart';
 import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,6 +53,7 @@ class _FeedingViewState extends State<FeedingView> {
   NursingController nursingController = NursingController();
   late SolidsProvider solidsProvider;
   late BottleDataProvider bottleDataProvider;
+  late BabyProvider babyProvider;
 
   Future<void> fetchBottleData(BottleDataProvider bottleDataProvider) async {
     try {
@@ -71,6 +73,7 @@ class _FeedingViewState extends State<FeedingView> {
   void didChangeDependencies() {
     solidsProvider = Provider.of<SolidsProvider>(context, listen: true);
     bottleDataProvider = Provider.of<BottleDataProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -114,7 +117,7 @@ class _FeedingViewState extends State<FeedingView> {
                   child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
@@ -128,13 +131,20 @@ class _FeedingViewState extends State<FeedingView> {
                           fit: BoxFit.fitHeight,
                         ),
                       ),
-                      SizedBox(width: 85),
                       Text(
                         "Feeding",
                         style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        " ${babyProvider.activeBaby?.babyName ?? 'Baby'}", // Access active baby's name
+                        style: TextStyle(
+                          color: Tcolor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),

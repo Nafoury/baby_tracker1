@@ -285,35 +285,33 @@ class _RoundButton1State extends State<RoundButton1> {
     setState(() {
       if (side == 'L') {
         isTimerLRunning = true;
-        isTimerRRunning = false; // Stop the timer of the other side
+        isTimerRRunning = false;
         startTimeL = DateTime.now();
         elapsedTimeL = Duration.zero;
+        timerL = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+          if (!isTimerLRunning) {
+            timer.cancel();
+          } else {
+            setState(() {
+              elapsedTimeL = DateTime.now().difference(startTimeL!);
+              timerControllerL.add(_formatDuration(elapsedTimeL));
+            });
+          }
+        });
       } else if (side == 'R') {
         isTimerRRunning = true;
-        isTimerLRunning = false; // Stop the timer of the other side
+        isTimerLRunning = false;
         startTimeR = DateTime.now();
         elapsedTimeR = Duration.zero;
-      }
-    });
-
-    timerL = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (!isTimerLRunning) {
-        timer.cancel();
-      } else {
-        setState(() {
-          elapsedTimeL = DateTime.now().difference(startTimeL!);
-          timerControllerL.add(_formatDuration(elapsedTimeL));
-        });
-      }
-    });
-
-    timerR = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (!isTimerRRunning) {
-        timer.cancel();
-      } else {
-        setState(() {
-          elapsedTimeR = DateTime.now().difference(startTimeR!);
-          timerControllerR.add(_formatDuration(elapsedTimeR));
+        timerR = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+          if (!isTimerRRunning) {
+            timer.cancel();
+          } else {
+            setState(() {
+              elapsedTimeR = DateTime.now().difference(startTimeR!);
+              timerControllerR.add(_formatDuration(elapsedTimeR));
+            });
+          }
         });
       }
     });
@@ -321,20 +319,16 @@ class _RoundButton1State extends State<RoundButton1> {
 
   void _stopTimer() async {
     setState(() {
-      isTimerLRunning = false;
-      isTimerRRunning = false;
-
-      elapsedTimeL = startTimeL != null
-          ? DateTime.now().difference(startTimeL!)
-          : Duration.zero;
-      elapsedTimeR = startTimeR != null
-          ? DateTime.now().difference(startTimeR!)
-          : Duration.zero;
-
-      timerL.cancel();
-      timerR.cancel();
+      if (isTimerLRunning) {
+        isTimerLRunning = false;
+        elapsedTimeL = DateTime.now().difference(startTimeL!);
+        timerL.cancel();
+      } else if (isTimerRRunning) {
+        isTimerRRunning = false;
+        elapsedTimeR = DateTime.now().difference(startTimeR!);
+        timerR.cancel();
+      }
     });
-
     // Determine the starting breast side and nursing side based on the sequence of button presses
     String startSide = '';
     String breastSide = '';

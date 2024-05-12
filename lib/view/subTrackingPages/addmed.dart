@@ -26,6 +26,7 @@ class _AddMedState extends State<AddMed> {
 
   // Define list of reminder intervals
   final List<String> reminderIntervals = [
+    '5 mins',
     '1 hour',
     '1 hour 30 min',
     '2 hours',
@@ -34,7 +35,7 @@ class _AddMedState extends State<AddMed> {
     '3 hour 30 min',
     '4 hours',
     '6 hours ',
-    '12 hours'
+
     // Add more intervals as needed
   ];
 
@@ -63,193 +64,205 @@ class _AddMedState extends State<AddMed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Tcolor.white,
-        body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-                child: SafeArea(
-                    child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Get.offAllNamed("/mainTab");
-                    },
-                    icon: Image.asset(
-                      "assets/images/back_Navs.png",
-                      width: 25,
-                      height: 25,
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 75,
-                  ),
-                  Text(
-                    "Add drug",
-                    style: TextStyle(
-                        color: Tcolor.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Column(
-                children: [
-                  HealthWidget(
-                    healthType: HealthType.Medications,
-                    startDate: startDate,
-                    controller: _note,
-                    status: status,
-                    onDateStratTimeChanged: (DateTime newStartDate) {
-                      setState(() {
-                        startDate = newStartDate;
-                      });
-                    },
-                    onNoteChanged: (String note) {
-                      _note.text = note;
-                    },
-                    onStatusChanged: (String newstatus) {
-                      setState(() {
-                        status = newstatus;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 30),
-                  RoundButton(
-                      onpressed: () async {
-                        if (status.isEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset("assets/images/warning.png",
-                                    height: 60, width: 60),
-                                content: Text(
-                                  "Medication type can't be empty",
-                                  style: TextStyle(fontStyle: FontStyle.normal),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          return;
-                        }
-                        bool existingData =
-                            await _checkMedicationDiaperData(startDate);
-                        if (existingData) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset("assets/images/warning.png"),
-                                content: Text(
-                                  'Medication data of the same type, date, and hour already exists.',
-                                  style: TextStyle(fontStyle: FontStyle.normal),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          return;
-                        } else {
-                          medicationsProvider.addMedicationRecord(MedData(
-                            date: startDate,
-                            type: status,
-                            note: _note.text,
-                          ));
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset(
-                                  "assets/images/check.png",
-                                  height: 60,
-                                  width: 60,
-                                ),
-                                content: Text(
-                                  'Vaccine Data was successfully added',
-                                  style: TextStyle(fontStyle: FontStyle.normal),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          setState(() {
-                            startDate = DateTime.now();
-                            _note.clear();
-                            status = '';
-                          });
-                        }
+      backgroundColor: Tcolor.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: SingleChildScrollView(
+          child: SafeArea(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Get.offAllNamed("/mainTab");
                       },
-                      title: "Save drug"),
-                  SizedBox(height: 30),
-                  ListTile(
-                    onTap: () {
-                      NotificationService.showBasicNotification();
-                    },
-                    leading: Icon(Icons.notifications),
-                    title: Text('Set Reminder'),
-                  ),
-                  // Display dropdown button for selecting reminder interval
-                  DropdownButton<String>(
-                    value: selectedInterval,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedInterval = newValue!;
-                      });
-                    },
-                    items: reminderIntervals.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  // Button to set the reminder
-                  TextButton(
-                    onPressed: () async {
-                      // Convert selected interval to Duration
-                      int hours = int.parse(selectedInterval.split(' ')[0]);
-                      int minutes = selectedInterval.contains('hour') ? 0 : 30;
-                      Duration interval =
-                          Duration(hours: hours, minutes: minutes);
+                      icon: Image.asset(
+                        "assets/images/back_Navs.png",
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 75,
+                    ),
+                    Text(
+                      "Add drug",
+                      style: TextStyle(
+                          color: Tcolor.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Column(
+                  children: [
+                    HealthWidget(
+                      healthType: HealthType.Medications,
+                      startDate: startDate,
+                      controller: _note,
+                      status: status,
+                      onDateStratTimeChanged: (DateTime newStartDate) {
+                        setState(() {
+                          startDate = newStartDate;
+                        });
+                      },
+                      onNoteChanged: (String note) {
+                        _note.text = note;
+                      },
+                      onStatusChanged: (String newstatus) {
+                        setState(() {
+                          status = newstatus;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 30),
+                    RoundButton(
+                        onpressed: () async {
+                          if (status.isEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Image.asset(
+                                      "assets/images/warning.png",
+                                      height: 60,
+                                      width: 60),
+                                  content: Text(
+                                    "Medication type can't be empty",
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.normal),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return;
+                          }
+                          bool existingData =
+                              await _checkMedicationDiaperData(startDate);
+                          if (existingData) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title:
+                                      Image.asset("assets/images/warning.png"),
+                                  content: Text(
+                                    'Medication data of the same type, date, and hour already exists.',
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.normal),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return;
+                          } else {
+                            medicationsProvider.addMedicationRecord(MedData(
+                              date: startDate,
+                              type: status,
+                              note: _note.text,
+                            ));
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Image.asset(
+                                    "assets/images/check.png",
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                  content: Text(
+                                    'Vaccine Data was successfully added',
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.normal),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            setState(() {
+                              startDate = DateTime.now();
+                              _note.clear();
+                              status = '';
+                            });
+                          }
+                        },
+                        title: "Save drug"),
+                    SizedBox(height: 30),
+                    ListTile(
+                      onTap: () {
+                        NotificationService.showBasicNotification();
+                      },
+                      leading: Icon(Icons.notifications),
+                      title: Text('Set Reminder'),
+                    ),
+                    // Display dropdown button for selecting reminder interval
+                    DropdownButton<String>(
+                      value: selectedInterval,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedInterval = newValue!;
+                        });
+                      },
+                      items: reminderIntervals.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    // Button to set the reminder
+                    TextButton(
+                      onPressed: () async {
+                        // Convert selected interval to Duration
+                        int hours = int.parse(selectedInterval.split(' ')[0]);
+                        int minutes =
+                            selectedInterval.contains('hour') ? 0 : 30;
+                        Duration interval =
+                            Duration(hours: hours, minutes: minutes);
 
-                      // Set the reminder using the selected interval
-                      await NotificationService.showScheduledNotification(
-                          startDate, interval);
-                      print(startDate);
-                      print(interval);
-                    },
-                    child: Text('Set Reminder'),
-                  )
-                ],
-              ),
-            ])))));
+// Set the reminder using the selected interval
+                        await NotificationService
+                            .showScheduledNotificationRepated(
+                                startDate, interval);
+                      },
+                      child: Text('Set Reminder'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

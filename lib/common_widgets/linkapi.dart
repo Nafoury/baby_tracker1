@@ -1,5 +1,6 @@
 const String linkServerName = "http://192.168.1.10/babyphp";
 const String linkImageFile = "http://192.168.1.10/babyphp/upload";
+
 const String linksignup = "$linkServerName/auth/signup.php";
 
 const String linklogin = "$linkServerName/auth/login.php";
@@ -71,3 +72,13 @@ const String linkAddTooth = "$linkServerName/baby_teeth/add.php";
 const String linkUpdateTooth = "$linkServerName/baby_teeth/update.php";
 const String linkReadTooth = "$linkServerName/baby_teeth/read.php";
 const String linkDeleteTooth = "$linkServerName/baby_teeth/delete.php";
+
+const String linkAddHead = "$linkServerName/baby_head/add.php";
+const String linkUpdateHead = "$linkServerName/baby_head/update.php";
+const String linkReadHead = "$linkServerName/baby_head/view.php";
+const String linkDeleteHead = "$linkServerName/baby_head/delete.php";
+
+const String linkUserImage = "$linkServerName/auth/image.php";
+const String linkReadUserImage = "$linkServerName/auth/readImage.php";
+const String linkDeleteUserImage = "$linkServerName/auth/deletePhotoUser.php";
+const String linkUpdateUserImage = "$linkServerName/auth/updateUserImage.php";

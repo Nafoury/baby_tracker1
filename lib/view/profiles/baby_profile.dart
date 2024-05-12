@@ -1,11 +1,10 @@
-import 'dart:ffi';
-
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/models/babyinfo.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/view/profiles/baby_Profile1.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class BabyProfile extends StatefulWidget {
@@ -68,7 +67,9 @@ class _BabyProfileState extends State<BabyProfile> {
                           fontWeight: FontWeight.w700),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       child: Text(
                         'Close',
                         style: TextStyle(color: Colors.blue.shade200),
@@ -128,6 +129,88 @@ class _BabyProfileState extends State<BabyProfile> {
                 ),
                 RoundButton(
                   onpressed: () {
+                    if (name.text.isEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Image.asset(
+                              "assets/images/warning.png",
+                              height: 60,
+                              width: 60,
+                            ),
+                            content: Text(
+                              "Baby name can't be empty",
+                              style: TextStyle(fontStyle: FontStyle.normal),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("OK"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      return;
+                    }
+                    if (startDate == null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Image.asset(
+                              "assets/images/warning.png",
+                              height: 60,
+                              width: 60,
+                            ),
+                            content: Text(
+                              "Date of birth can't be empty",
+                              style: TextStyle(fontStyle: FontStyle.normal),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("OK"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      return;
+                    }
+                    if (status.isEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Image.asset(
+                              "assets/images/warning.png",
+                              height: 60,
+                              width: 60,
+                            ),
+                            content: Text(
+                              "Gender can't be empty",
+                              style: TextStyle(fontStyle: FontStyle.normal),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("OK"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      return;
+                    }
+
                     babyProvider.addBabyData(
                       BabyInfo(
                         babyName: name.text,
@@ -138,6 +221,38 @@ class _BabyProfileState extends State<BabyProfile> {
                         dateOfBirth: startDate,
                       ),
                     );
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Image.asset(
+                            "assets/images/check.png",
+                            height: 60,
+                            width: 60,
+                          ),
+                          content: Text(
+                            'Baby was successfully added',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    setState(() {
+                      name.clear();
+                      startDate = DateTime.now();
+                      status = '';
+                      height.clear();
+                      head.clear();
+                      weight.clear();
+                    });
                   },
                   title: 'Add',
                 ),

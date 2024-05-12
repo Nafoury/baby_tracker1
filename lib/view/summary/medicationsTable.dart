@@ -62,7 +62,7 @@ class _MediciationRecordsTableState extends State<MediciationRecordsTable> {
     return Consumer<MedicationsProvider>(
       builder: (context, medicationsProvider, child) {
         return DataTable(
-          columnSpacing: 24,
+          columnSpacing: 20,
           columns: [
             DataColumn(
               label: Text(

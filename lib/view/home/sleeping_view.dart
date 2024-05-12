@@ -2,6 +2,7 @@ import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
 import 'package:baby_tracker/controller/sleepcontroller.dart';
 import 'package:baby_tracker/main.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/sleep_provider.dart';
 import 'package:baby_tracker/view/main_tab/main_tab.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,10 +31,12 @@ class _SleepingViewState extends State<SleepingView> {
   final _note = TextEditingController();
   late SleepProvider sleepProvider;
   late List<SleepData> sleepRecords = [];
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
     sleepProvider = Provider.of<SleepProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -97,7 +100,7 @@ class _SleepingViewState extends State<SleepingView> {
           child: SafeArea(
               child: Column(children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
@@ -111,7 +114,6 @@ class _SleepingViewState extends State<SleepingView> {
                 fit: BoxFit.fitHeight,
               ),
             ),
-            const SizedBox(width: 85),
             Text(
               "Sleeping",
               style: TextStyle(
@@ -119,6 +121,14 @@ class _SleepingViewState extends State<SleepingView> {
                   fontSize: 16,
                   fontWeight: FontWeight.w700),
             ),
+            Text(
+              " ${babyProvider.activeBaby?.babyName ?? 'Baby'}", // Access active baby's name
+              style: TextStyle(
+                color: Tcolor.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            )
           ],
         ),
         const SizedBox(
@@ -249,7 +259,7 @@ class _SleepingViewState extends State<SleepingView> {
                             title: Image.asset("assets/images/warning.png",
                                 height: 60, width: 60),
                             content: Text(
-                              "Duration can't be empty",
+                              "Duration can't be zero or less",
                               style: TextStyle(fontStyle: FontStyle.normal),
                             ),
                             actions: <Widget>[
@@ -325,7 +335,11 @@ class _SleepingViewState extends State<SleepingView> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Image.asset("assets/images/warning.png"),
+                            title: Image.asset(
+                              "assets/images/warning.png",
+                              height: 60,
+                              width: 60,
+                            ),
                             content: Text(
                               'Sleep data of end date already exists.',
                               style: TextStyle(fontStyle: FontStyle.normal),

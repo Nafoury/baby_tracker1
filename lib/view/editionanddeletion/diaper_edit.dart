@@ -83,7 +83,7 @@ class _DiaperEditState extends State<DiaperEdit> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -96,16 +96,14 @@ class _DiaperEditState extends State<DiaperEdit> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    const SizedBox(width: 85),
                     Text(
-                      "Diaper",
+                      "Edit Diaper",
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(width: 80),
                     TextButton(
                       onPressed: () async {
                         if (widget.entryData.changeId != null) {

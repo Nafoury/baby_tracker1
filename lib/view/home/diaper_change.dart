@@ -1,4 +1,5 @@
 import 'package:baby_tracker/models/diaperData.dart';
+import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
 import 'package:baby_tracker/view/summary/diaperDataTable.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +23,13 @@ class _DiaperChangeState extends State<DiaperChange> {
   final _note = TextEditingController();
   late DiaperProvider diaperProvider;
   late List<DiaperData> diapersRecords = [];
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
     diaperProvider = Provider.of<DiaperProvider>(context, listen: true);
+    babyProvider =
+        Provider.of<BabyProvider>(context, listen: true); // Access BabyProvider
     super.didChangeDependencies();
   }
 
@@ -67,7 +71,7 @@ class _DiaperChangeState extends State<DiaperChange> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
@@ -81,9 +85,16 @@ class _DiaperChangeState extends State<DiaperChange> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
                     Text(
                       "Diaper",
+                      style: TextStyle(
+                        color: Tcolor.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      " ${babyProvider.activeBaby?.babyName ?? 'Baby'}", // Access active baby's name
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 16,

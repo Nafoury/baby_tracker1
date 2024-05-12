@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:baby_tracker/Services/notifi_service.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:baby_tracker/models/babyinfo.dart';
+import 'package:baby_tracker/provider/UserImageProvider.dart';
+import 'package:baby_tracker/provider/babyHeadProvider.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
 import 'package:baby_tracker/provider/diaper_provider.dart';
@@ -62,6 +64,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => MomWeightProvider()),
         ChangeNotifierProvider(create: (context) => WeightProvider()),
         ChangeNotifierProvider(create: (context) => BabyProvider()),
+        ChangeNotifierProvider(create: (context) => HeadMeasureProvider()),
+        ChangeNotifierProvider(create: (context) => UserImageProvider()),
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),

@@ -11,12 +11,26 @@ class BabyProvider extends ChangeNotifier {
   List<BabyInfo> _babyRecords = List<BabyInfo>.empty(growable: true);
   List<BabyInfo> get babyRecords => _babyRecords;
 
+  String? _activeBabyId; // Changed from String? to int?
+  String? get activeBabyId => _activeBabyId;
+
+  BabyInfo? _activeBaby;
+
+  BabyInfo? get activeBaby => _activeBaby;
+
+  void addListener(void Function() listener) {
+    super.addListener(listener);
+    // Call the listener immediately upon addition to ensure the UI is updated
+    listener();
+  }
+
   Future addBabyData(BabyInfo babyInfo) async {
     print('Adding medication record: $babyInfo');
     final bool res = await babyInfoController.saveBabyData(babyInfo: babyInfo);
     if (res) {
       _babyRecords.add(babyInfo); // Corrected variable name
       notifyListeners();
+
       print('Diaper record added successfully: $_babyRecords');
     } else {
       print('Failed to add diaper record');
@@ -59,6 +73,14 @@ class BabyProvider extends ChangeNotifier {
       await babyInfoController.makeBabyActive(babyId);
       // You may want to fetch the updated list of babies after making one active
       await getbabyRecords();
+      _activeBabyId = babyId.toString();
+      // Update _activeBaby with the active baby's information
+      _activeBaby = _babyRecords.firstWhere(
+        (baby) => baby.infoId == int.parse(_activeBabyId!),
+        orElse: () =>
+            BabyInfo(), // Return a default BabyInfo object if active baby is not found
+      );
+      notifyListeners();
     } catch (e) {
       print('Error making baby active: $e');
       // Handle error appropriately

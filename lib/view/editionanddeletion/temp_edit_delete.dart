@@ -194,7 +194,7 @@ class _TempEditState extends State<TempEdit> {
                                 width: 60,
                               ),
                               content: Text(
-                                  "Diaper data of the same type, date, and hour already exists."),
+                                  "Temprature data of the same  date, and hour already exists."),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -223,8 +223,8 @@ class _TempEditState extends State<TempEdit> {
                                 height: 60,
                                 width: 60,
                               ),
-                              content:
-                                  Text("Diaper Data was successfully updated."),
+                              content: Text(
+                                  "Temprature Data was successfully updated."),
                               actions: [
                                 TextButton(
                                   onPressed: () {

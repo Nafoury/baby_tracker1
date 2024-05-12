@@ -69,7 +69,7 @@ class NotificationService {
     return scheduledDate;
   }
 
-  static Future<void> showScheduledNotification(
+  static Future<void> showScheduledNotificationRepated(
       DateTime scheduledTime, Duration interval) async {
     print('Scheduled time1 received: $scheduledTime');
     const AndroidNotificationDetails android = AndroidNotificationDetails(
@@ -81,7 +81,7 @@ class NotificationService {
     tz.initializeTimeZones();
 
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'Reminder',
-        'It\'s time for your reminder!', RepeatInterval.hourly, details,
+        'It\'s time for your reminder!', RepeatInterval.everyMinute, details,
         androidAllowWhileIdle: true);
   }
 }

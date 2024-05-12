@@ -60,7 +60,7 @@ class _VaccineRecordsTableState extends State<VaccineRecordsTable> {
     return Consumer<VaccineProvider>(
       builder: (context, vaccineProvider, child) {
         return DataTable(
-          columnSpacing: 18,
+          columnSpacing: 30,
           columns: [
             DataColumn(
               label: Text(
@@ -101,7 +101,7 @@ class _VaccineRecordsTableState extends State<VaccineRecordsTable> {
                 ),
               ),
               DataCell(Text(
-                records.type.toString(),
+                '${records.type.toString().substring(0, records.type.toString().indexOf('(')).trim()}', // Displaying only the first 10 characters
                 style: TextStyle(
                     color: Colors.black.withOpacity(0.4),
                     fontWeight: FontWeight.w600,

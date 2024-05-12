@@ -50,9 +50,46 @@ class _DayItemState extends State<DayItem> {
                           setState(() {
                             myfile = File(xFile!.path);
                           });
-                          faceDayController.savefaceData(
-                              faceData: FaceData(date: DateTime.now()),
-                              imagefile: myfile!);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirm Adding"),
+                                  content: Text(
+                                      "Are you sure you want to add this photo"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        faceDayController.savefaceData(
+                                            faceData:
+                                                FaceData(date: DateTime.now()),
+                                            imagefile: myfile!);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            duration: Durations.medium1,
+                                            backgroundColor:
+                                                Tcolor.gray.withOpacity(0.4),
+                                            content: Text(
+                                                "Photo was successfully added."),
+                                          ),
+                                        );
+                                        Navigator.of(context).pop();
+
+                                        // Go back to the previous page
+                                      },
+                                      child: Text("Add"),
+                                    ),
+                                  ],
+                                );
+                              });
                         },
                         child: Container(
                           padding: EdgeInsets.all(10),
@@ -66,9 +103,46 @@ class _DayItemState extends State<DayItem> {
                           setState(() {
                             myfile = File(xFile!.path);
                           });
-                          faceDayController.savefaceData(
-                              faceData: FaceData(date: DateTime.now()),
-                              imagefile: myfile!);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirm Adding"),
+                                  content: Text(
+                                      "Are you sure you want to add this photo"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        faceDayController.savefaceData(
+                                            faceData:
+                                                FaceData(date: DateTime.now()),
+                                            imagefile: myfile!);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            duration: Durations.medium1,
+                                            backgroundColor:
+                                                Tcolor.gray.withOpacity(0.4),
+                                            content: Text(
+                                                "Photo was successfully added."),
+                                          ),
+                                        );
+                                        Navigator.of(context).pop();
+
+                                        // Go back to the previous page
+                                      },
+                                      child: Text("Add"),
+                                    ),
+                                  ],
+                                );
+                              });
                         },
                         child: Container(
                           padding: EdgeInsets.all(10),

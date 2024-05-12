@@ -1,10 +1,17 @@
 import 'package:baby_tracker/common/color_extension.dart';
+import 'package:baby_tracker/common_widgets/crud.dart';
+import 'package:baby_tracker/common_widgets/linkapi.dart';
+import 'package:baby_tracker/models/ImageModel.dart';
 import 'package:baby_tracker/models/babyinfo.dart';
+import 'package:baby_tracker/provider/UserImageProvider.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/view/editionanddeletion/babyEdit_deletion.dart';
 import 'package:baby_tracker/view/profiles/baby_profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,10 +27,18 @@ class _MomProfileState extends State<MomProfile> {
   late String firstName = '';
   late String babyName = '';
   late BabyProvider babyProvider;
+  late UserImageProvider userImageProvider;
+  late File? myfile;
+  late File? Updatedfile;
+  List<UserData> userimage = [];
+  late UserData userData;
+  Crud crud = new Crud();
 
   @override
   void didChangeDependencies() {
-    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
+    setInitialActiveBaby();
+    userImageProvider = Provider.of<UserImageProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -39,6 +54,28 @@ class _MomProfileState extends State<MomProfile> {
       firstName = sharedPref.getString('first_name') ?? '';
       babyName = sharedPref.getString('baby_name') ?? '';
     });
+  }
+
+  void setInitialActiveBaby() {
+    if (babyProvider.activeBabyId == null &&
+        babyProvider.babyRecords.isNotEmpty) {
+      // If no active baby is set and there are babies registered, set the first baby as active
+      babyProvider.makeBabyActive(babyProvider.babyRecords.first.infoId!);
+    }
+  }
+
+  Future<void> fetchImageRecords(UserImageProvider userImageProvider) async {
+    try {
+      List<UserData> records = await userImageProvider.getImageRecord();
+      print('Fetched Image Record: $records');
+      setState(() {
+        userimage = records;
+        print('Fetched diapers Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching diapers records: $e');
+      // Handle error here
+    }
   }
 
   @override
@@ -91,13 +128,191 @@ class _MomProfileState extends State<MomProfile> {
                   backgroundColor: Colors.grey.shade200,
                   minRadius: 25,
                   maxRadius: 25,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Image.asset(
-                      "assets/images/profile.png",
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
+                  child: userImageProvider.userData.first.image!.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 130,
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () async {
+                                        XFile? xFile =
+                                            await ImagePicker().pickImage(
+                                          source: ImageSource.gallery,
+                                        );
+                                        setState(() {
+                                          Updatedfile = File(xFile!.path);
+                                        });
+                                        userImageProvider.editUserImage(
+                                            userData: UserData(
+                                              id: int.parse(sharedPref
+                                                  .getString("id")
+                                                  .toString()),
+                                            ),
+                                            imageFile: Updatedfile!);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child:
+                                            Text("Upload Image From Gallery"),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        XFile? xFile =
+                                            await ImagePicker().pickImage(
+                                          source: ImageSource.camera,
+                                        );
+                                        setState(() {
+                                          Updatedfile = File(xFile!.path);
+                                        });
+                                        userImageProvider.editUserImage(
+                                            userData: UserData(
+                                              id: int.parse(sharedPref
+                                                  .getString("id")
+                                                  .toString()),
+                                            ),
+                                            imageFile: Updatedfile!);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text("Choose from Camera"),
+                                      ),
+                                    ),
+                                    if (userImageProvider
+                                            .userData.first.image !=
+                                        null)
+                                      InkWell(
+                                        onTap: () async {
+                                          // Delete the image
+                                          bool success = await userImageProvider
+                                              .deleteUserImage(userImageProvider
+                                                  .userData.first.image!);
+                                          if (success) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                duration: Duration(
+                                                    milliseconds: 1500),
+                                                backgroundColor: Tcolor.gray
+                                                    .withOpacity(0.3),
+                                                content: Text(
+                                                    "Photo was successfully deleted."),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                duration: Duration(
+                                                    milliseconds: 1500),
+                                                backgroundColor: Tcolor.gray
+                                                    .withOpacity(0.4),
+                                                content: Text(
+                                                    "Failed to delete photo."),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(
+                                            "Delete photo",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: userImageProvider
+                                    .userData.first.image!.isNotEmpty
+                                ? Image.network(
+                                    "$linkImageFile/${userImageProvider.userData.first.image}",
+                                    fit: BoxFit.cover,
+                                    width: 200,
+                                    height: 200,
+                                  )
+                                : Image.asset(
+                                    "assets/images/profile.png",
+                                    fit: BoxFit.fitHeight,
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 100,
+                                child: Column(children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      XFile? xFile =
+                                          await ImagePicker().pickImage(
+                                        source: ImageSource.gallery,
+                                      );
+                                      setState(() {
+                                        myfile = File(xFile!.path);
+                                      });
+                                      userImageProvider.saveUserImage(
+                                        userData: UserData(
+                                          id: int.parse(sharedPref
+                                              .getString("id")
+                                              .toString()),
+                                        ),
+                                        imageFile: myfile!,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Text("Upload Image From Gallery"),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      XFile? xFile =
+                                          await ImagePicker().pickImage(
+                                        source: ImageSource.camera,
+                                      );
+                                      setState(() {
+                                        myfile = File(xFile!.path);
+                                      });
+
+                                      userImageProvider.saveUserImage(
+                                        userData: UserData(
+                                          id: int.parse(sharedPref
+                                              .getString("id")
+                                              .toString()),
+                                        ),
+                                        imageFile: myfile!,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Text("Choose from Camera"),
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                            );
+                          },
+                          icon: Image.asset(
+                            "assets/images/profile.png",
+                            fit: BoxFit.fitHeight,
+                            height: 20,
+                            width: 20,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -112,7 +327,6 @@ class _MomProfileState extends State<MomProfile> {
             Consumer<BabyProvider>(
               builder: (context, babyProvider, _) {
                 List<BabyInfo> babies = babyProvider.babyRecords;
-                // Check if the number of babies is less than 3 to determine visibility of the button
                 bool showAddButton = babies.length < 3;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,6 +336,8 @@ class _MomProfileState extends State<MomProfile> {
                       itemCount: babies.length,
                       itemBuilder: (context, index) {
                         BabyInfo baby = babies[index];
+                        bool isactive =
+                            baby.infoId.toString() == babyProvider.activeBabyId;
                         return TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -144,6 +360,16 @@ class _MomProfileState extends State<MomProfile> {
                               ),
                               SizedBox(width: 8),
                               Text(baby.babyName!),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              if (isactive) // Conditionally render active indication
+                                Text(
+                                  ' Active',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                             ],
                           ),
                         );
@@ -184,6 +410,10 @@ class _MomProfileState extends State<MomProfile> {
             TextButton.icon(
               onPressed: () {
                 sharedPref.clear();
+                FirebaseAuth.instance.signOut().then((value) => {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil("login", (route) => false)
+                    });
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil("login", (route) => false);
               },

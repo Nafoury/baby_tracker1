@@ -1,23 +1,19 @@
 import 'package:baby_tracker/common_widgets/boxes.dart';
 import 'package:baby_tracker/common_widgets/round_button.dart';
-import 'package:baby_tracker/common_widgets/weightBalance.dart';
-import 'package:baby_tracker/controller/feedingBottle.dart';
-import 'package:baby_tracker/controller/feedingSolids.dart';
+import 'package:baby_tracker/models/babyHead.dart';
 import 'package:baby_tracker/models/babyWeight.dart';
-import 'package:baby_tracker/models/bottleData.dart';
-import 'package:baby_tracker/models/solidsData.dart';
+import 'package:baby_tracker/provider/babyHeadProvider.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/weightProvider.dart';
-import 'package:baby_tracker/view/charts/solidschart.dart';
+import 'package:baby_tracker/view/charts/headBabyChart.dart';
 import 'package:baby_tracker/view/charts/weightBabyChart.dart';
 import 'package:baby_tracker/view/subTrackingPages/addBabyWeight.dart';
-import 'package:baby_tracker/view/subTrackingPages/momweight.dart';
+import 'package:baby_tracker/view/subTrackingPages/addHeadMeasure.dart';
+import 'package:baby_tracker/view/summary/babyHeadCicTable.dart';
 import 'package:baby_tracker/view/summary/babyWeightDataTable.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
-import 'package:baby_tracker/view/charts/bottlechart.dart';
-import 'package:baby_tracker/view/subTrackingPages/bottleView.dart';
 import 'package:provider/provider.dart';
 
 class GrowthTracking extends StatefulWidget {
@@ -30,16 +26,21 @@ class GrowthTracking extends StatefulWidget {
 class _GrowthTracking extends State<GrowthTracking> {
   int selectedbutton = 0;
   late WeightProvider weightProvider;
+  late HeadMeasureProvider headMeasureProvider;
   late BabyProvider babyProvider;
   late List<WeightData> weightRecords = [];
+  late List<MeasureData> headRecords = [];
   double birthweight = 0;
   bool birthWeightCalculated = false;
 
   @override
   void didChangeDependencies() {
     weightProvider = Provider.of<WeightProvider>(context, listen: false);
+    headMeasureProvider =
+        Provider.of<HeadMeasureProvider>(context, listen: false);
     super.didChangeDependencies();
     fetchWeightRecords(weightProvider);
+    fetchHeadRecords(headMeasureProvider);
   }
 
   Future<void> fetchWeightRecords(WeightProvider weightProvider) async {
@@ -50,6 +51,21 @@ class _GrowthTracking extends State<GrowthTracking> {
         weightRecords = records;
         updateWeightBoxes(records);
         print('Fetched weight Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching baby weight records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchHeadRecords(HeadMeasureProvider headMeasureProvider) async {
+    try {
+      List<MeasureData> records = await headMeasureProvider.getMeasureRecords();
+      print('Fetched head circ Records: $records');
+      setState(() {
+        headRecords = records;
+
+        print('Fetched head Records: $records');
       });
     } catch (e) {
       print('Error fetching baby weight records: $e');
@@ -115,6 +131,23 @@ class _GrowthTracking extends State<GrowthTracking> {
   }
 
   List weightboxes = [
+    {
+      "time": "At birth",
+      "weight": "",
+      "date": "",
+    },
+    {
+      "time": "Current",
+      "weight": "",
+      "date": "",
+    },
+    {
+      "time": "Change",
+      "weight": "",
+      "sign": ">",
+    },
+  ];
+  List headboxes = [
     {
       "time": "At birth",
       "weight": "",
@@ -332,11 +365,12 @@ class _GrowthTracking extends State<GrowthTracking> {
                                   if (babyProvider.babyRecords.isNotEmpty) {
                                     // Extract birthdate and weight at birth
                                     String birthdate = babyProvider
-                                        .babyRecords.first.dateOfBirth!
-                                        .toString();
-                                    birthweight = babyProvider
-                                        .babyRecords.first.babyWeight!
-                                        .toDouble();
+                                            .activeBaby?.dateOfBirth
+                                            .toString() ??
+                                        '';
+                                    birthweight =
+                                        babyProvider.activeBaby?.babyWeight ??
+                                            0;
 
                                     // Update "At birth" box with birthdate and weight at birth
                                     weightboxes[0]["date"] =
@@ -398,7 +432,52 @@ class _GrowthTracking extends State<GrowthTracking> {
                                 ]);
                               })
                             ],
-                          )
+                          ),
+                        if (selectedbutton == 1)
+                          Consumer<HeadMeasureProvider>(
+                              builder: (context, headMeasureProvider, child) {
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  height: media.width * 0.3,
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: weightboxes.length,
+                                    separatorBuilder:
+                                        (BuildContext context, int index) {
+                                      return SizedBox(
+                                          width:
+                                              20); // Adjust the width as needed
+                                    },
+                                    itemBuilder: (context, index) {
+                                      var aobj = headboxes[index] as Map? ?? {};
+                                      return Boxes(
+                                          aobj: aobj,
+                                          weightboxes: weightboxes.cast());
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                HeadChart(measureRecords: headRecords),
+                                RoundButton(
+                                    onpressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                BabyHeadPage()),
+                                      );
+                                    },
+                                    title: "Add Head circ"),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                BabyHeadDataTable(measureRecords: headRecords),
+                              ],
+                            );
+                          })
                       ])
                 ])))));
   }

@@ -2,50 +2,103 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:baby_tracker/models/diaperData.dart';
 
-class DiaperChart extends StatelessWidget {
+class DiaperChart extends StatefulWidget {
   final List<DiaperData> diaperRecords;
   const DiaperChart({required this.diaperRecords});
 
   @override
+  _DiaperChartState createState() => _DiaperChartState();
+}
+
+class _DiaperChartState extends State<DiaperChart> {
+  late DateTime currentDate;
+
+  @override
+  void initState() {
+    super.initState();
+    currentDate = DateTime.now();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      child: BarChart(
-        BarChartData(
-          minY: 0,
-          maxY: 6,
-          titlesData: titlesData,
-          borderData: borderData,
-          barGroups: generateBarGroups(),
-          gridData: const FlGridData(show: true, drawVerticalLine: false),
-          alignment: BarChartAlignment.spaceAround,
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  currentDate = currentDate.subtract(Duration(days: 7));
+                });
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 20,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (currentDate.isBefore(DateTime.now())) {
+                    currentDate = currentDate.add(Duration(days: 7));
+                  }
+                });
+              },
+              icon: Icon(
+                Icons.arrow_forward,
+                size: 20,
+              ),
+            ),
+          ],
         ),
-      ),
+        Container(
+          height: 250,
+          child: BarChart(
+            BarChartData(
+              minY: 0,
+              maxY: 6,
+              titlesData: titlesData,
+              borderData: borderData,
+              barGroups: generateBarGroups(),
+              gridData: const FlGridData(show: true, drawVerticalLine: false),
+              alignment: BarChartAlignment.spaceAround,
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  String _getFormattedDate(DateTime date) {
+    return '${_getMonthAbbreviation(date.month)} ${date.day}, ${date.year}';
   }
 
   List<BarChartGroupData> generateBarGroups() {
     Map<String, double> totalAmounts = {};
-    DateTime currentDate = DateTime.now();
 
-    for (var i = 7; i >= 0; i--) {
-      DateTime date = currentDate.subtract(Duration(days: i));
+    // Calculate the start and end date for the current week
+    DateTime startDate =
+        currentDate.subtract(Duration(days: currentDate.weekday - 1));
+    DateTime endDate = startDate.add(Duration(days: 6));
+
+    // Initialize totalAmount for each day of the current week
+    for (var i = 0; i < 7; i++) {
+      DateTime date = startDate.add(Duration(days: i));
       String dateStr = date.toLocal().toString().split(' ')[0];
-
-      // Initialize totalAmount for the date
       totalAmounts[dateStr] = 0.0;
     }
 
-    for (var record in diaperRecords) {
+    // Update totalAmounts based on diaperRecords
+    for (var record in widget.diaperRecords) {
       DiaperData diaperData = record;
-
       String dateStr = diaperData.startDate.toLocal().toString().split(' ')[0];
       if (totalAmounts.containsKey(dateStr)) {
-        // Increment the totalAmount for the date
         totalAmounts[dateStr] = totalAmounts[dateStr]! + 1;
       }
     }
 
+    // Generate BarChartGroupData for each day of the current week
     List<BarChartGroupData> barGroups = totalAmounts.entries.map((entry) {
       return generateGroup(entry.key, entry.value);
     }).toList();
@@ -59,10 +112,11 @@ class DiaperChart extends StatelessWidget {
       barsSpace: 2,
       barRods: [
         BarChartRodData(
-            toY: totalAmount,
-            color: Colors.cyan.shade400,
-            width: 18,
-            borderRadius: BorderRadius.only()),
+          toY: totalAmount,
+          color: Colors.cyan.shade400,
+          width: 18,
+          borderRadius: BorderRadius.only(),
+        ),
       ],
     );
   }

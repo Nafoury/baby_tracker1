@@ -3,8 +3,10 @@ import 'package:baby_tracker/common/color_extension.dart';
 
 class TodaySleepScheduleRow extends StatelessWidget {
   final Map<String, dynamic> activityData;
+  final VoidCallback? onEdit;
 
-  const TodaySleepScheduleRow({Key? key, required this.activityData})
+  const TodaySleepScheduleRow(
+      {Key? key, required this.activityData, this.onEdit})
       : super(key: key);
 
   @override
@@ -88,7 +90,9 @@ class TodaySleepScheduleRow extends StatelessWidget {
               },
               onSelected: (value) {
                 if (value == 'edit') {
-                  // Handle edit action
+                  if (onEdit != null) {
+                    onEdit!();
+                  }
                 } else if (value == 'delete') {
                   // Handle delete action
                 }
@@ -127,7 +131,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
             ),
           ),
           Text(
-            "Duration: ${data["duration"]} minutes", //here calculating the duration between start and end date
+            "Duration: ${data["duration"]} ", //here calculating the duration between start and end date
             style: TextStyle(
               color: Tcolor.black,
               fontSize: 14,
@@ -145,18 +149,61 @@ class TodaySleepScheduleRow extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       );
-    } else if (data["name"] == "Feed") {
+    } else if (data["name"] == "Solids") {
       return Text(
-        "Type: ${data["feedingType"]}",
+        "Amount: ${data["total"]}",
         style: TextStyle(
           color: Tcolor.gray,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
       );
+    } else if (data["name"] == "Bottle") {
+      return Text(
+        "Amount: ${data["amount"]}",
+        style: TextStyle(
+          color: Tcolor.gray,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    } else if (data["name"] == ["Nursing"]) {
+      return Column(children: [
+        Text(
+          "Duration: ${data["duration"]}",
+          style: TextStyle(
+            color: Tcolor.gray,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          "Side: ${data["side"]}",
+          style: TextStyle(
+            color: Tcolor.gray,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ]);
     }
-
-    // Return an empty widget if the activity type is not recognized
-    return SizedBox();
+    return Column(children: [
+      Text(
+        "Duration: ${data["duration"]}",
+        style: TextStyle(
+          color: Tcolor.gray,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      Text(
+        "Side: ${data["side"]}",
+        style: TextStyle(
+          color: Tcolor.gray,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ]);
   }
 }

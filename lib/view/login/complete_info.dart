@@ -178,7 +178,7 @@ class _CompleteinfoState extends State<Completeinfo> {
                                 context: context,
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime(2000),
-                                lastDate: DateTime(2100));
+                                lastDate: DateTime.now());
                             if (pickedDate != null) {
                               setState(() {
                                 _dateTextController.text =
