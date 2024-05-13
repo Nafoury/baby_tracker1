@@ -8,6 +8,7 @@ import 'package:baby_tracker/models/nursingData.dart';
 import 'package:baby_tracker/models/solidsData.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/provider/bottleDataProvider.dart';
+import 'package:baby_tracker/provider/nursingDataProvider.dart';
 import 'package:baby_tracker/provider/solids_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ class _FeedingViewState extends State<FeedingView> {
   SolidsController solidsController = SolidsController();
   NursingController nursingController = NursingController();
   late SolidsProvider solidsProvider;
+  late NursingDataProvider nursingDataProvider;
   late BottleDataProvider bottleDataProvider;
   late BabyProvider babyProvider;
 
@@ -73,6 +75,8 @@ class _FeedingViewState extends State<FeedingView> {
   void didChangeDependencies() {
     solidsProvider = Provider.of<SolidsProvider>(context, listen: true);
     bottleDataProvider = Provider.of<BottleDataProvider>(context, listen: true);
+    nursingDataProvider =
+        Provider.of<NursingDataProvider>(context, listen: true);
     babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
@@ -580,40 +584,16 @@ class _FeedingViewState extends State<FeedingView> {
                           ],
                         ),
                       if (selectedbutton == 3)
-                        FutureBuilder(
-                          future: Future.wait([
-                            bottleController.retrieveBottleData(),
-                            solidsController.retrieveSolidsData(),
-                            nursingController.retrieveNursingData(),
-                          ]),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<dynamic>> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: Text("Loading..."));
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.hasData) {
-                              List<BottleData> bottleRecords =
-                                  (snapshot.data![0] as List)
-                                      .cast<BottleData>();
-                              List<SolidsData> solidsRecords =
-                                  (snapshot.data![1] as List)
-                                      .cast<SolidsData>();
-                              List<NusringData> nursingRecords =
-                                  (snapshot.data![2] as List)
-                                      .cast<NusringData>();
-
-                              return FeedingSummaryTable(
-                                bottleRecords: bottleRecords,
-                                solidsRecrods: solidsRecords,
-                                nursingRecords: nursingRecords,
-                              );
-                            } else {
-                              return Text('No data available.');
-                            }
-                          },
-                        ),
+                        Consumer3<BottleDataProvider, SolidsProvider,
+                                NursingDataProvider>(
+                            builder: (context, bottleDataProvider,
+                                solidsProvider, nursingDataProvider, child) {
+                          return FeedingSummaryTable(
+                            bottleRecords: bottleDataProvider.bottleRecords,
+                            solidsRecrods: solidsProvider.solidsRecords,
+                            nursingRecords: nursingDataProvider.nursingRecords,
+                          );
+                        })
                     ],
                   ),
                 ],

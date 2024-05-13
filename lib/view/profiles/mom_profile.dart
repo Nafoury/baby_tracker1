@@ -7,7 +7,7 @@ import 'package:baby_tracker/provider/UserImageProvider.dart';
 import 'package:baby_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baby_tracker/view/editionanddeletion/babyEdit_deletion.dart';
 import 'package:baby_tracker/view/profiles/baby_profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -410,10 +410,7 @@ class _MomProfileState extends State<MomProfile> {
             TextButton.icon(
               onPressed: () {
                 sharedPref.clear();
-                FirebaseAuth.instance.signOut().then((value) => {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil("login", (route) => false)
-                    });
+
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil("login", (route) => false);
               },

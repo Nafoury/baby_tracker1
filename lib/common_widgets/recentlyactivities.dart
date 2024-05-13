@@ -4,9 +4,10 @@ import 'package:baby_tracker/common/color_extension.dart';
 class TodaySleepScheduleRow extends StatelessWidget {
   final Map<String, dynamic> activityData;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const TodaySleepScheduleRow(
-      {Key? key, required this.activityData, this.onEdit})
+      {Key? key, required this.activityData, this.onEdit, this.onDelete})
       : super(key: key);
 
   @override
@@ -94,7 +95,7 @@ class TodaySleepScheduleRow extends StatelessWidget {
                     onEdit!();
                   }
                 } else if (value == 'delete') {
-                  // Handle delete action
+                  onDelete!();
                 }
               },
               icon: Icon(

@@ -24,7 +24,6 @@ import 'package:baby_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baby_tracker/view/on_boarding/started_view.dart';
 import 'package:baby_tracker/view/tracking/feedinT.dart';
 import 'package:baby_tracker/view/tracking/mainTracking.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -39,16 +38,6 @@ void main() async {
   sharedPref = await SharedPreferences.getInstance();
 
   bool isLoggedIn = sharedPref.getBool('isLoggedIn') ?? false;
-
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: const FirebaseOptions(
-              apiKey: "AIzaSyAuVgA99gzuJCwmoeTUPdNz472EyYpXwy4",
-              appId: "1:463061599891:android:ef6934e6d4e96155cdaf66",
-              messagingSenderId: "463061599891",
-              projectId: "babytracker1-fffae"),
-        )
-      : await Firebase.initializeApp();
 
   runApp(
     MultiProvider(

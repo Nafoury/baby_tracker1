@@ -31,7 +31,9 @@ class _GrowthTracking extends State<GrowthTracking> {
   late List<WeightData> weightRecords = [];
   late List<MeasureData> headRecords = [];
   double birthweight = 0;
+  double birthHeadMeasure = 0;
   bool birthWeightCalculated = false;
+  bool birthHeadCalculated = false;
 
   @override
   void didChangeDependencies() {
@@ -64,6 +66,7 @@ class _GrowthTracking extends State<GrowthTracking> {
       print('Fetched head circ Records: $records');
       setState(() {
         headRecords = records;
+        updateHeadBoxes(records);
 
         print('Fetched head Records: $records');
       });
@@ -126,6 +129,63 @@ class _GrowthTracking extends State<GrowthTracking> {
         weightboxes[1]["date"] = currentDate;
         weightboxes[2]["weight"] = "$sign $changeString";
         weightboxes[2]["date"] = currentDate;
+      });
+    }
+  }
+
+  void updateHeadBoxes(List<MeasureData> records) {
+    // Check if birth weight has been calculated and at least one record exists
+    if (!birthHeadCalculated && records.isNotEmpty) {
+      records.sort((a, b) => a.date!.compareTo(b.date!));
+      MeasureData firstRecord = records.first;
+
+      // Calculate difference between birth weight and current weight
+      double currentWeight = double.parse(firstRecord.measure.toString());
+      double birthHead = double.parse(birthHeadMeasure.toString());
+
+      double birthToCurrentDifference = currentWeight - birthHead;
+      String birthToCurrentDifferenceString =
+          birthToCurrentDifference.toStringAsFixed(2);
+      String birthToCurrentSign = birthToCurrentDifference >= 0 ? "+" : "-";
+
+      // Extract date part from the DateTime object
+      String currentDate = firstRecord.date.toString().split(" ")[0];
+
+      setState(() {
+        headboxes[1]["weight"] = currentWeight.toString();
+        headboxes[1]["date"] = currentDate;
+        headboxes[2]["weight"] =
+            "$birthToCurrentSign $birthToCurrentDifferenceString";
+      });
+
+      // Mark birth weight as calculated
+      birthHeadCalculated = true;
+    }
+
+    // Check if there are at least two records to calculate change
+    if (records.length >= 2) {
+      records.sort((a, b) => a.date!.compareTo(b.date!));
+
+      // Get the latest two weight records
+      MeasureData currentRecord = records.last;
+      MeasureData previousRecord = records[records.length - 2];
+
+      // Calculate change and update weightboxes
+      double currentWeight = double.parse(currentRecord.measure.toString());
+      double previousWeight = double.parse(previousRecord.measure.toString());
+
+      double change = currentWeight - previousWeight;
+      String changeString = change.toStringAsFixed(2);
+      String sign = change >= 0 ? "+" : "-";
+
+      // Extract date part from the DateTime object
+      String currentDate = currentRecord.date.toString().split(" ")[0];
+
+      setState(() {
+        headboxes[1]["weight"] = currentWeight.toString();
+        headboxes[1]["date"] = currentDate;
+        headboxes[2]["weight"] = "$sign $changeString";
+        headboxes[2]["date"] = currentDate;
       });
     }
   }
@@ -434,50 +494,75 @@ class _GrowthTracking extends State<GrowthTracking> {
                             ],
                           ),
                         if (selectedbutton == 1)
-                          Consumer<HeadMeasureProvider>(
-                              builder: (context, headMeasureProvider, child) {
-                            return Column(
-                              children: [
-                                SizedBox(
-                                  height: media.width * 0.3,
-                                  child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: weightboxes.length,
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return SizedBox(
-                                          width:
-                                              20); // Adjust the width as needed
-                                    },
-                                    itemBuilder: (context, index) {
-                                      var aobj = headboxes[index] as Map? ?? {};
-                                      return Boxes(
-                                          aobj: aobj,
-                                          weightboxes: weightboxes.cast());
-                                    },
+                          Column(children: [
+                            Consumer<BabyProvider>(
+                              builder: (context, babyProvider, _) {
+                                if (babyProvider.babyRecords.isNotEmpty) {
+                                  // Extract birthdate and weight at birth
+                                  String birthdate = babyProvider
+                                          .activeBaby?.dateOfBirth
+                                          .toString() ??
+                                      '';
+                                  birthHeadMeasure =
+                                      babyProvider.activeBaby?.babyhead ?? 0;
+
+                                  // Update "At birth" box with birthdate and weight at birth
+                                  headboxes[0]["date"] =
+                                      birthdate.toString().split(" ")[0];
+                                  headboxes[0]["weight"] =
+                                      birthHeadMeasure.toString();
+                                }
+                                // Return the UI components
+                                return SizedBox(); // Return a placeholder widget if needed
+                              },
+                            ),
+                            Consumer<HeadMeasureProvider>(
+                                builder: (context, headMeasureProvider, child) {
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: media.width * 0.3,
+                                    child: ListView.separated(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: weightboxes.length,
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return SizedBox(
+                                            width:
+                                                20); // Adjust the width as needed
+                                      },
+                                      itemBuilder: (context, index) {
+                                        var aobj =
+                                            headboxes[index] as Map? ?? {};
+                                        return Boxes(
+                                            aobj: aobj,
+                                            weightboxes: headboxes.cast());
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                HeadChart(measureRecords: headRecords),
-                                RoundButton(
-                                    onpressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                BabyHeadPage()),
-                                      );
-                                    },
-                                    title: "Add Head circ"),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                BabyHeadDataTable(measureRecords: headRecords),
-                              ],
-                            );
-                          })
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  HeadChart(measureRecords: headRecords),
+                                  RoundButton(
+                                      onpressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BabyHeadPage()),
+                                        );
+                                      },
+                                      title: "Add Head circ"),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  BabyHeadDataTable(
+                                      measureRecords: headRecords),
+                                ],
+                              );
+                            }),
+                          ])
                       ])
                 ])))));
   }

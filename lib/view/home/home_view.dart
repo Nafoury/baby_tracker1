@@ -674,27 +674,33 @@ class _HomeViewState extends State<HomeView> {
                       if (diapersRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Diapers") {
                         return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DiaperEdit(
-                                            entryData: diapersRecords.last,
-                                          )),
-                                ));
+                          activityData: todaySleepArr[index],
+                          onEdit: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DiaperEdit(
+                                      entryData: diapersRecords.last,
+                                    )),
+                          ),
+                          onDelete: () => diaperProvider.deleteDiaperRecord(
+                              diapersRecords.last.changeId!),
+                        );
                       }
                       // Check if there are sleep records available
                       if (sleepRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Sleep") {
                         return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SleepEdit(
-                                            entryData: sleepRecords.last,
-                                          )),
-                                ));
+                          activityData: todaySleepArr[index],
+                          onEdit: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SleepEdit(
+                                      entryData: sleepRecords.last,
+                                    )),
+                          ),
+                          onDelete: () => sleepProvider
+                              .deleteSleepRecord(sleepRecords.last.sleepId!),
+                        );
                       }
 
                       if (solidsRecords.isNotEmpty &&
@@ -707,32 +713,39 @@ class _HomeViewState extends State<HomeView> {
                                       builder: (context) => SolidsEdit(
                                             entryData: solidsRecords.last,
                                           )),
-                                ));
+                                ),
+                            onDelete: () => solidsProvider.deleteSolidsRecord(
+                                solidsRecords.last.solidId!));
                       }
                       if (bottleRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Bottle") {
                         return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BottleEdit(
-                                            entryData: bottleRecords.last,
-                                          )),
-                                ));
+                          activityData: todaySleepArr[index],
+                          onEdit: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BottleEdit(
+                                      entryData: bottleRecords.last,
+                                    )),
+                          ),
+                          onDelete: () => bottleDataProvider
+                              .deleteBottleRecord(bottleRecords.last.feed1Id!),
+                        );
                       }
                       if (nursingRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Nursing") {
                         return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          NursingEditAndDeletion(
-                                            entryData: nursingRecords.last,
-                                          )),
-                                ));
+                          activityData: todaySleepArr[index],
+                          onEdit: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NursingEditAndDeletion(
+                                      entryData: nursingRecords.last,
+                                    )),
+                          ),
+                          onDelete: () => nursingDataProvider
+                              .deleteNursingRecord(nursingRecords.last.feedId!),
+                        );
                       }
 
                       return Container();

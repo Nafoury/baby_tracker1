@@ -1,382 +1,197 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'package:baby_tracker/models/nursingData.dart';
 import 'package:flutter/material.dart';
 
-class LineChartSample3 extends StatefulWidget {
-  LineChartSample3({
-    super.key,
-    Color? lineColor,
-    Color? indicatorLineColor,
-    Color? indicatorTouchedLineColor,
-    Color? indicatorSpotStrokeColor,
-    Color? indicatorTouchedSpotStrokeColor,
-    Color? bottomTextColor,
-    Color? bottomTouchedTextColor,
-    Color? averageLineColor,
-    Color? tooltipBgColor,
-    Color? tooltipTextColor,
-  })  : lineColor = lineColor ?? Colors.red,
-        indicatorLineColor =
-            indicatorLineColor ?? Colors.yellow.withOpacity(0.2),
-        indicatorTouchedLineColor = indicatorTouchedLineColor ?? Colors.yellow,
-        indicatorSpotStrokeColor =
-            indicatorSpotStrokeColor ?? Colors.yellow.withOpacity(0.5),
-        indicatorTouchedSpotStrokeColor =
-            indicatorTouchedSpotStrokeColor ?? Colors.yellow,
-        bottomTextColor = bottomTextColor ?? Colors.yellow.withOpacity(0.2),
-        bottomTouchedTextColor = bottomTouchedTextColor ?? Colors.yellow,
-        averageLineColor = averageLineColor ?? Colors.green.withOpacity(0.8),
-        tooltipBgColor = tooltipBgColor ?? Colors.green,
-        tooltipTextColor = tooltipTextColor ?? Colors.black;
+class NursingHeatmap extends StatelessWidget {
+  final List<NusringData> nursingData;
 
-  final Color lineColor;
-  final Color indicatorLineColor;
-  final Color indicatorTouchedLineColor;
-  final Color indicatorSpotStrokeColor;
-  final Color indicatorTouchedSpotStrokeColor;
-  final Color bottomTextColor;
-  final Color bottomTouchedTextColor;
-  final Color averageLineColor;
-  final Color tooltipBgColor;
-  final Color tooltipTextColor;
-
-  List<String> get weekDays =>
-      const ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-
-  List<double> get yValues => const [1.3, 1, 1.8, 1.5, 2.2, 1.8, 3];
+  const NursingHeatmap({Key? key, required this.nursingData}) : super(key: key);
 
   @override
-  State createState() => _LineChartSample3State();
-}
+  Widget build(BuildContext context) {
+    final List<String> dateTitles = _getDateTitles();
 
-class _LineChartSample3State extends State<LineChartSample3> {
-  late double touchedValue;
+    return Column(
+      children: [
+        // Top titles representing the last seven days
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: dateTitles.map((date) {
+            return _buildDateTitle(date);
+          }).toList(),
+        ),
+        // Left title and GridView.builder (your existing code)
+        Row(
+          children: [
+            // Left title
+            Container(
+              width: 40, // Adjust width as needed
+              child: Column(
+                children: [
+                  _buildHourTitle('00:00'),
+                  _buildHourTitle('06:00'),
+                  _buildHourTitle('12:00'),
+                  _buildHourTitle('18:00'),
+                  _buildHourTitle('00:00'),
+                ],
+              ),
+            ),
+            // GridView.builder
+            Expanded(
+              child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7, // 7 columns for days of the week
+                  crossAxisSpacing: 3.5,
+                  mainAxisSpacing: 3.5,
+                  childAspectRatio: 3.5,
+                ),
+                itemCount: 24 * 7, // 24 rows for each hour of the day
+                itemBuilder: (BuildContext context, int index) {
+                  final int day = index % 7;
+                  final int hour = index ~/ 7;
+                  final DateTime currentDate =
+                      DateTime.now().subtract(Duration(days: 6 - day));
+                  int totalSleepMinutes = 0;
+                  int totalMinutesInHour = 60;
+                  bool hasSleepData = false;
 
-  bool fitInsideBottomTitle = true;
-  bool fitInsideLeftTitle = false;
+                  // Calculate the start and end time for the current hour
+                  final DateTime hourStart = DateTime(currentDate.year,
+                      currentDate.month, currentDate.day, hour);
+                  final DateTime hourEnd = hourStart.add(Duration(hours: 1));
 
-  @override
-  void initState() {
-    touchedValue = -1;
-    super.initState();
+                  // Check if there is sleep data for the current hour
+                  for (var sleep in nursingData) {
+                    final DateTime? sleepStart = sleep.date;
+                    final Duration? leftDuration = sleep.leftDuration != null
+                        ? _parseDuration(sleep.leftDuration!)
+                        : null;
+                    final Duration? rightDuration = sleep.rightDuration != null
+                        ? _parseDuration(sleep.rightDuration!)
+                        : null;
+
+                    if (sleepStart != null &&
+                        leftDuration != null &&
+                        rightDuration != null) {
+                      final DateTime sleepEnd =
+                          sleepStart.add(leftDuration + rightDuration);
+                      if (sleepStart.isBefore(hourEnd) &&
+                          sleepEnd.isAfter(hourStart)) {
+                        hasSleepData = true;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (!hasSleepData) {
+                    return Container(
+                      color: Colors.grey.shade300,
+                    );
+                  }
+
+                  // Calculate the total sleep minutes within the current hour
+                  nursingData.forEach((sleep) {
+                    final DateTime? sleepStart = sleep.date;
+                    final Duration? leftDuration = sleep.leftDuration != null
+                        ? _parseDuration(sleep.leftDuration!)
+                        : null;
+                    final Duration? rightDuration = sleep.rightDuration != null
+                        ? _parseDuration(sleep.rightDuration!)
+                        : null;
+                    if (sleepStart != null &&
+                        leftDuration != null &&
+                        rightDuration != null) {
+                      // Check if there's an overlap between the sleep record and the current hour
+                      final DateTime sleepEnd =
+                          sleepStart.add(leftDuration + rightDuration);
+                      if (sleepStart.isBefore(hourEnd) &&
+                          sleepEnd.isAfter(hourStart)) {
+                        final DateTime overlapStart =
+                            sleepStart.isAfter(hourStart)
+                                ? sleepStart
+                                : hourStart;
+                        final DateTime overlapEnd =
+                            sleepEnd.isBefore(hourEnd) ? sleepEnd : hourEnd;
+                        final int overlapMinutes =
+                            overlapEnd.difference(overlapStart).inMinutes;
+                        totalSleepMinutes += overlapMinutes;
+                      }
+                    }
+                  });
+
+                  // Calculate the proportion of minutes slept in the current hour
+                  double proportion = totalSleepMinutes / totalMinutesInHour;
+
+                  return FractionallySizedBox(
+                    heightFactor: proportion,
+                    child: Container(
+                      color: _getColorForSleepMinutes(proportion),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    if (value % 1 != 0) {
-      return Container();
+  List<String> _getDateTitles() {
+    List<String> titles = [];
+    final currentDate = DateTime.now();
+    for (var i = 6; i >= 0; i--) {
+      DateTime date = currentDate.subtract(Duration(days: i));
+      String dateStr = '${date.day}.${date.month}';
+      titles.add(dateStr);
     }
-    final style = TextStyle(
-      color: Colors.black.withOpacity(0.5),
-      fontSize: 10,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 0:
-        text = '';
-        break;
-      case 1:
-        text = '1k calories';
-        break;
-      case 2:
-        text = '2k calories';
-        break;
-      case 3:
-        text = '3k calories';
-        break;
-      default:
-        return Container();
-    }
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 6,
-      fitInside: fitInsideLeftTitle
-          ? SideTitleFitInsideData.fromTitleMeta(meta)
-          : SideTitleFitInsideData.disable(),
-      child: Text(text, style: style, textAlign: TextAlign.center),
-    );
+    return titles;
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final isTouched = value == touchedValue;
-    final style = TextStyle(
-      color: isTouched ? widget.bottomTouchedTextColor : widget.bottomTextColor,
-      fontWeight: FontWeight.bold,
-    );
-
-    if (value % 1 != 0) {
-      return Container();
-    }
-    return SideTitleWidget(
-      space: 4,
-      axisSide: meta.axisSide,
-      fitInside: fitInsideBottomTitle
-          ? SideTitleFitInsideData.fromTitleMeta(meta, distanceFromEdge: 0)
-          : SideTitleFitInsideData.disable(),
+  Widget _buildDateTitle(String date) {
+    return Container(
+      height: 20, // Adjust height as needed
+      alignment: Alignment.center,
       child: Text(
-        widget.weekDays[value.toInt()],
-        style: style,
+        date,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.black, fontSize: 12),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2,
-      child: Padding(
-          padding: const EdgeInsets.only(right: 20.0, left: 12),
-          child: LineChart(
-            LineChartData(
-              lineTouchData: LineTouchData(
-                getTouchedSpotIndicator:
-                    (LineChartBarData barData, List<int> spotIndexes) {
-                  return spotIndexes.map((spotIndex) {
-                    final spot = barData.spots[spotIndex];
-                    if (spot.x == 0 || spot.x == 6) {
-                      return null;
-                    }
-                    return TouchedSpotIndicatorData(
-                      FlLine(
-                        color: widget.indicatorTouchedLineColor,
-                        strokeWidth: 4,
-                      ),
-                      FlDotData(
-                        getDotPainter: (spot, percent, barData, index) {
-                          if (index.isEven) {
-                            return FlDotCirclePainter(
-                              radius: 8,
-                              color: Colors.white,
-                              strokeWidth: 5,
-                              strokeColor:
-                                  widget.indicatorTouchedSpotStrokeColor,
-                            );
-                          } else {
-                            return FlDotSquarePainter(
-                              size: 16,
-                              color: Colors.white,
-                              strokeWidth: 5,
-                              strokeColor:
-                                  widget.indicatorTouchedSpotStrokeColor,
-                            );
-                          }
-                        },
-                      ),
-                    );
-                  }).toList();
-                },
-                touchTooltipData: LineTouchTooltipData(
-                  tooltipBgColor: widget.tooltipBgColor,
-                  getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                    return touchedBarSpots.map((barSpot) {
-                      final flSpot = barSpot;
-                      if (flSpot.x == 0 || flSpot.x == 6) {
-                        return null;
-                      }
-
-                      TextAlign textAlign;
-                      switch (flSpot.x.toInt()) {
-                        case 1:
-                          textAlign = TextAlign.left;
-                          break;
-                        case 5:
-                          textAlign = TextAlign.right;
-                          break;
-                        default:
-                          textAlign = TextAlign.center;
-                      }
-
-                      return LineTooltipItem(
-                        '${widget.weekDays[flSpot.x.toInt()]} \n',
-                        TextStyle(
-                          color: widget.tooltipTextColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: flSpot.y.toString(),
-                            style: TextStyle(
-                              color: widget.tooltipTextColor,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: ' k ',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: 'calories',
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                        textAlign: textAlign,
-                      );
-                    }).toList();
-                  },
-                ),
-                touchCallback:
-                    (FlTouchEvent event, LineTouchResponse? lineTouch) {
-                  if (!event.isInterestedForInteractions ||
-                      lineTouch == null ||
-                      lineTouch.lineBarSpots == null) {
-                    setState(() {
-                      touchedValue = -1;
-                    });
-                    return;
-                  }
-                  final value = lineTouch.lineBarSpots![0].x;
-
-                  if (value == 0 || value == 6) {
-                    setState(() {
-                      touchedValue = -1;
-                    });
-                    return;
-                  }
-
-                  setState(() {
-                    touchedValue = value;
-                  });
-                },
-              ),
-              extraLinesData: ExtraLinesData(
-                horizontalLines: [
-                  HorizontalLine(
-                    y: 1.8,
-                    color: widget.averageLineColor,
-                    strokeWidth: 3,
-                    dashArray: [20, 10],
-                  ),
-                ],
-              ),
-              lineBarsData: [
-                LineChartBarData(
-                  isStepLineChart: true,
-                  spots: widget.yValues.asMap().entries.map((e) {
-                    return FlSpot(e.key.toDouble(), e.value);
-                  }).toList(),
-                  isCurved: false,
-                  barWidth: 4,
-                  color: widget.lineColor,
-                  belowBarData: BarAreaData(
-                    show: true,
-                    gradient: LinearGradient(
-                      colors: [
-                        widget.lineColor.withOpacity(0.5),
-                        widget.lineColor.withOpacity(0),
-                      ],
-                      stops: const [0.5, 1.0],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    spotsLine: BarAreaSpotsLine(
-                      show: true,
-                      flLineStyle: FlLine(
-                        color: widget.indicatorLineColor,
-                        strokeWidth: 2,
-                      ),
-                      checkToShowSpotLine: (spot) {
-                        if (spot.x == 0 || spot.x == 6) {
-                          return false;
-                        }
-
-                        return true;
-                      },
-                    ),
-                  ),
-                  dotData: FlDotData(
-                    show: true,
-                    getDotPainter: (spot, percent, barData, index) {
-                      if (index.isEven) {
-                        return FlDotCirclePainter(
-                          radius: 6,
-                          color: Colors.white,
-                          strokeWidth: 3,
-                          strokeColor: widget.indicatorSpotStrokeColor,
-                        );
-                      } else {
-                        return FlDotSquarePainter(
-                          size: 12,
-                          color: Colors.white,
-                          strokeWidth: 3,
-                          strokeColor: widget.indicatorSpotStrokeColor,
-                        );
-                      }
-                    },
-                    checkToShowDot: (spot, barData) {
-                      return spot.x != 0 && spot.x != 6;
-                    },
-                  ),
-                ),
-              ],
-              minY: 0,
-              borderData: FlBorderData(
-                show: true,
-                border: Border.all(
-                  color: Colors.transparent,
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                checkToShowHorizontalLine: (value) => value % 1 == 0,
-                checkToShowVerticalLine: (value) => value % 1 == 0,
-                getDrawingHorizontalLine: (value) {
-                  if (value == 0) {
-                    return const FlLine(
-                      color: Colors.orange,
-                      strokeWidth: 2,
-                    );
-                  } else {
-                    return const FlLine(
-                      color: Colors.amberAccent,
-                      strokeWidth: 0.5,
-                    );
-                  }
-                },
-                getDrawingVerticalLine: (value) {
-                  if (value == 0) {
-                    return const FlLine(
-                      color: Colors.redAccent,
-                      strokeWidth: 10,
-                    );
-                  } else {
-                    return const FlLine(
-                      color: Colors.amberAccent,
-                      strokeWidth: 0.5,
-                    );
-                  }
-                },
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 46,
-                    getTitlesWidget: leftTitleWidgets,
-                  ),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: bottomTitleWidgets,
-                  ),
-                ),
-              ),
-            ),
-          )),
+  Widget _buildHourTitle(String hour) {
+    return Container(
+      height: 80, // Adjust height as needed
+      alignment: Alignment.center,
+      child: Text(
+        hour,
+        style: TextStyle(color: Colors.black, fontSize: 11),
+      ),
     );
+  }
+
+  Color _getColorForSleepMinutes(double proportion) {
+    if (proportion >= 1.0) {
+      return Colors.green.shade300; // Entire hour slept
+    } else if (proportion > 0.75) {
+      return Colors.lightGreen; // More than 45 minutes slept
+    } else if (proportion > 0.5) {
+      return Colors.yellow; // More than 30 minutes slept
+    } else if (proportion > 0.25) {
+      return Colors.orange; // More than 15 minutes slept
+    } else if (proportion > 0) {
+      return Colors.red.shade300; // Less than 15 minutes slept
+    } else {
+      return Colors.black; // No sleep during this hour
+    }
+  }
+
+  Duration _parseDuration(String durationString) {
+    List<String> parts = durationString.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    int seconds = int.parse(parts[2]);
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
   }
 }

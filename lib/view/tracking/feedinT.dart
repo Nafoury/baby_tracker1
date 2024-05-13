@@ -212,6 +212,9 @@ class _FeedingTracking extends State<FeedingTracking> {
                                           fontSize: 20),
                                     ),
                                   ),
+                                  NursingHeatmap(
+                                    nursingData: nursingRecords,
+                                  ),
                                   SizedBox(
                                     height: 30,
                                   ),
