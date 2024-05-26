@@ -2,8 +2,9 @@ const String linkServerName = "http://192.168.1.9/babyphp";
 const String linkImageFile = "http://192.168.1.9/babyphp/upload";
 
 const String linksignup = "$linkServerName/auth/signup.php";
-
 const String linklogin = "$linkServerName/auth/login.php";
+const String linkResetPassword = "$linkServerName/auth/resetpassword.php";
+const String linkUpdatePassword = "$linkServerName/auth/updatepassword.php";
 
 const String linkAddinfo = "$linkServerName/completeinfo/add.php";
 const String linkViewinfo = "$linkServerName/completeinfo/view.php";

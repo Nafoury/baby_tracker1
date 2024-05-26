@@ -38,6 +38,7 @@ class _RoundButton1State extends State<RoundButton1> {
   late DateTime startDate1;
   late NursingDataProvider nursingDataProvider;
   late List<NusringData> nursingRecors = [];
+  String? startingSide;
 
   @override
   void initState() {
@@ -63,27 +64,28 @@ class _RoundButton1State extends State<RoundButton1> {
 
   @override
   Widget build(BuildContext context) {
+    var media = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
-          width: 300,
-          height: 400,
+          width: media.height,
+          height: media.height * 0.4,
           decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: Tcolor.primaryColor1.withOpacity(0.4)),
+            shape: BoxShape.rectangle,
+            color: Tcolor.primaryColor1.withOpacity(0.4),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Tap the button L or R to\n begin the timer with",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -106,7 +108,7 @@ class _RoundButton1State extends State<RoundButton1> {
                             ? Tcolor.primaryColor1.withOpacity(0.8)
                             : Colors.purpleAccent.shade100.withOpacity(0.2),
                         border: isButtonLTapped
-                            ? null // Remove the border if isButtonLTapped is true
+                            ? null
                             : Border.all(
                                 color: Colors.purple.shade100,
                                 width: 2.0,
@@ -142,7 +144,7 @@ class _RoundButton1State extends State<RoundButton1> {
                             ? Tcolor.primaryColor1.withOpacity(0.8)
                             : Colors.purpleAccent.shade100.withOpacity(0.2),
                         border: isButtonRTapped
-                            ? null // Remove the border if isButtonLTapped is true
+                            ? null
                             : Border.all(
                                 color: Colors.purple.shade100,
                                 width: 2.0,
@@ -161,9 +163,7 @@ class _RoundButton1State extends State<RoundButton1> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -200,89 +200,86 @@ class _RoundButton1State extends State<RoundButton1> {
         ),
         SizedBox(height: 10),
         Visibility(
-            visible: isButtonLTapped || isButtonRTapped,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
+          visible: isButtonLTapped || isButtonRTapped,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      onPressed: () {
-                        _stopTimer();
-                      },
-                      child: Text(
-                        'Stop',
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w500),
-                      ),
                     ),
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        _resetTimer();
-                      },
-                      child: Text(
-                        'Reset',
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _showStartDatePicker(
-                        context, startDate1); // Show date picker for start date
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors
-                            .purpleAccent.shade100, // Set the border color here
-                        width: 2.0, // Set the border width
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
-                    ),
+                    onPressed: _stopTimer,
                     child: Text(
-                      DateFormat('dd MMM yyyy  HH:mm').format(startDate1),
+                      'Stop',
                       style: TextStyle(
-                        color: Colors.purpleAccent.shade100,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    onPressed: _resetTimer,
+                    child: Text(
+                      'Reset',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5),
+              GestureDetector(
+                onTap: () {
+                  _showStartDatePicker(context, startDate1);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.purpleAccent.shade100,
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Text(
+                    DateFormat('dd MMM yyyy  HH:mm').format(startDate1),
+                    style: TextStyle(
+                      color: Colors.purpleAccent.shade100,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   void _startTimer(String side) {
     setState(() {
+      if (startingSide == null) {
+        startingSide = side;
+      }
       if (side == 'L') {
         isTimerLRunning = true;
         isTimerRRunning = false;
@@ -333,35 +330,8 @@ class _RoundButton1State extends State<RoundButton1> {
         timerR?.cancel();
       }
 
-      // Determine the starting breast side and nursing side based on the sequence of button presses
-      String startSide = '';
-      String breastSide = '';
+      String nursingSide = elapsedTimeL > elapsedTimeR ? 'L' : 'R';
 
-      if (isButtonLTapped && isButtonRTapped) {
-        // If both buttons were tapped, determine the sequence
-        if (startTimeL != null && startTimeR != null) {
-          // If both start times are available, check which one comes first
-          if (startTimeL!.isBefore(startTimeR!)) {
-            startSide = 'L';
-            breastSide = 'R';
-          } else {
-            startSide = 'R';
-            breastSide = 'L';
-          }
-        } else if (startTimeL != null) {
-          startSide = 'L';
-          breastSide = 'R';
-        } else if (startTimeR != null) {
-          startSide = 'R';
-          breastSide = 'L';
-        }
-      } else if (isButtonLTapped) {
-        startSide = 'L';
-        breastSide = 'L';
-      } else if (isButtonRTapped) {
-        startSide = 'R';
-        breastSide = 'R';
-      }
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -381,8 +351,8 @@ class _RoundButton1State extends State<RoundButton1> {
                   nursingDataProvider.addNursingData(NusringData(
                     leftDuration: _formatDuration(elapsedTimeL),
                     date: startDate1,
-                    nursingSide: breastSide,
-                    startingBreast: startSide,
+                    nursingSide: nursingSide,
+                    startingBreast: startingSide ?? '',
                     rightDuration: _formatDuration(elapsedTimeR),
                     babyId: sharedPref.getString("info_id"),
                   ));
@@ -405,6 +375,7 @@ class _RoundButton1State extends State<RoundButton1> {
       isTimerRRunning = false;
       elapsedTimeL = Duration.zero;
       elapsedTimeR = Duration.zero;
+      startingSide = null;
     });
 
     timerControllerL.add('00:00');
@@ -413,37 +384,36 @@ class _RoundButton1State extends State<RoundButton1> {
 
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitHours = twoDigits(duration.inHours);
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds';
+    return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
   }
 
-  void _showStartDatePicker(BuildContext context, DateTime initialDateTime) {
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40));
-    DateTime maximumDateTime = DateTime.now();
-
-    showCupertinoModalPopup(
+  void _showStartDatePicker(BuildContext context, DateTime initialDate) {
+    showDatePicker(
       context: context,
-      builder: (BuildContext builderContext) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: CupertinoDatePicker(
-            mode: CupertinoDatePickerMode.dateAndTime,
-            initialDateTime: initialDateTime,
-            minimumDate: minimumDateTime,
-            maximumDate: maximumDateTime,
-            onDateTimeChanged: (DateTime newDateTime) {
-              print('New DateTime: $newDateTime');
-              setState(() {
-                startDate1 = newDateTime;
-              });
-            },
-          ),
-        );
-      },
-    );
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    ).then((selectedDate) {
+      if (selectedDate != null) {
+        showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(initialDate),
+        ).then((selectedTime) {
+          if (selectedTime != null) {
+            setState(() {
+              startDate1 = DateTime(
+                selectedDate.year,
+                selectedDate.month,
+                selectedDate.day,
+                selectedTime.hour,
+                selectedTime.minute,
+              );
+            });
+          }
+        });
+      }
+    });
   }
 }

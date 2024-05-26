@@ -714,7 +714,7 @@ class _HomeViewState extends State<HomeView> {
                         }),
                   ),
                   SizedBox(
-                    height: media.width * 0.2,
+                    height: media.width * 0.1,
                   ),
                   Align(
                     alignment: Alignment.topLeft,

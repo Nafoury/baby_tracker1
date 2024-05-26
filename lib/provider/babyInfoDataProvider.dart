@@ -77,7 +77,7 @@ class BabyProvider extends ChangeNotifier {
 
       _babyRecords = await babyInfoController.retrieveBabyData();
       if (_babyRecords.isNotEmpty) {
-        if (activeBabyId != null) {
+        if (activeBabyId != null && int.tryParse(activeBabyId) != null) {
           _activeBaby = _babyRecords.firstWhere(
             (baby) => baby.infoId == int.parse(activeBabyId),
             orElse: () => _babyRecords.first,

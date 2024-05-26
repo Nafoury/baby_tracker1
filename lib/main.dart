@@ -21,6 +21,7 @@ import 'package:baba_tracker/view/home/home_view.dart';
 import 'package:baba_tracker/view/login/complete_info.dart';
 import 'package:baba_tracker/view/login/login_page.dart';
 import 'package:baba_tracker/view/login/sign_up.dart';
+import 'package:baba_tracker/view/login/updatepassword.dart';
 import 'package:baba_tracker/view/main_tab/main_tab.dart';
 import 'package:baba_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baba_tracker/view/on_boarding/started_view.dart';
@@ -89,6 +90,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/trackingPage", page: () => TrackingPage()),
         GetPage(name: "/diaperchange", page: () => DiaperChange()),
         GetPage(name: "/trackingPage", page: () => TrackingPage()),
+        GetPage(name: "/updatedPassword", page: () => UpdatedPassword()),
       ],
       routes: {"login": (context) => LoginPage()},
     );

@@ -15,7 +15,6 @@ enum TrackingType {
 
 enum FeedingSubtype {
   solids,
-  nursing,
   bottle,
 }
 
@@ -340,6 +339,7 @@ class TrackingWidget extends StatelessWidget {
             },
             itemCount: 7,
             itemBuilder: (BuildContext context, int index) {
+              var media = MediaQuery.of(context).size;
               switch (index) {
                 case 0:
                   return GestureDetector(
@@ -385,7 +385,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 260, // Adjust the width as needed
+                        width: media.width * 0.75,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -429,7 +429,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 215, // Adjust the width as needed
+                        width: media.width * 0.65,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -473,7 +473,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 190, // Adjust the width as needed
+                        width: media.width * 0.6,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -517,7 +517,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 255, // Adjust the width as needed
+                        width: media.width * 0.75, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -561,7 +561,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: 265, // Adjust the width as needed
+                        width: media.width * 0.77,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -671,59 +671,7 @@ class TrackingWidget extends StatelessWidget {
             }
           },
         );
-      case FeedingSubtype.nursing:
-        return ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) {
-              return const Column(
-                children: [
-                  SizedBox(height: 25),
-                  Divider(
-                    color: Colors.grey,
-                    height: 1,
-                  ),
-                ],
-              );
-            },
-            itemCount: 3,
-            itemBuilder: (BuildContext context, int index) {
-              switch (index) {
-                case 0:
-                  return RoundButton1();
 
-                case 1:
-                  return GestureDetector(
-                      onTap: () {
-                        _showStartDatePicker(
-                            context); // Show date picker for start date
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(" Date & Time ",
-                              style: TextStyle(
-                                  color: Tcolor.black,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold)),
-                          Text(
-                            DateFormat('dd MMM yyyy  HH:mm').format(startDate!),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ));
-
-                case 2:
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [],
-                  );
-                default:
-                  return SizedBox();
-              }
-            });
       default:
         return _buildDefaulttype();
     }

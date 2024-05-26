@@ -23,10 +23,12 @@ class _TeethWidgetState extends State<TeethWidget> {
   Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
     List<TeethData> existingData = await teethControlle.retrieveTeethData();
     bool duplicateExists = existingData.any((teeth) =>
-        teeth.date == startDate &&
-        teeth.date!.year == startDate.year &&
-        teeth.date!.month == startDate.month &&
-        teeth.date!.day == startDate.day);
+        teeth.lower != choice ||
+        teeth.upper != choice2 &&
+            teeth.date == startDate &&
+            teeth.date!.year == startDate.year &&
+            teeth.date!.month == startDate.month &&
+            teeth.date!.day == startDate.day);
     return duplicateExists;
   }
 
@@ -223,12 +225,99 @@ class _TeethWidgetState extends State<TeethWidget> {
                               height: 300,
                             ),
                             RoundButton(
-                                onpressed: () {
-                                  teethControlle.saveteethData(
-                                      teethData: TeethData(
-                                          date: startDate,
-                                          upper: choice,
-                                          lower: choice2));
+                                onpressed: () async {
+                                  if (choice.isNotEmpty || choice2.isNotEmpty) {
+                                    bool exisitng =
+                                        await _checkDuplicateTeethData(
+                                            startDate);
+                                    if (exisitng) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Image.asset(
+                                                "assets/images/warning.png",
+                                                height: 60,
+                                                width: 60),
+                                            content: Text(
+                                              "Teeth data already exists.",
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.normal),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("OK"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      teethControlle.saveteethData(
+                                          teethData: TeethData(
+                                              date: startDate,
+                                              upper: choice,
+                                              lower: choice2));
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Image.asset(
+                                              "assets/images/check.png",
+                                              height: 60,
+                                              width: 60,
+                                            ),
+                                            content: Text(
+                                              ' Data was successfully added',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.normal),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("OK"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      setState(() {
+                                        choice = '';
+                                        choice2 = '';
+                                      });
+                                    }
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Image.asset(
+                                              "assets/images/warning.png",
+                                              height: 60,
+                                              width: 60),
+                                          content: Text(
+                                            "fields can't be empty",
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.normal),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("OK"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                                 title: "Add teeth"),
                           ],

@@ -104,7 +104,8 @@ class TeethDropDown extends StatelessWidget {
                             "Lateral incisor(R)",
                             "Canine(R)",
                             "First molar(R)",
-                            "Second Molar(R)"
+                            "Second Molar(R)",
+                            ""
                           ].map((name) {
                             return DropdownMenuItem(
                               value: name,

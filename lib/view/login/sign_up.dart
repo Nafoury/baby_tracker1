@@ -11,6 +11,8 @@ import 'package:baba_tracker/common_widgets/linkapi.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:baba_tracker/common_widgets/crud.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -54,6 +56,37 @@ class _SignupState extends State<Signup> {
 
   saveToSharedPreferences() async {
     sharedPref.setString('first_name', _firstname.text);
+  }
+
+  sendEmail() async {
+    String username = _emailTextController.text;
+    String password = _passwordTextController.text;
+
+    final smtpServer = gmail(username, password);
+    // Create our message.
+    final message = Message()
+      ..from = Address(username)
+      ..recipients.add('fatema.moha.2001@gmail.com')
+      ..subject = 'Test Dart Mailer library :: 😀 :: ${DateTime.now()}'
+      ..html = "<h1>Test</h1>\n<p>Hey! Here's some HTML content</p>";
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+    } on MailerException catch (e) {
+      print('Message not sent.');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
+
+    var connection = PersistentConnection(smtpServer);
+
+    // Send the first message
+    await connection.send(message);
+
+    // close the connection
+    await connection.close();
   }
 
   @override

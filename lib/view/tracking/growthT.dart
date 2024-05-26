@@ -52,6 +52,7 @@ class _GrowthTracking extends State<GrowthTracking> {
         Provider.of<HeadMeasureProvider>(context, listen: false);
     heightMeasureProvider =
         Provider.of<HeightMeasureProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
     fetchWeightRecords(weightProvider);
     fetchHeadRecords(headMeasureProvider);
@@ -340,7 +341,7 @@ class _GrowthTracking extends State<GrowthTracking> {
                 child: SafeArea(
                     child: Column(children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
@@ -354,9 +355,15 @@ class _GrowthTracking extends State<GrowthTracking> {
                           fit: BoxFit.fitHeight,
                         ),
                       ),
-                      SizedBox(width: 85),
                       Text(
                         "Growth",
+                        style: TextStyle(
+                            color: Tcolor.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        " ${babyProvider.activeBaby?.babyName ?? 'Baby'}",
                         style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 16,

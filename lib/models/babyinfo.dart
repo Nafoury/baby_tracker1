@@ -26,10 +26,12 @@ class BabyInfo {
     infoId = json['info_id'];
     babyName = json['baby_name'];
     gender = json['gender'];
-    dateOfBirth = DateTime.parse(json['date_of_birth']);
-    babyWeight = double.parse(json['baby_weight'].toString());
-    babyHeight = double.parse(json['baby_height'].toString());
-    babyhead = double.parse(json['baby_head'].toString());
+    dateOfBirth = json['date_of_birth'] != null
+        ? DateTime.parse(json['date_of_birth'])
+        : null;
+    babyWeight = double.tryParse(json['baby_weight'].toString()) ?? 0.0;
+    babyHeight = double.tryParse(json['baby_height'].toString()) ?? 0.0;
+    babyhead = double.tryParse(json['baby_head'].toString()) ?? 0.0;
     image = json['photo'];
     completeInfoUserAuthorization = json['complete_info_user_authorization'];
     isActive = json['active'] == 1;

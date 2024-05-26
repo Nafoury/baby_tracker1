@@ -317,7 +317,7 @@ class _FeedingViewState extends State<FeedingView> {
                               mlValue = value;
                             });
                           }),
-                          SizedBox(height: 20),
+                          SizedBox(height: 40),
                           Padding(
                             padding: EdgeInsets.all(10),
                             child: TrackingWidget(

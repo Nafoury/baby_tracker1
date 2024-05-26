@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/common_widgets/linkapi.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/view/home/home_view.dart';
+import 'package:baba_tracker/view/login/forgetpassword..dart';
 import 'package:baba_tracker/view/login/sign_up.dart';
 
 import 'package:flutter/material.dart';
@@ -138,10 +139,23 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(
-                    height: media.width * 0.04,
+                    height: media.width * 0.3,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Get.to(ForgetPassword());
+                    },
+                    child: Text(
+                      "Forget your password?",
+                      style: TextStyle(
+                        color: Tcolor.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
                   ),
                   SizedBox(
-                    height: media.width * 0.4,
+                    height: media.width * 0.04,
                   ),
                   RoundButton(
                       onpressed: () async {

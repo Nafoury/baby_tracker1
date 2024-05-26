@@ -43,6 +43,18 @@ class _TeethEditState extends State<TeethEdit> {
     choice1 = widget.entryData.lower!;
   }
 
+  Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
+    List<TeethData> existingData = await teethController.retrieveTeethData();
+    bool duplicateExists = existingData.any((teeth) =>
+        teeth.lower != choice ||
+        teeth.upper != choice1 &&
+            teeth.date == startDate &&
+            teeth.date!.year == startDate.year &&
+            teeth.date!.month == startDate.month &&
+            teeth.date!.day == startDate.day);
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildTrackingInfo();
@@ -80,7 +92,44 @@ class _TeethEditState extends State<TeethEdit> {
                   TextButton(
                     onPressed: () {
                       if (widget.entryData.toothId != null) {
-                        teethController.deleteTeeth(widget.entryData.toothId!);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Confirm Deletion"),
+                              content: Text(
+                                  "Are you sure you want to delete this record?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    await teethController
+                                        .deleteTeeth(widget.entryData.toothId!);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration: Durations.medium1,
+                                        backgroundColor:
+                                            Tcolor.gray.withOpacity(0.4),
+                                        content: Text(
+                                            "Record was successfully deleted."),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+
+                                    // Go back to the previous page
+                                  },
+                                  child: Text("Delete"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                       Navigator.pop(context);
                     },
@@ -116,20 +165,89 @@ class _TeethEditState extends State<TeethEdit> {
               ),
               SizedBox(height: 20),
               RoundButton(
-                  onpressed: () {
-                    if (widget.entryData.toothId != null) {
-                      teethController.editTeeth(TeethData(
-                        date: date,
-                        upper: choice,
-                        lower: choice1,
-                        toothId: widget.entryData.toothId,
-                      ));
+                  onpressed: () async {
+                    if (choice.isNotEmpty || choice1.isNotEmpty) {
+                      bool exisitng = await _checkDuplicateTeethData(date!);
+                      if (exisitng) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset("assets/images/warning.png",
+                                  height: 60, width: 60),
+                              content: Text(
+                                "Teeth data already exists.",
+                                style: TextStyle(fontStyle: FontStyle.normal),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        teethController.editTeeth(TeethData(
+                            date: date, upper: choice, lower: choice1));
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/check.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content: Text(
+                                ' Data was successfully added',
+                                style: TextStyle(fontStyle: FontStyle.normal),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        setState(() {
+                          choice = '';
+                          choice1 = '';
+                        });
+                      }
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Image.asset("assets/images/warning.png",
+                                height: 60, width: 60),
+                            content: Text(
+                              "fields can't be empty",
+                              style: TextStyle(fontStyle: FontStyle.normal),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("OK"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
-                    print(date);
-                    print(choice);
-                    print(choice1);
                   },
-                  title: "Save changes")
+                  title: "Add teeth"),
             ],
           ),
         ),
