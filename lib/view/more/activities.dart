@@ -18,8 +18,6 @@ class _ActivitiesState extends State<Activities> {
     "Crying",
     "Mild Illnesses",
     "Sleeping",
-    "Feeding",
-    "Mental Health"
   ];
 
   List<List<List<ActivityItem>>> subtitleLists = [
@@ -58,12 +56,12 @@ class _ActivitiesState extends State<Activities> {
       [
         ActivityItem(
           subtitle: "Choosing the best baby bottles and nipples",
-          imageUrl: "assets/images/baby_care.png",
+          imageUrl: "assets/images/baby_bottlechoosen.jpg",
           relatedArticle: "How to Choose Bottles and Nipples",
         ),
         ActivityItem(
           subtitle: "9 simple tips for bottle feeding",
-          imageUrl: "assets/images/sleep_act.png",
+          imageUrl: "assets/images/baby_bottlestaff.jpeg",
           relatedArticle: "How to bottle feed your baby",
         ),
         ActivityItem(
@@ -73,7 +71,7 @@ class _ActivitiesState extends State<Activities> {
         ),
         ActivityItem(
           subtitle: "How much milk does my baby need?",
-          imageUrl: "assets/images/cradle_cap.png",
+          imageUrl: "assets/images/babyamount.jpg",
           relatedArticle: "How Much Should My Baby Eat?",
         ),
       ],
@@ -82,24 +80,9 @@ class _ActivitiesState extends State<Activities> {
     [
       [
         ActivityItem(
-          subtitle: "Baby led or routin led?",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "How much crying is normal?",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
           subtitle: "How to soothe a crying baby",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with crying",
-          imageUrl: "assets/images/cradle_cap.png",
-          relatedArticle: "How Do I Handle My Baby?",
+          imageUrl: "assets/images/baby_crying.jpg",
+          relatedArticle: "How to soothe a crying baby",
         ),
       ],
     ],
@@ -107,85 +90,17 @@ class _ActivitiesState extends State<Activities> {
       [
         ActivityItem(
           subtitle: "Your baby's first fever",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "Ear infections: what you need to know",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "Dealing with diarrhea",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with colic",
-          imageUrl: "assets/images/cradle_cap.png",
+          imageUrl: "assets/images/baby_mum2.jpg",
           relatedArticle: "How Do I Handle My Baby?",
         ),
       ],
     ],
     [
       [
-        ActivityItem(
-          subtitle: "Developing a consistent sleep routine",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "How much sleep does my baby need?",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "when will my baby sleep through the night?",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
         ActivityItem(
           subtitle: "Establishing good sleep habits",
-          imageUrl: "assets/images/cradle_cap.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-      ],
-    ],
-    [
-      [
-        ActivityItem(
-          subtitle: "How do I know my baby is getting enough?",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "when do I feed my baby?",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "4 tips for breastfeedin in public",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-      ],
-    ],
-    [
-      [
-        ActivityItem(
-          subtitle: "Top tips for the first 6 weeks",
-          imageUrl: "assets/images/baby_care.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "coping with new parent stress",
-          imageUrl: "assets/images/sleep_act.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
-        ActivityItem(
-          subtitle: "Postpartum depression explained",
-          imageUrl: "assets/images/burbing.png",
-          relatedArticle: "How Do I Handle My Baby?",
+          imageUrl: "assets/images/baby_sleep.jpg",
+          relatedArticle: "5 habits for good sleep",
         ),
       ],
     ],
@@ -247,7 +162,7 @@ class _ActivitiesState extends State<Activities> {
                           duration: const Duration(milliseconds: 200),
                           child: Container(
                             width:
-                                (MediaQuery.of(context).size.width * 0.3) - 30,
+                                (MediaQuery.of(context).size.width * 0.3) - 15,
                             height: 40,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(colors: Tcolor.primaryG),
@@ -366,18 +281,13 @@ class _ActivitiesState extends State<Activities> {
       case 0:
         return Alignment.centerLeft;
       case 1:
-        return Alignment.centerLeft + const Alignment(0.32, 0);
+        return Alignment.centerLeft + const Alignment(0.5, 0);
       case 2:
-        return Alignment.centerLeft + const Alignment(0.65, 0);
-      case 3:
         return Alignment.center;
+      case 3:
+        return Alignment.centerRight - const Alignment(0.5, 0);
       case 4:
-        return Alignment.centerRight - const Alignment(0.7, 0);
-      case 5:
-        return Alignment.centerRight - const Alignment(0.3, 0);
-      case 6:
         return Alignment.centerRight;
-
       default:
         return Alignment.centerLeft;
     }

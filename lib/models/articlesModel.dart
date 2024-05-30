@@ -119,4 +119,41 @@ List<Article> articles = [
     "⬤By 6 months:",
     "24 to 32 ounces spread out over four or five feedings a day. "
   ]),
+  Article(title: "How to soothe a crying baby", sections: [
+    " You can't spoil your baby with too much attention. To soothe a crying baby:",
+    "",
+    "1.First, make sure your baby doesn't have a fever. In a baby, a fever is a temperature of 100.4°F (38°C). Call the doctor right away if your baby does have a fever",
+    "2.Make sure your baby isn't hungry and has a clean diaper",
+    "3.Rock or walk with the baby",
+    "4.Sing or talk to your baby",
+    "5.Offer the baby a pacifier",
+    "6.Take the baby for a ride in a stroller",
+    "7.Hold your baby close against your body and take calm, slow breaths",
+    "8.Give the baby a warm bath",
+    "9.rub the baby's back",
+    "10.Place your baby across your lap on their belly and rub your baby's back",
+    "11.Put your baby in a swing or vibrating seat. The motion may be soothing",
+    "12.Put your baby in an infant car seat in the back of the car and go for a ride. Often, the vibration and movement of the car are calming"
+  ]),
+  Article(title: "5 habits for good sleep", sections: [
+    "1.Feed your baby right before bedtime so they are not hungry when you put them in their crib.",
+    "",
+    "2.Put your child in their crib when they are sleepy but not yet asleep. This lets them learn to fall asleep on their",
+    "",
+    "3.Have a regular sleep schedule and a nighttime routine.",
+    "",
+    "⬤Your child should go to sleep at the same time each night.",
+    "",
+    "4.You can give your baby a pacifier while they sleep.",
+    "",
+    "⬤If your baby is breastfeeding, be sure they can put their mouth around the nipple and latch on before starting a pacifier. This is usually around 3 to 4 weeks of age.",
+    "",
+    "5.Do not put your child in their crib with a bottle or cup. Sleeping with milk or juice in their mouth can lead to tooth decay (cavities)."
+  ]),
+  Article(title: "How to reduce your child's fever", sections: [
+    "Firstly, avoiding dehydration is important. Give your child plenty of fluids, throughout the day, and check on them regularly during the night",
+    "Give them food if they want it.",
+    "Try to keep them covered with light clothing and bedding, but don't undress them or cover them in too many bedclothes. Keep their room at a comfortable temperature rather than adding more layers of clothes",
+    "Keep them home from school and away from other people until their temperature comes down to normal."
+  ]),
 ];
