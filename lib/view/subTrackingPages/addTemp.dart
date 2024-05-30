@@ -28,7 +28,7 @@ class _AddTempState extends State<AddTemp> {
 
   @override
   void didChangeDependencies() {
-    tempProvider = Provider.of<TempProvider>(context, listen: false);
+    tempProvider = Provider.of<TempProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -58,7 +58,7 @@ class _AddTempState extends State<AddTemp> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Get.offAllNamed("/mainTab");
+                      Navigator.pop(context);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",

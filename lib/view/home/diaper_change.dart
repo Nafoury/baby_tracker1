@@ -33,20 +33,6 @@ class _DiaperChangeState extends State<DiaperChange> {
     super.didChangeDependencies();
   }
 
-  Future<void> fetchMedicationRecords(DiaperProvider diaperProvider) async {
-    try {
-      List<DiaperData> records = await diaperProvider.getMedicationRecords();
-      print('Fetched diapers Records: $records');
-      setState(() {
-        diapersRecords = records;
-        print('Fetched diapers Records: $records');
-      });
-    } catch (e) {
-      print('Error fetching diapers records: $e');
-      // Handle error here
-    }
-  }
-
   Future<bool> _checkDuplicateDiaperData(DateTime startDate) async {
     List<DiaperData> existingData = await diaperProvider.getMedicationRecords();
     bool duplicateExists = existingData.any((diaper) =>

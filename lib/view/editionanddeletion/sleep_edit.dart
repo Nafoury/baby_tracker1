@@ -327,6 +327,7 @@ class _SleepEditState extends State<SleepEdit> {
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
                                     },
                                     child: Text("OK"),
                                   ),

@@ -76,11 +76,6 @@ class _ActivitiesState extends State<Activities> {
           imageUrl: "assets/images/cradle_cap.png",
           relatedArticle: "How Much Should My Baby Eat?",
         ),
-        ActivityItem(
-          subtitle: "Suck,smallow,breathe-what it means",
-          imageUrl: "assets/images/bathin_baby.png",
-          relatedArticle: "How Do I Handle My Baby?",
-        ),
       ],
     ],
 
@@ -252,7 +247,7 @@ class _ActivitiesState extends State<Activities> {
                           duration: const Duration(milliseconds: 200),
                           child: Container(
                             width:
-                                (MediaQuery.of(context).size.width * 0.4) - 50,
+                                (MediaQuery.of(context).size.width * 0.3) - 30,
                             height: 40,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(colors: Tcolor.primaryG),
@@ -371,9 +366,9 @@ class _ActivitiesState extends State<Activities> {
       case 0:
         return Alignment.centerLeft;
       case 1:
-        return Alignment.centerLeft + const Alignment(0.3, 0);
+        return Alignment.centerLeft + const Alignment(0.32, 0);
       case 2:
-        return Alignment.centerLeft + const Alignment(0.7, 0);
+        return Alignment.centerLeft + const Alignment(0.65, 0);
       case 3:
         return Alignment.center;
       case 4:

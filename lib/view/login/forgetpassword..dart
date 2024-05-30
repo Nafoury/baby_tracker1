@@ -5,6 +5,7 @@ import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/common_widgets/linkapi.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/view/home/home_view.dart';
+import 'package:baba_tracker/view/login/login_page.dart';
 import 'package:baba_tracker/view/login/sign_up.dart';
 
 import 'package:flutter/material.dart';
@@ -83,8 +84,23 @@ class _LoginPageState extends State<ForgetPassword> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Get.off(LoginPage());
+                        },
+                        icon: Image.asset(
+                          "assets/images/back_Navs.png",
+                          width: 25,
+                          height: 25,
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(
-                    height: 80,
+                    height: 70,
                   ),
                   RoundTextFiled(
                     hintext: "enter valid email",
@@ -99,7 +115,7 @@ class _LoginPageState extends State<ForgetPassword> {
                     },
                   ),
                   SizedBox(
-                    height: media.width * 0.3,
+                    height: media.width * 0.6,
                   ),
                   RoundButton(
                       onpressed: () async {

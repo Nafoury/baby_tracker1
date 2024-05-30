@@ -1,4 +1,5 @@
 import 'package:baba_tracker/main.dart';
+import 'package:baba_tracker/view/login/forgetpassword..dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/round_textfiled.dart';
@@ -77,6 +78,24 @@ class _UpdatedPasswordState extends State<UpdatedPassword> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Get.off(ForgetPassword());
+                        },
+                        icon: Image.asset(
+                          "assets/images/back_Navs.png",
+                          width: 25,
+                          height: 25,
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 70,
+                  ),
                   SizedBox(height: 80),
                   RoundTextFiled(
                     hintext: "Password",

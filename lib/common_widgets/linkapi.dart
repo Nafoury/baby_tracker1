@@ -88,3 +88,8 @@ const String linkAddHeight = "$linkServerName/baby_height/addRecord.php";
 const String linkUpdateHeight = "$linkServerName/baby_height/update.php";
 const String linkReadHeight = "$linkServerName/baby_height/readData.php";
 const String linkDeleteHeight = "$linkServerName/baby_height/deleteRecord.php";
+
+const String linkAddMileStone = "$linkServerName/milestones/add.php";
+const String linkUpdateMileStone = "$linkServerName/milestones/update.php";
+const String linkReadMileStone = "$linkServerName/milestones/read.php";
+const String linkDeleteMileStone = "$linkServerName/milestones/delete.php";

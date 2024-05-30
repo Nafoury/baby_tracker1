@@ -107,7 +107,7 @@ class _GrowthTracking extends State<GrowthTracking> {
     }
   }
 
-  void updateWeightBoxes(List<WeightData> records) {
+  void updateWeightBoxes(List<WeightData> records) async {
     // Check if birth weight has been calculated and at least one record exists
     if (!birthWeightCalculated && records.isNotEmpty) {
       records.sort((a, b) => a.date!.compareTo(b.date!));
@@ -580,7 +580,7 @@ class _GrowthTracking extends State<GrowthTracking> {
                                     height: 30,
                                   ),
                                   WeightChart(
-                                    weightRecords: weightRecords,
+                                    weightRecords: weightProvider.weightRecords,
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -599,7 +599,8 @@ class _GrowthTracking extends State<GrowthTracking> {
                                     height: 20,
                                   ),
                                   BabyWeightDataTable(
-                                      weightRecords: weightRecords)
+                                      weightRecords:
+                                          weightProvider.weightRecords)
                                 ]);
                               })
                             ],
@@ -654,7 +655,9 @@ class _GrowthTracking extends State<GrowthTracking> {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  HeadChart(measureRecords: headRecords),
+                                  HeadChart(
+                                      measureRecords:
+                                          headMeasureProvider.headRecords),
                                   RoundButton(
                                       onpressed: () {
                                         Navigator.push(
@@ -669,7 +672,8 @@ class _GrowthTracking extends State<GrowthTracking> {
                                     height: 20,
                                   ),
                                   BabyHeadDataTable(
-                                      measureRecords: headRecords),
+                                      measureRecords:
+                                          headMeasureProvider.headRecords),
                                 ],
                               );
                             }),
@@ -727,7 +731,9 @@ class _GrowthTracking extends State<GrowthTracking> {
                                       height: 20,
                                     ),
                                     BabyHeightChart(
-                                        heightmeasureRecords: heightRecords),
+                                        heightmeasureRecords:
+                                            heightMeasureProvider
+                                                .heightRecords),
                                     RoundButton(
                                         onpressed: () {
                                           Navigator.push(
@@ -739,7 +745,8 @@ class _GrowthTracking extends State<GrowthTracking> {
                                         },
                                         title: "Add height measure"),
                                     BabyHeightDataTable(
-                                        heightmeasuredata: heightRecords)
+                                        heightmeasuredata:
+                                            heightMeasureProvider.heightRecords)
                                   ],
                                 );
                               })

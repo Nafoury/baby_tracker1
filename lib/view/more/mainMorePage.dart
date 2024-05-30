@@ -1,6 +1,7 @@
 import 'package:baba_tracker/view/more/activities.dart';
 import 'package:baba_tracker/view/more/face_day.dart';
-import 'package:baba_tracker/view/more/guids.dart';
+
+import 'package:baba_tracker/view/more/milestones.dart';
 import 'package:baba_tracker/view/more/toothPage1.dart';
 import 'package:baba_tracker/view/more/toothPgae.dart';
 import 'package:flutter/material.dart';
@@ -67,29 +68,37 @@ class _MorePage extends State<MorePage> {
                             ]),
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey.shade100,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Milestones()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade100,
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/milestone.png",
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.contain,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "Milestones",
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w700),
+                              ),
+                            ]),
                       ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/milestone.png",
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.contain,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "Milestones",
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.w700),
-                            ),
-                          ]),
                     ),
                     InkWell(
                       onTap: () {

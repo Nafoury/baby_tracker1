@@ -11,6 +11,7 @@ import 'package:baba_tracker/models/medData.dart';
 import 'package:baba_tracker/models/vaccineData.dart';
 import 'package:baba_tracker/provider/UserImageProvider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
+import 'package:baba_tracker/provider/tempProvider.dart';
 import 'package:baba_tracker/provider/vaccine_provider.dart';
 import 'package:baba_tracker/view/profiles/children_profile.dart';
 import 'package:baba_tracker/models/nursingData.dart';
@@ -114,6 +115,20 @@ class _HomeViewState extends State<HomeView> {
       });
     } catch (e) {
       print('Error fetching baby records: $e');
+      // Handle error here
+    }
+  }
+
+  Future<void> fetchTempRecords(TempProvider tempProvider) async {
+    try {
+      List<TempData> records = await tempProvider.getTempRecords();
+      print('Fetched Medication Records: $records');
+      setState(() {
+        tempRecords = records;
+        print('Fetched Medication Records: $records');
+      });
+    } catch (e) {
+      print('Error fetching medication records: $e');
       // Handle error here
     }
   }
@@ -366,7 +381,7 @@ class _HomeViewState extends State<HomeView> {
       }
     }
     for (var record in vaccinesRecords) {
-      if (record.isReminderSet!) {
+      if (record.isReminderSet! && record.date!.isAfter(DateTime.now())) {
         await WorkManagerService().init();
         NotificationService.showSchduledNotification1(
             record.date!, record.type!);
@@ -739,77 +754,107 @@ class _HomeViewState extends State<HomeView> {
                           todaySleepArr[index]["name"] == "Diapers") {
                         return TodaySleepScheduleRow(
                           activityData: todaySleepArr[index],
-                          onEdit: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DiaperEdit(
-                                      entryData: diapersRecords.last,
-                                    )),
-                          ),
-                          onDelete: () => diaperProvider.deleteDiaperRecord(
-                              diapersRecords.last.changeId!),
+                          onEdit: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DiaperEdit(
+                                        entryData: diapersRecords.last,
+                                      )),
+                            );
+                            fetchDiaperRecords(
+                                diaperProvider); // Re-fetch data after edit
+                          },
+                          onDelete: () async {
+                            await diaperProvider.deleteDiaperRecord(
+                                diapersRecords.last.changeId!);
+                            fetchDiaperRecords(
+                                diaperProvider); // Re-fetch data after delete
+                          },
                         );
                       }
                       // Check if there are sleep records available
                       if (sleepRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Sleep") {
                         return TodaySleepScheduleRow(
-                          activityData: todaySleepArr[index],
-                          onEdit: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SleepEdit(
-                                      entryData: sleepRecords.last,
-                                    )),
-                          ),
-                          onDelete: () => sleepProvider
-                              .deleteSleepRecord(sleepRecords.last.sleepId!),
-                        );
+                            activityData: todaySleepArr[index],
+                            onEdit: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SleepEdit(
+                                          entryData: sleepRecords.last,
+                                        )),
+                              );
+                              fetchSleepRecords(sleepProvider);
+                            },
+                            onDelete: () async {
+                              await sleepProvider.deleteSleepRecord(
+                                  sleepRecords.last.sleepId!);
+                              fetchSleepRecords(sleepProvider);
+                            });
                       }
 
                       if (solidsRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Solids") {
                         return TodaySleepScheduleRow(
                             activityData: todaySleepArr[index],
-                            onEdit: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SolidsEdit(
-                                            entryData: solidsRecords.last,
-                                          )),
-                                ),
-                            onDelete: () => solidsProvider.deleteSolidsRecord(
-                                solidsRecords.last.solidId!));
+                            onEdit: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SolidsEdit(
+                                          entryData: solidsRecords.last,
+                                        )),
+                              );
+                              fetchSolidsRecords(solidsProvider);
+                            },
+                            onDelete: () async {
+                              await solidsProvider.deleteSolidsRecord(
+                                  solidsRecords.last.solidId!);
+                              fetchSolidsRecords(solidsProvider);
+                            });
                       }
                       if (bottleRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Bottle") {
                         return TodaySleepScheduleRow(
-                          activityData: todaySleepArr[index],
-                          onEdit: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BottleEdit(
-                                      entryData: bottleRecords.last,
-                                    )),
-                          ),
-                          onDelete: () => bottleDataProvider
-                              .deleteBottleRecord(bottleRecords.last.feed1Id!),
-                        );
+                            activityData: todaySleepArr[index],
+                            onEdit: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BottleEdit(
+                                          entryData: bottleRecords.last,
+                                        )),
+                              );
+                              fetchBottleData(bottleDataProvider);
+                            },
+                            onDelete: () async {
+                              await bottleDataProvider.deleteBottleRecord(
+                                  bottleRecords.last.feed1Id!);
+                              fetchBottleData(bottleDataProvider);
+                            });
                       }
                       if (nursingRecords.isNotEmpty &&
                           todaySleepArr[index]["name"] == "Nursing") {
                         return TodaySleepScheduleRow(
-                          activityData: todaySleepArr[index],
-                          onEdit: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NursingEditAndDeletion(
-                                      entryData: nursingRecords.last,
-                                    )),
-                          ),
-                          onDelete: () => nursingDataProvider
-                              .deleteNursingRecord(nursingRecords.last.feedId!),
-                        );
+                            activityData: todaySleepArr[index],
+                            onEdit: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NursingEditAndDeletion(
+                                          entryData: nursingRecords.last,
+                                        )),
+                              );
+                              fetchNursingData(nursingDataProvider);
+                            },
+                            onDelete: () async {
+                              await nursingDataProvider.deleteNursingRecord(
+                                  nursingRecords.last.feedId!);
+                              fetchNursingData(nursingDataProvider);
+                            });
                       }
 
                       return Container();

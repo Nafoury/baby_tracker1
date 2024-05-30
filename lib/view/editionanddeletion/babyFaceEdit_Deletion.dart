@@ -38,7 +38,9 @@ class _BabyFaceEditState extends State<BabyFaceEdit> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
                       width: 25,
@@ -52,13 +54,6 @@ class _BabyFaceEditState extends State<BabyFaceEdit> {
                       color: Tcolor.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Close',
-                      style: TextStyle(color: Colors.blue.shade200),
                     ),
                   ),
                 ],
