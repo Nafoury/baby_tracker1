@@ -4,7 +4,13 @@ import 'dart:async';
 
 class BabyBottleSelector extends StatefulWidget {
   final ValueChanged<double> onMlValueChanged;
-  BabyBottleSelector({required this.onMlValueChanged});
+  final double initialMlValue; // Add initial value parameter
+
+  BabyBottleSelector({
+    required this.onMlValueChanged,
+    required this.initialMlValue, // Initialize with the initial value
+  });
+
   @override
   _BabyBottleSelectorState createState() => _BabyBottleSelectorState();
 }
@@ -19,6 +25,11 @@ class _BabyBottleSelectorState extends State<BabyBottleSelector> {
   @override
   void initState() {
     super.initState();
+    mlValue = widget.initialMlValue; // Set initial value
+    insideLiquidHeight =
+        (mlValue / 400.0) * maxLiquidHeight; // Calculate initial height
+    liquidColor = calculateLiquidColor(mlValue); // Set initial color
+
     // Initialize the timer with a 300 milliseconds delay
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {});
   }

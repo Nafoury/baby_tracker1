@@ -44,30 +44,24 @@ class _SleepingViewState extends State<SleepingView> {
       DateTime startDate, DateTime endDate) async {
     List<SleepData> existingData = await sleepProvider.getSleepRecords();
     bool duplicateExists = existingData.any((sleepRecord) =>
-        (sleepRecord.startDate!.isAtSameMomentAs(startDate) ||
-            sleepRecord.startDate!.isAfter(startDate)) &&
-        (sleepRecord.endDate!.isAtSameMomentAs(endDate) ||
-            sleepRecord.endDate!.isBefore(endDate)));
+        (startDate.isBefore(sleepRecord.endDate!) ||
+            startDate.isAtSameMomentAs(sleepRecord.endDate!)) &&
+        (endDate.isAfter(sleepRecord.startDate!) ||
+            endDate.isAtSameMomentAs(sleepRecord.startDate!)));
     return duplicateExists;
   }
 
   Future<bool> _checkDuplicateStartSleepData(DateTime startDate) async {
     List<SleepData> existingData = await sleepProvider.getSleepRecords();
-    bool duplicateExists = existingData.any((sleepRecord) =>
-        sleepRecord.startDate!.year == startDate.year &&
-        sleepRecord.startDate!.month == startDate.month &&
-        sleepRecord.startDate!.day == startDate.day &&
-        sleepRecord.startDate!.hour == startDate.hour);
+    bool duplicateExists = existingData.any(
+        (sleepRecord) => startDate.isAtSameMomentAs(sleepRecord.startDate!));
     return duplicateExists;
   }
 
-  Future<bool> _checkDuplicateEndtSleepData(DateTime endDate) async {
+  Future<bool> _checkDuplicateEndSleepData(DateTime endDate) async {
     List<SleepData> existingData = await sleepProvider.getSleepRecords();
-    bool duplicateExists = existingData.any((sleepRecord) =>
-        sleepRecord.endDate!.year == endDate.year &&
-        sleepRecord.endDate!.month == endDate.month &&
-        sleepRecord.endDate!.day == endDate.day &&
-        sleepRecord.endDate!.hour == endDate.hour);
+    bool duplicateExists = existingData
+        .any((sleepRecord) => endDate.isAtSameMomentAs(sleepRecord.endDate!));
     return duplicateExists;
   }
 
@@ -323,7 +317,7 @@ class _SleepingViewState extends State<SleepingView> {
                       return;
                     }
                     bool existingEndDate =
-                        await _checkDuplicateEndtSleepData(startDate);
+                        await _checkDuplicateEndSleepData(startDate);
                     if (existingEndDate) {
                       showDialog(
                         context: context,

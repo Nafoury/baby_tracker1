@@ -59,12 +59,13 @@ class WeightChart extends StatelessWidget {
 
     // Populate the lists with actual data
     for (var record in data) {
-      final monthStart = DateTime(record.date!.year, record.date!.month, 1);
+      final monthStart = DateTime(record.date!.year, record.date!.month,
+          1); //detrmine the start of month
       groupedData.update(
         monthStart,
-        (existingData) => [...existingData, record],
+        (existingData) => [...existingData, record], //lambda function
         ifAbsent: () => [record],
-      );
+      ); // if month start alreday exists update it with the weight record other wise create one
     }
 
     return groupedData;

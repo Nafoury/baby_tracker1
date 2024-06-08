@@ -1,10 +1,10 @@
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:baba_tracker/common_widgets/tab_button.dart';
-import 'package:baba_tracker/view/home/blank_view.dart';
 import 'package:baba_tracker/view/home/home_view.dart';
 import 'package:baba_tracker/view/more/mainMorePage.dart';
-import 'package:flutter/material.dart';
 import 'package:baba_tracker/view/tracking/mainTracking.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MainTab extends StatefulWidget {
   const MainTab({Key? key}) : super(key: key);
@@ -20,7 +20,20 @@ class _MainTabState extends State<MainTab> {
   @override
   void initState() {
     super.initState();
-    currenttab = const HomeView();
+    selectTab = Get.arguments ??
+        0; // Get the initial tab index from arguments, default to 0
+    currenttab = _getTab(selectTab);
+  }
+
+  Widget _getTab(int index) {
+    switch (index) {
+      case 1:
+        return const TrackingPage();
+      case 2:
+        return const MorePage();
+      default:
+        return const HomeView();
+    }
   }
 
   @override

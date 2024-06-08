@@ -83,6 +83,7 @@ class _WeightPageState extends State<WeightPage> {
                 height: 10,
               ),
               BalanceWeight(
+                  initialWeight: mlValue,
                   max: 200,
                   min: 0,
                   startDate: startDate,

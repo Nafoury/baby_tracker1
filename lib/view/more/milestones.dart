@@ -1,9 +1,13 @@
+import 'package:baba_tracker/common/color_extension.dart';
 import 'package:baba_tracker/controller/milesStonesController.dart';
 import 'package:baba_tracker/models/milestonesModel.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/view/editionanddeletion/babymilestone.dart';
 import 'package:baba_tracker/view/more/dataRange.dart';
 import 'package:baba_tracker/view/more/milestone.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class Milestones extends StatefulWidget {
   const Milestones({super.key});
@@ -16,6 +20,14 @@ class _MilestonesState extends State<Milestones> {
   int _selectedMonth = 1;
   late MileStonesController mileStonesController = new MileStonesController();
   Set<String> pickedMilestones = {};
+  late BabyProvider babyProvider;
+
+  @override
+  void didChangeDependencies() {
+    babyProvider =
+        Provider.of<BabyProvider>(context, listen: true); // Access BabyProvider
+    super.didChangeDependencies();
+  }
 
   final List<Map<String, dynamic>> milestoneData = [
     {
@@ -59,7 +71,7 @@ class _MilestonesState extends State<Milestones> {
   @override
   void initState() {
     super.initState();
-    _retrieveData(); // Call the retrieve data function when the widget is initialized
+    _retrieveData();
   }
 
   @override
@@ -72,11 +84,11 @@ class _MilestonesState extends State<Milestones> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.offAllNamed('/mainTab', arguments: 2);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
@@ -86,13 +98,20 @@ class _MilestonesState extends State<Milestones> {
                     ),
                   ),
                   Text(
-                    "MileStones",
+                    "Milestones",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w700),
                   ),
-                  Spacer(flex: 3),
+                  Text(
+                    " ${babyProvider.activeBaby?.babyName ?? 'Baby'}", // Access active baby's name
+                    style: TextStyle(
+                      color: Tcolor.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ],
               ),
               SingleChildScrollView(

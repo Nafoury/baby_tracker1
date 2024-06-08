@@ -28,7 +28,7 @@ class _SignupState extends State<Signup> {
   final _firstname = TextEditingController();
   bool isloading = false;
   bool ischeck = false;
-  bool isvisible = false;
+  bool isvisible = true;
   final formkey = GlobalKey<FormState>();
 
   signUp() async {
@@ -123,7 +123,7 @@ class _SignupState extends State<Signup> {
                       controller: _firstname,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "password is required";
+                          return "name is required";
                         }
                         return null;
                       }),
@@ -161,13 +161,13 @@ class _SignupState extends State<Signup> {
                           });
                         },
                         icon: Icon(
-                            isvisible ? Icons.visibility : Icons.visibility_off,
+                            isvisible ? Icons.visibility_off : Icons.visibility,
                             color: Tcolor.gray,
                             size: 20)),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Enter password";
-                      } else if (_passwordTextController.text.length < 6) {
+                      } else if (_passwordTextController.text.length < 8) {
                         return "Password Lenght should be more than 8 \ncharacters";
                       }
                     },

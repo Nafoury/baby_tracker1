@@ -22,16 +22,15 @@ class BabyProfileEditAndDeletion extends StatefulWidget {
 
 class _BabyProfileEditAndDeletionState
     extends State<BabyProfileEditAndDeletion> {
-  DateTime? startDate = DateTime.now();
-  late TextEditingController dateController;
+  late DateTime startDate;
   late String status;
   late String name;
-  late TextEditingController nameController;
   late String weight;
-  late TextEditingController weightController;
   late String height;
-  late TextEditingController heightController;
   late String head;
+  late TextEditingController nameController;
+  late TextEditingController weightController;
+  late TextEditingController heightController;
   late TextEditingController headController;
   late BabyProvider babyProvider;
   late File? updatedFile = null;
@@ -39,25 +38,30 @@ class _BabyProfileEditAndDeletionState
 
   @override
   void didChangeDependencies() {
-    babyProvider = Provider.of<BabyProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.babyInfo.dateOfBirth;
-    dateController = TextEditingController(
-        text: startDate != null ? startDate!.toString() : '');
-    name = widget.babyInfo.babyName!;
-    nameController = TextEditingController(text: name);
-    weight = widget.babyInfo.babyWeight?.toStringAsFixed(0) ?? '';
-    weightController = TextEditingController(text: weight);
-    height = widget.babyInfo.babyHeight?.toStringAsFixed(0) ?? '';
-    heightController = TextEditingController(text: height);
-    head = widget.babyInfo.babyhead?.toStringAsFixed(0) ?? '';
-    headController = TextEditingController(text: head);
+    startDate = widget.babyInfo.dateOfBirth!;
     status = widget.babyInfo.gender.toString();
+    name = widget.babyInfo.babyName!;
+    weight = widget.babyInfo.babyWeight?.toStringAsFixed(0) ?? '';
+    height = widget.babyInfo.babyHeight?.toStringAsFixed(0) ?? '';
+    head = widget.babyInfo.babyhead?.toStringAsFixed(0) ?? '';
+    nameController = TextEditingController(text: name);
+    weightController = TextEditingController(text: weight);
+    heightController = TextEditingController(text: height);
+    headController = TextEditingController(text: head);
+    print(startDate);
+    print(status);
+    print(name);
+    print(weight);
+    print(head);
+    print(height);
+    print(widget.babyInfo.image);
   }
 
   @override
@@ -113,7 +117,8 @@ class _BabyProfileEditAndDeletionState
                       backgroundColor: Colors.grey.shade200,
                       minRadius: 25,
                       maxRadius: 25,
-                      child: widget.babyInfo.image!.isNotEmpty
+                      child: widget.babyInfo.image != null &&
+                              widget.babyInfo.image!.isNotEmpty
                           ? GestureDetector(
                               onTap: () {
                                 showModalBottomSheet(
@@ -325,6 +330,19 @@ class _BabyProfileEditAndDeletionState
                                               builder: (context) =>
                                                   Completeinfo()),
                                         );
+                                      } else {
+                                        // Show SnackBar using a Builder widget to ensure a valid context
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            duration: Durations.medium1,
+                                            backgroundColor:
+                                                Tcolor.gray.withOpacity(0.4),
+                                            content: Text(
+                                                "Baby was successfully deleted."),
+                                          ),
+                                        );
+                                        Navigator.of(context).pop();
                                       }
                                     },
                                     child: Text("Delete"),

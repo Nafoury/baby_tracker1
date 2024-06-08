@@ -1,18 +1,52 @@
 import 'package:baba_tracker/models/sleepData.dart';
 import 'package:flutter/material.dart';
 
-class SleepHeatmap extends StatelessWidget {
+class SleepHeatmap extends StatefulWidget {
   final List<SleepData> sleepData;
 
   const SleepHeatmap({Key? key, required this.sleepData}) : super(key: key);
 
   @override
+  _SleepHeatmapState createState() => _SleepHeatmapState();
+}
+
+class _SleepHeatmapState extends State<SleepHeatmap> {
+  DateTime _startDate = DateTime.now();
+  @override
   Widget build(BuildContext context) {
-    final List<String> dateTitles = _getDateTitles();
+    final List<String> dateTitles = _getDateTitles(_startDate);
 
     return Column(
       children: [
         // Top titles representing the last seven days
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _startDate = _startDate.subtract(Duration(days: 7));
+                });
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 20,
+              ),
+            ),
+            SizedBox(width: 10),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _startDate = _startDate.add(Duration(days: 7));
+                });
+              },
+              icon: Icon(
+                Icons.arrow_forward,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: dateTitles.map((date) {
@@ -40,7 +74,7 @@ class SleepHeatmap extends StatelessWidget {
               child: GridView.builder(
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7, // 7 columns for days of the week
+                  crossAxisCount: 7,
                   crossAxisSpacing: 3.5,
                   mainAxisSpacing: 3.5,
                   childAspectRatio: 3.5,
@@ -50,7 +84,7 @@ class SleepHeatmap extends StatelessWidget {
                   final int day = index % 7;
                   final int hour = index ~/ 7;
                   final DateTime currentDate =
-                      DateTime.now().subtract(Duration(days: 6 - day));
+                      _startDate.subtract(Duration(days: 6 - day));
                   int totalSleepMinutes = 0;
                   int totalMinutesInHour = 60;
                   bool hasSleepData = false;
@@ -61,7 +95,7 @@ class SleepHeatmap extends StatelessWidget {
                   final DateTime hourEnd = hourStart.add(Duration(hours: 1));
 
                   // Check if there is sleep data for the current hour
-                  for (var sleep in sleepData) {
+                  for (var sleep in widget.sleepData) {
                     final DateTime? sleepStart = sleep.startDate;
                     final DateTime? sleepEnd = sleep.endDate;
 
@@ -81,7 +115,7 @@ class SleepHeatmap extends StatelessWidget {
                   }
 
                   // Calculate the total sleep minutes within the current hour
-                  sleepData.forEach((sleep) {
+                  widget.sleepData.forEach((sleep) {
                     final DateTime? sleepStart = sleep.startDate;
                     final DateTime? sleepEnd = sleep.endDate;
 
@@ -120,9 +154,9 @@ class SleepHeatmap extends StatelessWidget {
     );
   }
 
-  List<String> _getDateTitles() {
+  List<String> _getDateTitles(DateTime startDate) {
     List<String> titles = [];
-    final currentDate = DateTime.now();
+    final currentDate = startDate;
     for (var i = 6; i >= 0; i--) {
       DateTime date = currentDate.subtract(Duration(days: i));
       String dateStr = '${date.day}.${date.month}';

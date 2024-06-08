@@ -100,7 +100,7 @@ class _SolidsEditState extends State<SolidsEdit> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      // Get.offAllNamed("/mainTab");
+                      Navigator.pop(context);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",

@@ -14,18 +14,11 @@ class BabyProvider extends ChangeNotifier {
   List<BabyInfo> _babyRecords = List<BabyInfo>.empty(growable: true);
   List<BabyInfo> get babyRecords => _babyRecords;
 
-  String? _activeBabyId; // Changed from String? to int?
+  String? _activeBabyId;
   String? get activeBabyId => _activeBabyId;
 
   BabyInfo? _activeBaby;
-
   BabyInfo? get activeBaby => _activeBaby;
-
-  void addListener(void Function() listener) {
-    super.addListener(listener);
-    // Call the listener immediately upon addition to ensure the UI is updated
-    listener();
-  }
 
   Future addBabyData(BabyInfo babyInfo, File? imageFile) async {
     print('Adding baby record: $babyInfo');
@@ -67,6 +60,10 @@ class BabyProvider extends ChangeNotifier {
     final bool res = await babyInfoController.deleteBaby(babyInfo);
     if (res) {
       _babyRecords.removeWhere((element) => element.infoId == babyInfo);
+      await fetchAndSetActiveBaby(); // Refresh the list and active baby
+      if (_activeBaby != null) {
+        await saveActiveBabyId(_activeBaby!.infoId.toString());
+      }
       notifyListeners();
     }
   }

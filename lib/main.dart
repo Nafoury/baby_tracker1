@@ -7,6 +7,7 @@ import 'package:baba_tracker/provider/UserImageProvider.dart';
 import 'package:baba_tracker/provider/babyHeadProvider.dart';
 import 'package:baba_tracker/provider/babyHeightProvider.dart';
 import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
+import 'package:baba_tracker/provider/babyfaceDay.dart';
 import 'package:baba_tracker/provider/bottleDataProvider.dart';
 import 'package:baba_tracker/provider/diaper_provider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
@@ -23,8 +24,12 @@ import 'package:baba_tracker/view/login/login_page.dart';
 import 'package:baba_tracker/view/login/sign_up.dart';
 import 'package:baba_tracker/view/login/updatepassword.dart';
 import 'package:baba_tracker/view/main_tab/main_tab.dart';
+import 'package:baba_tracker/view/more/face_day.dart';
+import 'package:baba_tracker/view/more/mainMorePage.dart';
+import 'package:baba_tracker/view/more/milestones.dart';
 import 'package:baba_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baba_tracker/view/on_boarding/started_view.dart';
+import 'package:baba_tracker/view/profiles/mom_profile.dart';
 import 'package:baba_tracker/view/tracking/feedinT.dart';
 import 'package:baba_tracker/view/tracking/mainTracking.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +65,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => BabyProvider()),
         ChangeNotifierProvider(create: (context) => HeadMeasureProvider()),
         ChangeNotifierProvider(create: (context) => UserImageProvider()),
-        ChangeNotifierProvider(create: (context) => HeightMeasureProvider())
+        ChangeNotifierProvider(create: (context) => HeightMeasureProvider()),
+        ChangeNotifierProvider(create: (context) => FaceDayProvider())
         // Add more providers if needed
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
@@ -91,6 +97,10 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/diaperchange", page: () => DiaperChange()),
         GetPage(name: "/trackingPage", page: () => TrackingPage()),
         GetPage(name: "/updatedPassword", page: () => UpdatedPassword()),
+        GetPage(name: "/faceADay", page: () => FaceAday()),
+        GetPage(name: "/morePage", page: () => MorePage()),
+        GetPage(name: "/milestone", page: () => Milestones()),
+        GetPage(name: "/momprofile", page: () => MomProfile()),
       ],
       routes: {"login": (context) => LoginPage()},
     );

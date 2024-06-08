@@ -45,10 +45,12 @@ class _LoginPageState extends State<LoginPage> {
         // Update shared preferences with info_id from server response
         sharedPref.setString("id", response['data']['id'].toString());
         sharedPref.setString("info_id", response['data']['info_id'].toString());
+        sharedPref.setString(
+            'first_name', response['data']['first_name'].toString());
         sharedPref.setBool('isLoggedIn', true);
         Get.offAllNamed("/mainTab");
         print("the baby id when I logged in" +
-            response['data']['info_id'].toString());
+            response['data']['first_name'].toString());
       } else {
         showDialog(
           context: context,

@@ -205,6 +205,26 @@ class _NursingEditAndDeletionState extends State<NursingEditAndDeletion> {
     return duplicateExists;
   }
 
+  Future<bool> _checkDuplicateNursingData1(DateTime startDate,
+      String? leftDurationStr, String? rightDurationStr) async {
+    List<NusringData> existingData =
+        await nursingDataProvider.getNursingRecords();
+
+    // Calculate end date based on start date and duration
+    Duration totalDuration = _parseDuration1(leftDurationStr, rightDurationStr);
+
+    bool duplicateExists = existingData.any((nursingRecord) {
+      // Calculate total duration of left and right feeding for the existing record
+      Duration recordDuration = _parseDuration1(
+          nursingRecord.leftDuration, nursingRecord.rightDuration);
+
+      // Check if the start date matches and if the total duration matches the recorded duration
+      return nursingRecord.date == startDate && recordDuration == totalDuration;
+    });
+
+    return duplicateExists;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildTrackingInfo();
@@ -496,8 +516,8 @@ class _NursingEditAndDeletionState extends State<NursingEditAndDeletion> {
                   );
                   return;
                 }
-                bool existingData =
-                    await _checkDuplicateNursingData(startDate!);
+                bool existingData = await _checkDuplicateNursingData1(
+                    startDate!, leftduration, rightduration);
                 if (existingData) {
                   showDialog(
                     context: context,
@@ -540,7 +560,7 @@ class _NursingEditAndDeletionState extends State<NursingEditAndDeletion> {
                           height: 60,
                           width: 60,
                         ),
-                        content: Text("Solids Data was successfully updated."),
+                        content: Text("Nursing Data was successfully updated."),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -655,5 +675,32 @@ class _NursingEditAndDeletionState extends State<NursingEditAndDeletion> {
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
+  }
+
+  Duration _parseDuration1(String? leftDurationStr, String? rightDurationStr) {
+    // Initialize left and right durations to zero
+    Duration leftDuration = Duration();
+    Duration rightDuration = Duration();
+
+    // Parse leftDurationStr and rightDurationStr into Duration objects
+    if (leftDurationStr != null && leftDurationStr.isNotEmpty) {
+      leftDuration = Duration(
+        hours: int.parse(leftDurationStr.split(':')[0]),
+        minutes: int.parse(leftDurationStr.split(':')[1]),
+        seconds: int.parse(leftDurationStr.split(':')[2]),
+      );
+    }
+    if (rightDurationStr != null && rightDurationStr.isNotEmpty) {
+      rightDuration = Duration(
+        hours: int.parse(rightDurationStr.split(':')[0]),
+        minutes: int.parse(rightDurationStr.split(':')[1]),
+        seconds: int.parse(rightDurationStr.split(':')[2]),
+      );
+    }
+
+    // Calculate the total duration by adding left and right durations
+    Duration totalDuration = leftDuration + rightDuration;
+
+    return totalDuration;
   }
 }

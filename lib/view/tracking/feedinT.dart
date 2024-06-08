@@ -1,10 +1,7 @@
-import 'package:baba_tracker/common_widgets/round_button.dart';
-import 'package:baba_tracker/controller/feedNursing.dart';
-import 'package:baba_tracker/controller/feedingBottle.dart';
-import 'package:baba_tracker/controller/feedingSolids.dart';
 import 'package:baba_tracker/models/bottleData.dart';
 import 'package:baba_tracker/models/nursingData.dart';
 import 'package:baba_tracker/models/solidsData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/bottleDataProvider.dart';
 import 'package:baba_tracker/provider/nursingDataProvider.dart';
 import 'package:baba_tracker/provider/solids_provider.dart';
@@ -29,9 +26,13 @@ class FeedingTracking extends StatefulWidget {
 
 class _FeedingTracking extends State<FeedingTracking> {
   int selectedbutton = 0;
-  BottleController bottleController = BottleController();
-  SolidsController solidsController = SolidsController();
-  NursingController nursingController = NursingController();
+  late BabyProvider babyProvider;
+
+  @override
+  void didChangeDependencies() {
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class _FeedingTracking extends State<FeedingTracking> {
                 child: SafeArea(
                     child: Column(children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
@@ -58,9 +59,15 @@ class _FeedingTracking extends State<FeedingTracking> {
                           fit: BoxFit.fitHeight,
                         ),
                       ),
-                      SizedBox(width: 85),
                       Text(
                         "Feeding",
+                        style: TextStyle(
+                            color: Tcolor.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        babyProvider.activeBaby!.babyName!,
                         style: TextStyle(
                             color: Tcolor.black,
                             fontSize: 16,

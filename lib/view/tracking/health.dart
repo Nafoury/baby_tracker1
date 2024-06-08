@@ -1,5 +1,6 @@
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/models/tempData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
 import 'package:baba_tracker/provider/tempProvider.dart';
 import 'package:baba_tracker/provider/vaccine_provider.dart';
@@ -32,6 +33,7 @@ class _HealthTracking extends State<HealthTracking> {
   String status = '';
   String status1 = '';
   final ValueNotifier<double> temperature = ValueNotifier(0.5);
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
@@ -40,6 +42,7 @@ class _HealthTracking extends State<HealthTracking> {
     Provider.of<MedicationsProvider>(context, listen: false)
         .getMedicationRecords();
     Provider.of<VaccineProvider>(context, listen: false).getVaccineRecords();
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
   }
 
   @override
@@ -54,7 +57,7 @@ class _HealthTracking extends State<HealthTracking> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
@@ -68,9 +71,16 @@ class _HealthTracking extends State<HealthTracking> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
                     Text(
                       "Health",
+                      style: TextStyle(
+                        color: Tcolor.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      babyProvider.activeBaby!.babyName!,
                       style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 16,

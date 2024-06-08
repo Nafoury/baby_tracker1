@@ -78,10 +78,12 @@ class NotificationService {
     log(tz.local.name);
     log("Current time: ${tz.TZDateTime.now(tz.local).hour}");
 
+    final extractedType =
+        type.toString().substring(0, type.toString().indexOf('(')).trim();
     await flutterLocalNotificationsPlugin.zonedSchedule(
       2,
       "Vaccine Reminder",
-      "$type for baby ",
+      extractedType,
       tz.TZDateTime(
         tz.local,
         currentDate.year,

@@ -17,6 +17,7 @@ class UpdatedPassword extends StatefulWidget {
 
 class _UpdatedPasswordState extends State<UpdatedPassword> {
   final _passwordTextController = TextEditingController();
+  final _passwordTextController1 = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Crud crud = Crud();
 
@@ -29,7 +30,8 @@ class _UpdatedPasswordState extends State<UpdatedPassword> {
   }
 
   void _updatePassword() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() &&
+        _passwordTextController.text == _passwordTextController1.text) {
       try {
         var response = await crud.postrequest(linkUpdatePassword, {
           "password": _passwordTextController.text,
@@ -61,6 +63,28 @@ class _UpdatedPasswordState extends State<UpdatedPassword> {
       } catch (e) {
         print("Error during password update: $e");
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Image.asset(
+              "assets/images/change.png",
+              height: 60,
+              width: 60,
+            ),
+            content: Text("the password dosen't match"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.offAllNamed("/login");
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -118,7 +142,29 @@ class _UpdatedPasswordState extends State<UpdatedPassword> {
                       return null;
                     },
                   ),
-                  SizedBox(height: media.width * 0.3),
+                  SizedBox(height: media.width * 0.1),
+                  RoundTextFiled(
+                    hintext: "Confirm password",
+                    icon: "assets/images/lock_icon.png",
+                    controller: _passwordTextController1,
+                    obscureText: _obscureText,
+                    rightIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Tcolor.gray,
+                      ),
+                      onPressed: _togglePasswordVisibility,
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "cofirm password";
+                      } else if (value.length < 8) {
+                        return "Password length should be at least 8 characters";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: media.width * 0.2),
                   RoundButton(
                     onpressed: _updatePassword,
                     title: "Update Password",

@@ -4,12 +4,10 @@ import 'package:baba_tracker/view/more/ActivityItem.dart';
 import 'package:flutter/material.dart';
 
 class ActivityDetailPage extends StatelessWidget {
-  final String imageUrl;
   final String description;
   final ActivityItem activity;
 
   ActivityDetailPage({
-    required this.imageUrl,
     required this.description,
     required this.activity,
   });
@@ -27,15 +25,23 @@ class ActivityDetailPage extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Image.asset(
-                  imageUrl,
-                  width: 600,
-                  height: 300,
-                  fit: BoxFit.fill,
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Image.asset(
+                        "assets/images/back_Navs.png",
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 20),
                 Text(
                   description,
                   textAlign: TextAlign.center,
@@ -45,9 +51,6 @@ class ActivityDetailPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Render activity details using the activity object
-                // (e.g., activity.subtitle, activity.imageUrl, etc.)
-                // Render related article sections here
                 Column(
                   children: [
                     Text(

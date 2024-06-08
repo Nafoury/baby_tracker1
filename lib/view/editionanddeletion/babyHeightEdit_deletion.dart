@@ -75,7 +75,7 @@ class _BabyHeightEditState extends State<BabyHeightEdit> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Get.offAllNamed("/mainTab");
+                        Navigator.pop(context);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
@@ -148,6 +148,7 @@ class _BabyHeightEditState extends State<BabyHeightEdit> {
                   height: 30,
                 ),
                 BalanceWeight(
+                    initialWeight: mlvalue,
                     max: 200,
                     min: 0,
                     startDate: startDate,

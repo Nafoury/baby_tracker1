@@ -140,6 +140,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
                 height: 30,
               ),
               BalanceWeight(
+                  initialWeight: mlvalue,
                   max: 200,
                   min: 0,
                   startDate: startDate,

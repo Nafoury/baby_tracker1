@@ -70,17 +70,12 @@ class _DiaperChartState extends State<DiaperChart> {
     );
   }
 
-  String _getFormattedDate(DateTime date) {
-    return '${_getMonthAbbreviation(date.month)} ${date.day}, ${date.year}';
-  }
-
   List<BarChartGroupData> generateBarGroups() {
     Map<String, double> totalAmounts = {};
 
     // Calculate the start and end date for the current week
     DateTime startDate =
         currentDate.subtract(Duration(days: currentDate.weekday - 1));
-    DateTime endDate = startDate.add(Duration(days: 6));
 
     // Initialize totalAmount for each day of the current week
     for (var i = 0; i < 7; i++) {

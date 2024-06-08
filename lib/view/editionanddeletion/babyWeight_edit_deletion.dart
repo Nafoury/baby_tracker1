@@ -73,7 +73,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Get.offAllNamed("/mainTab");
+                        Navigator.pop(context);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
@@ -145,107 +145,109 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                   height: 30,
                 ),
                 BalanceWeight(
-                    max: 200,
-                    min: 0,
-                    startDate: startDate,
-                    onStartDateChanged: (DateTime newStartDate) {
-                      setState(() {
-                        startDate = newStartDate;
-                      });
-                    },
-                    onWeightChanged: (double value) {
-                      setState(() {
-                        mlvalue = value;
-                      });
-                    }),
+                  max: 200,
+                  min: 0,
+                  initialWeight: mlvalue, // Pass the initial weight
+                  onWeightChanged: (double value) {
+                    setState(() {
+                      mlvalue = value;
+                    });
+                  },
+                  startDate: startDate,
+                  onStartDateChanged: (DateTime newStartDate) {
+                    setState(() {
+                      startDate = newStartDate;
+                    });
+                  },
+                ),
                 SizedBox(height: 20),
                 RoundButton(
-                    onpressed: () async {
-                      if (widget.entryData.weightId != null) {
-                        if (mlvalue.isEqual(0)) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset(
-                                  "assets/images/warning.png",
-                                  height: 60,
-                                  width: 60,
+                  onpressed: () async {
+                    if (widget.entryData.weightId != null) {
+                      if (mlvalue.isEqual(0)) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/warning.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content: Text("weight can't be empty"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
                                 ),
-                                content: Text("weight can't be empty"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          return;
-                        }
-
-                        bool duplicateExists =
-                            await _checkDuplicateWeightData(startDate!);
-                        if (duplicateExists) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset(
-                                  "assets/images/warning.png",
-                                  height: 60,
-                                  width: 60,
-                                ),
-                                content:
-                                    Text("You're already added weight today"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          return;
-                        } else {
-                          weightProvider.editWeightRecord(WeightData(
-                              date: startDate,
-                              weight: mlvalue,
-                              weightId: widget.entryData.weightId!));
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Image.asset(
-                                  "assets/images/change.png",
-                                  height: 60,
-                                  width: 60,
-                                ),
-                                content:
-                                    Text("Weight was successfully updated."),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("OK"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
+                              ],
+                            );
+                          },
+                        );
+                        return;
                       }
-                      Navigator.pop(context);
-                    },
-                    title: "Save changes")
+
+                      bool duplicateExists =
+                          await _checkDuplicateWeightData(startDate!);
+                      if (duplicateExists) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/warning.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content:
+                                  Text("You're already added weight today"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      } else {
+                        weightProvider.editWeightRecord(WeightData(
+                            date: startDate,
+                            weight: mlvalue,
+                            weightId: widget.entryData.weightId!));
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Image.asset(
+                                "assets/images/change.png",
+                                height: 60,
+                                width: 60,
+                              ),
+                              content: Text("Weight was successfully updated."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                    Navigator.pop(context);
+                  },
+                  title: "Save changes",
+                )
               ],
             ),
           ),

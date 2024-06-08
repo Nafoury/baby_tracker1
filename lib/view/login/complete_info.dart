@@ -314,8 +314,7 @@ class _CompleteinfoState extends State<Completeinfo> {
 
                             await babyProvider.addBabyData(babyInfo, imageFile);
                             saveToSharedPreferences();
-                            String babyId = babyInfo.infoId.toString();
-                            sharedPref.setString("info_id", babyId);
+
                             Get.offAllNamed("/mainTab");
                           }
                         },

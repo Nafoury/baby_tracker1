@@ -21,7 +21,7 @@ class _NursingDataTableState extends State<NursingDataTable> {
     return Consumer<NursingDataProvider>(
       builder: (context, nursingProvider, child) {
         List<NusringData> nursingRecords = nursingProvider.nursingRecords;
-        if (nursingRecords == null || nursingRecords!.isEmpty) {
+        if (nursingRecords.isEmpty) {
           return Padding(
             padding: EdgeInsets.only(top: 150),
             child: Center(

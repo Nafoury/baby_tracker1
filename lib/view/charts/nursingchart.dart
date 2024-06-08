@@ -125,7 +125,7 @@ class _NursingHeatmapState extends State<NursingHeatmap> {
                     );
                   }
 
-                  // Calculate the total sleep minutes within the current hour
+                  // Calculate the total sleep minutes within the current hour(each record (session) )
                   widget.nursingData.forEach((sleep) {
                     final DateTime? sleepStart = sleep.date;
                     final Duration? leftDuration = sleep.leftDuration != null

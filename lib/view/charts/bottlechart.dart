@@ -96,7 +96,10 @@ class _BottleChartState extends State<BottleChart> {
     // Initialize totalAmount for each day of the current week
     for (var i = 0; i < 7; i++) {
       DateTime date = startDate.add(Duration(days: i));
-      String dateStr = date.toLocal().toString().split(' ')[0];
+      String dateStr = date
+          .toLocal()
+          .toString()
+          .split(' ')[0]; //converting the date to fomat yyyy mm dd
       totalAmounts[dateStr] = 0.0;
     }
 
@@ -112,7 +115,7 @@ class _BottleChartState extends State<BottleChart> {
       }
     }
 
-    // Generate BarChartGroupData for each day of the current week
+    // each entrey is in the map it converted to bar in the chart
     List<BarChartGroupData> barGroups = totalAmounts.entries.map((entry) {
       return generateGroup(entry.key, entry.value);
     }).toList();

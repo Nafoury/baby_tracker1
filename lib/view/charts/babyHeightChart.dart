@@ -73,7 +73,6 @@ class BabyHeightChart extends StatelessWidget {
     return groupedData;
   }
 
-  // Create a complete list of WeightData objects with placeholders for missing months
   List<HeightMeasureData> _createCompleteMonthlyData(
       Map<DateTime, List<HeightMeasureData>> monthlyData) {
     final List<HeightMeasureData> allData = [];

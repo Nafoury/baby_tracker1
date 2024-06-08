@@ -100,23 +100,13 @@ class BabyInfoController {
   // Inside the function responsible for deleting a baby
   Future<bool> deleteBaby(int infoId) async {
     try {
-      // Send request to delete the baby
       var response = await crud
           .postrequest(linkDeleteinfo, {"info_id": infoId.toString()});
-
       if (response['status'] == 'success') {
-        // If deletion is successful
-        if (response.containsKey('activate_next') &&
-            response['activate_next'] == true) {
-          // If the next baby is activated
-          // Update local state to reflect the change
-          // Optionally, you can refresh the baby list
-        }
         return true;
       }
       return false;
     } catch (e) {
-      // Handle any exceptions
       print("Error: $e");
       return false;
     }
@@ -192,14 +182,11 @@ class BabyInfoController {
         sharedPref.setString("info_id", babyId.toString());
 
         print('Baby successfully made active.');
-        // You can perform additional actions if needed
       } else {
         print('Failed to make baby active.');
-        // Handle failure scenario
       }
     } catch (e) {
       print('Error making baby active: $e');
-      // Handle any exceptions that might occur during the request
     }
   }
 }

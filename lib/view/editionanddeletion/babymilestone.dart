@@ -2,7 +2,7 @@ import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/controller/milesStonesController.dart';
 import 'package:baba_tracker/models/milestonesModel.dart';
 import 'package:baba_tracker/view/more/milestones.dart';
-
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:baba_tracker/common/color_extension.dart';
@@ -52,10 +52,7 @@ class _MileStoneEditState extends State<MileStoneEdit> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Milestones()),
-                      );
+                      Get.offAllNamed('/milestone');
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",

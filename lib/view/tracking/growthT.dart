@@ -53,10 +53,10 @@ class _GrowthTracking extends State<GrowthTracking> {
     heightMeasureProvider =
         Provider.of<HeightMeasureProvider>(context, listen: false);
     babyProvider = Provider.of<BabyProvider>(context, listen: false);
-    super.didChangeDependencies();
     fetchWeightRecords(weightProvider);
     fetchHeadRecords(headMeasureProvider);
     fetchHeightRecords(heightMeasureProvider);
+    super.didChangeDependencies();
   }
 
   Future<void> fetchHeightRecords(
@@ -534,7 +534,6 @@ class _GrowthTracking extends State<GrowthTracking> {
                               Consumer<BabyProvider>(
                                 builder: (context, babyProvider, _) {
                                   if (babyProvider.babyRecords.isNotEmpty) {
-                                    // Extract birthdate and weight at birth
                                     String birthdate = babyProvider
                                             .activeBaby?.dateOfBirth
                                             .toString() ??
@@ -543,18 +542,18 @@ class _GrowthTracking extends State<GrowthTracking> {
                                         babyProvider.activeBaby?.babyWeight ??
                                             0;
 
-                                    // Update "At birth" box with birthdate and weight at birth
                                     weightboxes[0]["date"] =
                                         birthdate.toString().split(" ")[0];
                                     weightboxes[0]["weight"] =
                                         birthweight.toString();
                                   }
-                                  // Return the UI components
-                                  return SizedBox(); // Return a placeholder widget if needed
+                                  return SizedBox();
                                 },
                               ),
                               Consumer<WeightProvider>(
                                   builder: (context, weightProvider, child) {
+                                // Call updateHeightBoxes whenever weight records change
+
                                 return Column(children: [
                                   SizedBox(
                                     height: media.width * 0.3,
@@ -563,9 +562,7 @@ class _GrowthTracking extends State<GrowthTracking> {
                                       itemCount: weightboxes.length,
                                       separatorBuilder:
                                           (BuildContext context, int index) {
-                                        return SizedBox(
-                                            width:
-                                                20); // Adjust the width as needed
+                                        return SizedBox(width: 20);
                                       },
                                       itemBuilder: (context, index) {
                                         var aobj =

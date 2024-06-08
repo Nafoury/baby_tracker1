@@ -238,7 +238,6 @@ class _ActivitiesState extends State<Activities> {
           context,
           MaterialPageRoute(
             builder: (context) => ActivityDetailPage(
-              imageUrl: activity.imageUrl,
               description: activity.subtitle,
               activity: activity,
             ),

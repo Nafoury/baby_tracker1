@@ -3,10 +3,7 @@ import 'package:baba_tracker/common_widgets/healthActivites.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/teethController.dart';
 import 'package:baba_tracker/models/teethModel.dart';
-import 'package:baba_tracker/models/tempData.dart';
-import 'package:baba_tracker/provider/tempProvider.dart';
-import 'package:baba_tracker/shapes/temp3.dart';
-import 'package:baba_tracker/shapes/temp4.dart';
+
 import 'package:baba_tracker/view/more/toothPgae.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,12 +43,9 @@ class _TeethEditState extends State<TeethEdit> {
   Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
     List<TeethData> existingData = await teethController.retrieveTeethData();
     bool duplicateExists = existingData.any((teeth) =>
-        teeth.lower != choice ||
-        teeth.upper != choice1 &&
-            teeth.date == startDate &&
-            teeth.date!.year == startDate.year &&
-            teeth.date!.month == startDate.month &&
-            teeth.date!.day == startDate.day);
+        teeth.date == startDate &&
+        teeth.upper == choice &&
+        teeth.lower == choice1);
     return duplicateExists;
   }
 
@@ -131,7 +125,6 @@ class _TeethEditState extends State<TeethEdit> {
                           },
                         );
                       }
-                      Navigator.pop(context);
                     },
                     child: Text(
                       "Delete",
@@ -163,12 +156,12 @@ class _TeethEditState extends State<TeethEdit> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 175),
               RoundButton(
                   onpressed: () async {
                     if (choice.isNotEmpty || choice1.isNotEmpty) {
-                      bool exisitng = await _checkDuplicateTeethData(date!);
-                      if (exisitng) {
+                      bool existing = await _checkDuplicateTeethData(date!);
+                      if (existing) {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -192,7 +185,10 @@ class _TeethEditState extends State<TeethEdit> {
                         );
                       } else {
                         teethController.editTeeth(TeethData(
-                            date: date, upper: choice, lower: choice1));
+                            date: date,
+                            upper: choice,
+                            lower: choice1,
+                            toothId: widget.entryData.toothId));
 
                         showDialog(
                           context: context,
@@ -204,7 +200,7 @@ class _TeethEditState extends State<TeethEdit> {
                                 width: 60,
                               ),
                               content: Text(
-                                ' Data was successfully added',
+                                'Data was successfully updated',
                                 style: TextStyle(fontStyle: FontStyle.normal),
                               ),
                               actions: <Widget>[
@@ -231,7 +227,7 @@ class _TeethEditState extends State<TeethEdit> {
                             title: Image.asset("assets/images/warning.png",
                                 height: 60, width: 60),
                             content: Text(
-                              "fields can't be empty",
+                              "Fields can't be empty",
                               style: TextStyle(fontStyle: FontStyle.normal),
                             ),
                             actions: <Widget>[
@@ -247,7 +243,7 @@ class _TeethEditState extends State<TeethEdit> {
                       );
                     }
                   },
-                  title: "Add teeth"),
+                  title: "Save changes"),
             ],
           ),
         ),

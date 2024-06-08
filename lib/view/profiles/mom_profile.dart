@@ -63,20 +63,6 @@ class _MomProfileState extends State<MomProfile> {
     }
   }
 
-  Future<void> fetchImageRecords(UserImageProvider userImageProvider) async {
-    try {
-      List<UserData> records = await userImageProvider.getImageRecord();
-      print('Fetched Image Record: $records');
-      setState(() {
-        userimage = records;
-        print('Fetched diapers Records: $records');
-      });
-    } catch (e) {
-      print('Error fetching diapers records: $e');
-      // Handle error here
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,6 +131,7 @@ class _MomProfileState extends State<MomProfile> {
                                         setState(() {
                                           Updatedfile = File(xFile!.path);
                                         });
+                                        Navigator.pop(context);
                                         userImageProvider.editUserImage(
                                             userData: UserData(
                                               id: int.parse(sharedPref
@@ -168,6 +155,7 @@ class _MomProfileState extends State<MomProfile> {
                                         setState(() {
                                           Updatedfile = File(xFile!.path);
                                         });
+                                        Navigator.pop(context);
                                         userImageProvider.editUserImage(
                                             userData: UserData(
                                               id: int.parse(sharedPref
@@ -263,6 +251,7 @@ class _MomProfileState extends State<MomProfile> {
                                       setState(() {
                                         myfile = File(xFile!.path);
                                       });
+                                      Navigator.pop(context);
                                       userImageProvider.saveUserImage(
                                         userData: UserData(
                                           id: int.parse(sharedPref
@@ -286,6 +275,7 @@ class _MomProfileState extends State<MomProfile> {
                                       setState(() {
                                         myfile = File(xFile!.path);
                                       });
+                                      Navigator.pop(context);
 
                                       userImageProvider.saveUserImage(
                                         userData: UserData(

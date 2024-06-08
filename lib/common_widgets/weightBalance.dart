@@ -2,24 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:animated_weight_picker/animated_weight_picker.dart';
 import 'package:intl/intl.dart';
 
-class BalanceWeight extends StatelessWidget {
+class BalanceWeight extends StatefulWidget {
   final double min;
   final double max;
-  String? selectedValue;
   final DateTime? startDate;
   final Function(DateTime) onStartDateChanged;
   final Function(double) onWeightChanged;
+  final double initialWeight;
   final Widget? suffix;
 
-  BalanceWeight(
-      {Key? key,
-      required this.min,
-      required this.max,
-      this.selectedValue,
-      this.startDate,
-      required this.onStartDateChanged,
-      required this.onWeightChanged,
-      this.suffix});
+  BalanceWeight({
+    Key? key,
+    required this.min,
+    required this.max,
+    this.startDate,
+    required this.onStartDateChanged,
+    required this.onWeightChanged,
+    required this.initialWeight,
+    this.suffix,
+  }) : super(key: key);
+
+  @override
+  _BalanceWeightState createState() => _BalanceWeightState();
+}
+
+class _BalanceWeightState extends State<BalanceWeight> {
+  late double selectedWeight;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedWeight = widget.initialWeight; // Initialize with the initial weight
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +53,32 @@ class BalanceWeight extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              DateFormat('dd MMM yyyy').format(startDate!),
+              DateFormat('dd MMM yyyy').format(widget.startDate!),
               style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),
             ),
             SizedBox(height: 30),
+            Text(
+              selectedWeight.toStringAsFixed(2), // Display the selected weight
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            SizedBox(height: 30),
             AnimatedWeightPicker(
-              suffix: suffix,
+              suffix: widget.suffix,
               selectedValueColor: Colors.blue.shade200,
               dialColor: Colors.blue.shade200,
               suffixTextColor: Colors.blue.shade200,
-              min: min,
-              max: max,
+              min: widget.min,
+              max: widget.max,
               onChange: (newValue) {
-                // newValue is the newly selected weight
-                onWeightChanged(double.parse(newValue!));
-                selectedValue = newValue;
+                setState(() {
+                  selectedWeight =
+                      double.parse(newValue!); // Update the selected weight
+                });
+                widget.onWeightChanged(selectedWeight);
               },
             ),
           ],
@@ -69,12 +94,12 @@ class BalanceWeight extends StatelessWidget {
 
     showDatePicker(
       context: context,
-      initialDate: startDate,
+      initialDate: widget.startDate!,
       firstDate: minimumDateTime,
       lastDate: maximumDateTime,
     ).then((pickedDate) {
       if (pickedDate != null) {
-        onStartDateChanged(pickedDate);
+        widget.onStartDateChanged(pickedDate);
       }
     });
   }

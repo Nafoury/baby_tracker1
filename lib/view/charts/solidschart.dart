@@ -1,6 +1,7 @@
 import 'package:baba_tracker/models/solidsData.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:intl/intl.dart';
 
 class SolidsChart extends StatefulWidget {
   final List<SolidsData> solidsRecords;
@@ -13,7 +14,7 @@ class SolidsChart extends StatefulWidget {
 class _SolidsChartState extends State<SolidsChart> {
   late List<String> labels;
   late List<DateTime> dates;
-  late List<SolidsData> mappedData;
+  late List<SolidsData?> mappedData; // Changed to nullable
   late double maxY;
   late DateTime selectedStartDate;
 
@@ -34,7 +35,6 @@ class _SolidsChartState extends State<SolidsChart> {
     for (var i = 0; i < 7; i++) {
       DateTime date = startDate.add(Duration(days: i));
       dates.add(date);
-      String dateStr = date.toLocal().toString().split(' ')[0];
       labels.add('${date.day}.${date.month}');
     }
 
@@ -43,22 +43,23 @@ class _SolidsChartState extends State<SolidsChart> {
         (data) => data.date!.day == date.day && data.date!.month == date.month,
         orElse: () => SolidsData(
           date: date,
-          fruits: 0,
-          veg: 0,
-          protein: 0,
-          grains: 0,
-          dairy: 0,
+          fruits: null,
+          veg: null,
+          protein: null,
+          grains: null,
+          dairy: null,
         ),
       );
-      mappedData.add(dataForDate);
+      if (dataForDate.fruits != null ||
+          dataForDate.veg != null ||
+          dataForDate.protein != null ||
+          dataForDate.grains != null ||
+          dataForDate.dairy != null) {
+        mappedData.add(dataForDate);
+      }
     }
 
     maxY = calculateMaxY();
-
-    // Debugging print statements
-    print("Mapped Data: $mappedData");
-    print("Max Y: $maxY");
-    print("Labels: $labels");
 
     setState(() {});
   }
@@ -88,6 +89,22 @@ class _SolidsChartState extends State<SolidsChart> {
       children: [
         Text("Overview",
             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20)),
+        Row(
+          children: [
+            Text(
+              DateFormat('MMM dd -')
+                  .format(selectedStartDate.subtract(Duration(days: 6))),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              DateFormat('MMM dd, yyyy').format(selectedStartDate),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -140,43 +157,43 @@ class _SolidsChartState extends State<SolidsChart> {
               interval: 50,
             ),
             series: [
-              StackedColumnSeries<SolidsData, String>(
+              StackedColumnSeries<SolidsData?, String>(
                 dataSource: mappedData,
                 xValueMapper: (data, _) =>
-                    '${data.date!.day}.${data.date!.month}',
-                yValueMapper: (data, _) => data.fruits,
+                    data != null ? '${data.date!.day}.${data.date!.month}' : '',
+                yValueMapper: (data, _) => data != null ? data.fruits : null,
                 name: 'Fruits',
                 color: Colors.pink.shade100,
               ),
-              StackedColumnSeries<SolidsData, String>(
+              StackedColumnSeries<SolidsData?, String>(
                 dataSource: mappedData,
                 xValueMapper: (data, _) =>
-                    '${data.date!.day}.${data.date!.month}',
-                yValueMapper: (data, _) => data.veg,
+                    data != null ? '${data.date!.day}.${data.date!.month}' : '',
+                yValueMapper: (data, _) => data != null ? data.veg : null,
                 name: 'Vegetables',
                 color: Colors.green.shade200,
               ),
-              StackedColumnSeries<SolidsData, String>(
+              StackedColumnSeries<SolidsData?, String>(
                 dataSource: mappedData,
                 xValueMapper: (data, _) =>
-                    '${data.date!.day}.${data.date!.month}',
-                yValueMapper: (data, _) => data.protein,
+                    data != null ? '${data.date!.day}.${data.date!.month}' : '',
+                yValueMapper: (data, _) => data != null ? data.protein : null,
                 name: 'Protein',
                 color: Colors.brown.shade200,
               ),
-              StackedColumnSeries<SolidsData, String>(
+              StackedColumnSeries<SolidsData?, String>(
                 dataSource: mappedData,
                 xValueMapper: (data, _) =>
-                    '${data.date!.day}.${data.date!.month}',
-                yValueMapper: (data, _) => data.grains,
+                    data != null ? '${data.date!.day}.${data.date!.month}' : '',
+                yValueMapper: (data, _) => data != null ? data.grains : null,
                 name: 'Grains',
                 color: Colors.blue.shade100,
               ),
-              StackedColumnSeries<SolidsData, String>(
+              StackedColumnSeries<SolidsData?, String>(
                 dataSource: mappedData,
                 xValueMapper: (data, _) =>
-                    '${data.date!.day}.${data.date!.month}',
-                yValueMapper: (data, _) => data.dairy,
+                    data != null ? '${data.date!.day}.${data.date!.month}' : '',
+                yValueMapper: (data, _) => data != null ? data.dairy : null,
                 name: 'Dairy',
                 color: Colors.blue.shade500,
               ),

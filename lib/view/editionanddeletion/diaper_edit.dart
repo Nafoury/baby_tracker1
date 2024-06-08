@@ -78,7 +78,7 @@ class _DiaperEditState extends State<DiaperEdit> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Get.offAllNamed("/mainTab");
+                        Navigator.pop(context);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",

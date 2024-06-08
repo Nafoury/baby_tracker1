@@ -52,10 +52,12 @@ class _BabyProfileState extends State<BabyProfile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
                         width: 25,
@@ -63,21 +65,15 @@ class _BabyProfileState extends State<BabyProfile> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
+                    SizedBox(
+                      width: 70,
+                    ),
                     Text(
                       "Add Child",
                       style: TextStyle(
                           color: Tcolor.black,
                           fontSize: 14,
                           fontWeight: FontWeight.w700),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Close',
-                        style: TextStyle(color: Colors.blue.shade200),
-                      ),
                     ),
                   ],
                 ),
@@ -118,6 +114,7 @@ class _BabyProfileState extends State<BabyProfile> {
                                     setState(() {
                                       myfile = File(xFile!.path);
                                     });
+                                    Navigator.pop(context);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(10),
@@ -133,6 +130,7 @@ class _BabyProfileState extends State<BabyProfile> {
                                     setState(() {
                                       myfile = File(xFile!.path);
                                     });
+                                    Navigator.pop(context);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(10),
@@ -295,6 +293,7 @@ class _BabyProfileState extends State<BabyProfile> {
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
+                                Get.offAllNamed("/mainTab");
                               },
                               child: Text("OK"),
                             ),

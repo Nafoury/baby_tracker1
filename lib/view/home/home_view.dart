@@ -436,41 +436,9 @@ class _HomeViewState extends State<HomeView> {
 
   loadDataFromSharedPreferences() async {
     sharedPref = await SharedPreferences.getInstance();
-
-    dateOfBirthString = babyProvider.activeBaby?.dateOfBirth.toString() ?? '';
     setState(() {
       firstName = sharedPref.getString('first_name') ?? '';
-      babyname = babyProvider.activeBaby?.babyName ?? 'Baby';
-      print('Date of Birth String: $dateOfBirthString');
-      print('baby name: $babyname');
-      calculateWeeks(); // Calculate weeks initially after setting the dateOfBirthString
-    });
-  }
-
-  void calculateWeeks() {
-    // Calculate weeks from dateOfBirthString and assign it to weekText
-    weekText = calculateAgeInWeeks(dateOfBirthString);
-    setState(() {});
-  }
-
-  String calculateAgeInWeeks(String dobString) {
-    // Parse the date of birth string to a DateTime object
-    DateTime dob = DateTime.parse(dobString);
-
-    // Calculate the difference between the current date and the birth date
-    Duration difference = DateTime.now().difference(dob);
-
-    // Calculate the age in weeks (considering 7 days per week)
-    int weeks = difference.inDays ~/ 7;
-
-    return ' $weeks weeks'; // Return the age in weeks as a string
-  }
-
-  void startWeekUpdateTimer() {
-    const oneWeek = const Duration(days: 7); // Update every week
-    Timer.periodic(oneWeek, (Timer timer) {
-      // Call calculateWeeks every week to update the displayed age
-      calculateWeeks();
+      // Calculate weeks initially after setting the dateOfBirthString
     });
   }
 
@@ -527,345 +495,376 @@ class _HomeViewState extends State<HomeView> {
       "image": "assets/images/diaper_change.png"
     },
   ];
+
+  String formatDateDifference(DateTime dateOfBirth) {
+    final now = DateTime.now();
+    final difference = now.difference(dateOfBirth);
+
+    if (difference.inDays < 7) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ';
+    } else if (difference.inDays < 30) {
+      final weeks = difference.inDays ~/ 7;
+      return '$weeks week${weeks > 1 ? 's' : ''} ';
+    } else {
+      final months = difference.inDays ~/ 30;
+      return '$months month${months > 1 ? 's' : ''} ';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Consumer<BabyProvider>(builder: (context, babyProvider, child) {
-      final activeBaby = babyProvider.activeBaby!.babyName;
-      final image = babyProvider.activeBaby!.image;
-      return Scaffold(
-        backgroundColor: Tcolor.white,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Welcome Back!",
-                        style: TextStyle(color: Tcolor.gray, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: media.height * 0.3,
-                    //color: Tcolor.black,
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      double innerHeight = constraints.maxHeight;
-                      double innerWidth = constraints.maxWidth;
+      if (babyProvider.activeBaby == null) {
+        // If activeBaby is null, show loading indicator
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      } else {
+        // Data has been fetched, render the UI with the fetched data
+        final activeBaby = babyProvider.activeBaby!.babyName ?? "";
+        final image = babyProvider.activeBaby!.image ?? "";
+        final dateOfBirthString = babyProvider.activeBaby!.dateOfBirth ?? "";
+        final dateOfBirth = DateTime.parse(
+            dateOfBirthString.toString()); // Parse the date string
+        final formattedDateOfBirth = formatDateDifference(dateOfBirth);
+        return Scaffold(
+          backgroundColor: Tcolor.white,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SingleChildScrollView(
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Welcome Back!",
+                          style: TextStyle(color: Tcolor.gray, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      height: media.height * 0.3,
+                      //color: Tcolor.black,
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        double innerHeight = constraints.maxHeight;
+                        double innerWidth = constraints.maxWidth;
 
-                      return Stack(
-                        children: [
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 20,
-                            child: Container(
-                              height: innerHeight * 0.80,
-                              width: innerWidth,
-                              decoration: BoxDecoration(
-                                gradient:
-                                    LinearGradient(colors: Tcolor.primaryG),
-                                borderRadius:
-                                    BorderRadius.circular(media.width * 0.07),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Image.asset(
-                                      "assets/images/dots_lighter.png",
-                                      height: media.width * 0.4,
-                                      width: double.maxFinite,
-                                      fit: BoxFit.fitHeight,
+                        return Stack(
+                          children: [
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 20,
+                              child: Container(
+                                height: innerHeight * 0.80,
+                                width: innerWidth,
+                                decoration: BoxDecoration(
+                                  gradient:
+                                      LinearGradient(colors: Tcolor.primaryG),
+                                  borderRadius:
+                                      BorderRadius.circular(media.width * 0.07),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                        "assets/images/dots_lighter.png",
+                                        height: media.width * 0.4,
+                                        width: double.maxFinite,
+                                        fit: BoxFit.fitHeight,
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    bottom: 15,
-                                    right: 20,
-                                    child: Text(
-                                      weekText,
-                                      style: TextStyle(
-                                          color: Tcolor.black, fontSize: 15),
+                                    Positioned(
+                                      bottom: 15,
+                                      right: 20,
+                                      child: Text(
+                                        "$formattedDateOfBirth",
+                                        style: TextStyle(
+                                            color: Tcolor.black, fontSize: 15),
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    left: 20,
-                                    top: 47,
-                                    //bottom: 25,
-                                    child: Text(
-                                      "${getGreeting()} $activeBaby & $firstName",
-                                      style: TextStyle(
-                                          color: Tcolor.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700),
+                                    Positioned(
+                                      left: 20,
+                                      top: 47,
+                                      //bottom: 25,
+                                      child: Text(
+                                        "${getGreeting()} $activeBaby & $firstName",
+                                        style: TextStyle(
+                                            color: Tcolor.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 20,
-                            child: GestureDetector(
-                              // Use GestureDetector for interaction
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MomProfile(),
-                                  ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.grey.shade300,
-                                radius: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: userImageProvider
-                                          .userData.first.image!.isNotEmpty
-                                      ? Image.network(
-                                          "$linkImageFile/${userImageProvider.userData.first.image}",
-                                          fit: BoxFit.cover,
-                                          width: 60,
-                                          height: 60,
-                                        )
-                                      : Image.asset(
-                                          "assets/images/profile.png",
-                                          fit: BoxFit.cover,
-                                          width: 30,
-                                          height: 30,
-                                        ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 15,
-                            left: 80,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChildrenProfile(),
+                            Positioned(
+                              top: 0,
+                              left: 20,
+                              child: GestureDetector(
+                                // Use GestureDetector for interaction
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MomProfile(),
+                                    ),
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey.shade300,
+                                  radius: 30,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: userImageProvider
+                                            .userData.first.image!.isNotEmpty
+                                        ? Image.network(
+                                            "$linkImageFile/${userImageProvider.userData.first.image}",
+                                            fit: BoxFit.cover,
+                                            width: 60,
+                                            height: 60,
+                                          )
+                                        : Image.asset(
+                                            "assets/images/profile.png",
+                                            fit: BoxFit.cover,
+                                            width: 30,
+                                            height: 30,
+                                          ),
                                   ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.grey.shade300,
-                                radius: 25,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: image!.isNotEmpty
-                                      ? Image.network(
-                                          "$linkImageFile/${image}",
-                                          fit: BoxFit.cover,
-                                          width: 60,
-                                          height: 60,
-                                        )
-                                      : Image.asset(
-                                          "assets/images/profile.png",
-                                          fit: BoxFit.cover,
-                                          width: 20,
-                                        ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Last 24 hours',
-                      style: TextStyle(
-                          color: Tcolor.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  SizedBox(
-                    height: media.width * 0.5,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: activiteslist.length,
-                        itemBuilder: (context, index) {
-                          var aobj = activiteslist[index] as Map? ?? {};
-                          Widget pageRoute;
-                          switch (index) {
-                            case 0:
-                              pageRoute = SleepingView();
-                              break;
-                            case 1:
-                              pageRoute = FeedingView();
-                              break;
-                            case 2:
-                              pageRoute = DiaperChange();
-                              break;
-                            default:
-                              pageRoute = Container();
-                              break;
-                          }
-                          return Activites(
-                              aobj: aobj,
-                              index: index,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => pageRoute),
-                                );
-                              });
-                        }),
-                  ),
-                  SizedBox(
-                    height: media.width * 0.1,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Recently Activity',
-                      style: TextStyle(
-                          color: Tcolor.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  SizedBox(
-                    height: media.width * 0.01,
-                  ),
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: todaySleepArr.length,
-                    itemBuilder: (context, index) {
-                      if (diapersRecords.isNotEmpty &&
-                          todaySleepArr[index]["name"] == "Diapers") {
-                        return TodaySleepScheduleRow(
-                          activityData: todaySleepArr[index],
-                          onEdit: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DiaperEdit(
-                                        entryData: diapersRecords.last,
-                                      )),
-                            );
-                            fetchDiaperRecords(
-                                diaperProvider); // Re-fetch data after edit
-                          },
-                          onDelete: () async {
-                            await diaperProvider.deleteDiaperRecord(
-                                diapersRecords.last.changeId!);
-                            fetchDiaperRecords(
-                                diaperProvider); // Re-fetch data after delete
-                          },
+                            Positioned(
+                              top: 15,
+                              left: 80,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ChildrenProfile(),
+                                    ),
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey.shade300,
+                                  radius: 25,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: image.isNotEmpty
+                                        ? Image.network(
+                                            "$linkImageFile/${image}",
+                                            fit: BoxFit.cover,
+                                            width: 60,
+                                            height: 60,
+                                          )
+                                        : Image.asset(
+                                            "assets/images/profile.png",
+                                            fit: BoxFit.cover,
+                                            width: 20,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         );
-                      }
-                      // Check if there are sleep records available
-                      if (sleepRecords.isNotEmpty &&
-                          todaySleepArr[index]["name"] == "Sleep") {
-                        return TodaySleepScheduleRow(
+                      }),
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Last 24 hours',
+                        style: TextStyle(
+                            color: Tcolor.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    SizedBox(
+                      height: media.width * 0.5,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: activiteslist.length,
+                          itemBuilder: (context, index) {
+                            var aobj = activiteslist[index] as Map? ?? {};
+                            Widget pageRoute;
+                            switch (index) {
+                              case 0:
+                                pageRoute = SleepingView();
+                                break;
+                              case 1:
+                                pageRoute = FeedingView();
+                                break;
+                              case 2:
+                                pageRoute = DiaperChange();
+                                break;
+                              default:
+                                pageRoute = Container();
+                                break;
+                            }
+                            return Activites(
+                                aobj: aobj,
+                                index: index,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => pageRoute),
+                                  );
+                                });
+                          }),
+                    ),
+                    SizedBox(
+                      height: media.width * 0.1,
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Recently Activity',
+                        style: TextStyle(
+                            color: Tcolor.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    SizedBox(
+                      height: media.width * 0.01,
+                    ),
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: todaySleepArr.length,
+                      itemBuilder: (context, index) {
+                        if (diapersRecords.isNotEmpty &&
+                            todaySleepArr[index]["name"] == "Diapers") {
+                          return TodaySleepScheduleRow(
                             activityData: todaySleepArr[index],
                             onEdit: () async {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SleepEdit(
-                                          entryData: sleepRecords.last,
+                                    builder: (context) => DiaperEdit(
+                                          entryData: diapersRecords.last,
                                         )),
                               );
-                              fetchSleepRecords(sleepProvider);
+                              fetchDiaperRecords(
+                                  diaperProvider); // Re-fetch data after edit
                             },
                             onDelete: () async {
-                              await sleepProvider.deleteSleepRecord(
-                                  sleepRecords.last.sleepId!);
-                              fetchSleepRecords(sleepProvider);
-                            });
-                      }
+                              await diaperProvider.deleteDiaperRecord(
+                                  diapersRecords.last.changeId!);
+                              fetchDiaperRecords(
+                                  diaperProvider); // Re-fetch data after delete
+                            },
+                          );
+                        }
+                        // Check if there are sleep records available
+                        if (sleepRecords.isNotEmpty &&
+                            todaySleepArr[index]["name"] == "Sleep") {
+                          return TodaySleepScheduleRow(
+                              activityData: todaySleepArr[index],
+                              onEdit: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SleepEdit(
+                                            entryData: sleepRecords.last,
+                                          )),
+                                );
+                                fetchSleepRecords(sleepProvider);
+                              },
+                              onDelete: () async {
+                                await sleepProvider.deleteSleepRecord(
+                                    sleepRecords.last.sleepId!);
+                                fetchSleepRecords(sleepProvider);
+                              });
+                        }
 
-                      if (solidsRecords.isNotEmpty &&
-                          todaySleepArr[index]["name"] == "Solids") {
-                        return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SolidsEdit(
-                                          entryData: solidsRecords.last,
-                                        )),
-                              );
-                              fetchSolidsRecords(solidsProvider);
-                            },
-                            onDelete: () async {
-                              await solidsProvider.deleteSolidsRecord(
-                                  solidsRecords.last.solidId!);
-                              fetchSolidsRecords(solidsProvider);
-                            });
-                      }
-                      if (bottleRecords.isNotEmpty &&
-                          todaySleepArr[index]["name"] == "Bottle") {
-                        return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => BottleEdit(
-                                          entryData: bottleRecords.last,
-                                        )),
-                              );
-                              fetchBottleData(bottleDataProvider);
-                            },
-                            onDelete: () async {
-                              await bottleDataProvider.deleteBottleRecord(
-                                  bottleRecords.last.feed1Id!);
-                              fetchBottleData(bottleDataProvider);
-                            });
-                      }
-                      if (nursingRecords.isNotEmpty &&
-                          todaySleepArr[index]["name"] == "Nursing") {
-                        return TodaySleepScheduleRow(
-                            activityData: todaySleepArr[index],
-                            onEdit: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        NursingEditAndDeletion(
-                                          entryData: nursingRecords.last,
-                                        )),
-                              );
-                              fetchNursingData(nursingDataProvider);
-                            },
-                            onDelete: () async {
-                              await nursingDataProvider.deleteNursingRecord(
-                                  nursingRecords.last.feedId!);
-                              fetchNursingData(nursingDataProvider);
-                            });
-                      }
+                        if (solidsRecords.isNotEmpty &&
+                            todaySleepArr[index]["name"] == "Solids") {
+                          return TodaySleepScheduleRow(
+                              activityData: todaySleepArr[index],
+                              onEdit: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SolidsEdit(
+                                            entryData: solidsRecords.last,
+                                          )),
+                                );
+                                fetchSolidsRecords(solidsProvider);
+                              },
+                              onDelete: () async {
+                                await solidsProvider.deleteSolidsRecord(
+                                    solidsRecords.last.solidId!);
+                                fetchSolidsRecords(solidsProvider);
+                              });
+                        }
+                        if (bottleRecords.isNotEmpty &&
+                            todaySleepArr[index]["name"] == "Bottle") {
+                          return TodaySleepScheduleRow(
+                              activityData: todaySleepArr[index],
+                              onEdit: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BottleEdit(
+                                            entryData: bottleRecords.last,
+                                          )),
+                                );
+                                fetchBottleData(bottleDataProvider);
+                              },
+                              onDelete: () async {
+                                await bottleDataProvider.deleteBottleRecord(
+                                    bottleRecords.last.feed1Id!);
+                                fetchBottleData(bottleDataProvider);
+                              });
+                        }
+                        if (nursingRecords.isNotEmpty &&
+                            todaySleepArr[index]["name"] == "Nursing") {
+                          return TodaySleepScheduleRow(
+                              activityData: todaySleepArr[index],
+                              onEdit: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          NursingEditAndDeletion(
+                                            entryData: nursingRecords.last,
+                                          )),
+                                );
+                                fetchNursingData(nursingDataProvider);
+                              },
+                              onDelete: () async {
+                                await nursingDataProvider.deleteNursingRecord(
+                                    nursingRecords.last.feedId!);
+                                fetchNursingData(nursingDataProvider);
+                              });
+                        }
 
-                      return Container();
-                    },
-                  ),
-                ],
+                        return Container();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      }
     });
   }
 }

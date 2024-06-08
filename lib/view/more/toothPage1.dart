@@ -23,12 +23,9 @@ class _TeethWidgetState extends State<TeethWidget> {
   Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
     List<TeethData> existingData = await teethControlle.retrieveTeethData();
     bool duplicateExists = existingData.any((teeth) =>
-        teeth.lower != choice ||
-        teeth.upper != choice2 &&
-            teeth.date == startDate &&
-            teeth.date!.year == startDate.year &&
-            teeth.date!.month == startDate.month &&
-            teeth.date!.day == startDate.day);
+        teeth.date == startDate &&
+        teeth.upper == choice &&
+        teeth.lower == choice2);
     return duplicateExists;
   }
 

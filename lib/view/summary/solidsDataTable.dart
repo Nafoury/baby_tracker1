@@ -15,7 +15,7 @@ class SolidsDataTable extends StatelessWidget {
     return Consumer<SolidsProvider>(
       builder: (context, solidsProvider, child) {
         List<SolidsData> solidsRecords = solidsProvider.solidsRecords;
-        if (solidsRecords == null || solidsRecords!.isEmpty) {
+        if (solidsRecords.isEmpty) {
           return Padding(
             padding: EdgeInsets.only(top: 150),
             child: Center(

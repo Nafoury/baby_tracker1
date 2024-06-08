@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 
 class BottleEdit extends StatefulWidget {
   final BottleData entryData;
-
   final Function(DateTime)? onDateStratTimeChanged;
 
   const BottleEdit({
@@ -75,7 +74,7 @@ class _BottleEditState extends State<BottleEdit> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 IconButton(
                   onPressed: () {
-                    // Get.offAllNamed("/mainTab");
+                    Navigator.pop(context);
                   },
                   icon: Image.asset(
                     "assets/images/back_Navs.png",
@@ -143,11 +142,14 @@ class _BottleEditState extends State<BottleEdit> {
               ]),
               Column(
                 children: [
-                  BabyBottleSelector(onMlValueChanged: (double value) {
-                    setState(() {
-                      amount = value;
-                    });
-                  }),
+                  BabyBottleSelector(
+                    initialMlValue: amount, // Pass the initial amount
+                    onMlValueChanged: (double value) {
+                      setState(() {
+                        amount = value;
+                      });
+                    },
+                  ),
                   SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.all(10),
@@ -161,8 +163,10 @@ class _BottleEditState extends State<BottleEdit> {
                           startDate = newStartDate;
                         });
                       },
-                      onNoteChanged: (String note) {
-                        note = note;
+                      onNoteChanged: (String newNote) {
+                        setState(() {
+                          note = newNote;
+                        });
                       },
                     ),
                   ),
