@@ -57,6 +57,7 @@ class _VaccineEditState extends State<VaccineEdit> {
   Future<bool> _checkVaccineDDuplicateData(DateTime startDate) async {
     List<VaccineData> existingData = await vaccineProvider.getVaccineRecords();
     bool duplicateExists = existingData.any((vaccine) =>
+        vaccine.isReminderSet == isSwitch &&
         vaccine.type == type &&
         vaccine.date!.year == startDate.year &&
         vaccine.date!.month == startDate.month &&

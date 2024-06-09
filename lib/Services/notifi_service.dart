@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:baba_tracker/models/vaccineData.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -15,7 +14,7 @@ class NotificationService {
 
   static Future init() async {
     InitializationSettings settings = const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('@mipmap/launcher_icon'),
       iOS: DarwinInitializationSettings(),
     );
     flutterLocalNotificationsPlugin.initialize(
@@ -100,17 +99,18 @@ class NotificationService {
   }
 
   static Future<void> showScheduledNotificationRepeated(
-      DateTime scheduledTime, Duration interval) async {
+      DateTime firstScheduledTime, Duration interval) async {
     await Workmanager().registerPeriodicTask(
-      'reminder_task',
+      'its Medication Time',
       'reminder_task',
       frequency: interval,
-      initialDelay: scheduledTime.difference(DateTime.now()),
+      initialDelay: firstScheduledTime.difference(DateTime.now()),
       inputData: {'interval': interval.inMinutes.toString()},
       constraints: Constraints(
         networkType: NetworkType.connected,
       ),
     );
+    print("notifiaction is created1");
   }
 
   static Future<void> cancelScheduledNotification() async {

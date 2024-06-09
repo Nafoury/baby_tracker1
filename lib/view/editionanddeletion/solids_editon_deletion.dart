@@ -74,17 +74,19 @@ class _SolidsEditState extends State<SolidsEdit> {
 
   Future<bool> _checkDuplicateSolidsData(DateTime startDate) async {
     List<SolidsData> existingData = await solidsProvider.getSolidsRecords();
+
     bool duplicateExists = existingData.any((solids) =>
-        solids.fruits == fruits &&
-        solids.dairy == dairy &&
-        solids.grains == grain &&
-        solids.protein == meat &&
-        solids.veg == veg &&
+        solids.fruits!.toString() == fruitController.text &&
+        solids.dairy!.toString() == dairyController.text &&
+        solids.grains!.toString() == grainController.text &&
+        solids.protein!.toString() == proteinController.text &&
+        solids.veg!.toString() == vegController.text &&
         solids.date!.year == startDate.year &&
         solids.date!.month == startDate.month &&
         solids.date!.day == startDate.day &&
         solids.date!.hour == startDate.hour &&
         solids.date!.minute == startDate.minute);
+
     return duplicateExists;
   }
 

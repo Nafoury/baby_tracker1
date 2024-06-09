@@ -68,16 +68,13 @@ class _UpdatedPasswordState extends State<UpdatedPassword> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Image.asset(
-              "assets/images/change.png",
-              height: 60,
-              width: 60,
-            ),
+            title:
+                Image.asset("assets/images/warning.png", height: 60, width: 60),
             content: Text("the password dosen't match"),
             actions: [
               TextButton(
                 onPressed: () {
-                  Get.offAllNamed("/login");
+                  Navigator.pop(context);
                 },
                 child: Text("OK"),
               ),

@@ -63,15 +63,19 @@ class _AddMedState extends State<AddMed> {
 
       Duration interval = Duration(hours: hours, minutes: minutes);
 
+      // Calculate the first scheduled time based on the current time and interval
+      DateTime now = DateTime.now();
+      DateTime firstScheduledTime = now.add(interval);
+
       // Cancel existing tasks before scheduling the new one
       await NotificationService.cancelScheduledNotification();
 
       // Initialize WorkManager and set the reminder
       await WorkManagerService().init();
 
-      // Set the reminder using the selected interval
+      // Set the reminder using the calculated first scheduled time and the interval
       await NotificationService.showScheduledNotificationRepeated(
-          DateTime.now(), interval);
+          firstScheduledTime, interval);
     } else {
       NotificationService.cancelScheduledNotification();
     }

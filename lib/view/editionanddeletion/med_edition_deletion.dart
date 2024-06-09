@@ -114,6 +114,8 @@ class _MediciationEditState extends State<MediciationEdit> {
     List<MedData> existingData =
         await medicationsProvider.getMedicationRecords();
     bool duplicateExists = existingData.any((medication) =>
+        medication.reminderInterval == selectedInterval &&
+        medication.isReminderSet == isSwitch &&
         medication.type == type &&
         medication.date!.year == startDate.year &&
         medication.date!.month == startDate.month &&
@@ -409,6 +411,7 @@ class _MediciationEditState extends State<MediciationEdit> {
                               isReminderSet: isSwitch,
                               reminderInterval: selectedInterval,
                               medId: widget.entryData.medId));
+                          _scheduleNotification();
 
                           showDialog(
                             context: context,
@@ -435,7 +438,6 @@ class _MediciationEditState extends State<MediciationEdit> {
                           );
                         }
                       }
-                      _scheduleNotification(); // Schedule notification based on the current state
                     },
                     title: "Save changes")
               ],

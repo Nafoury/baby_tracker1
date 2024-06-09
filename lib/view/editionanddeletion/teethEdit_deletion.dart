@@ -43,9 +43,9 @@ class _TeethEditState extends State<TeethEdit> {
   Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
     List<TeethData> existingData = await teethController.retrieveTeethData();
     bool duplicateExists = existingData.any((teeth) =>
-        teeth.date == startDate &&
-        teeth.upper == choice &&
-        teeth.lower == choice1);
+        teeth.date! == startDate &&
+        teeth.upper! == choice &&
+        teeth.lower! == choice1);
     return duplicateExists;
   }
 

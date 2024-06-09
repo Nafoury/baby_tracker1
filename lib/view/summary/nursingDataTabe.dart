@@ -32,7 +32,7 @@ class _NursingDataTableState extends State<NursingDataTable> {
                     height: 90,
                     width: 90,
                   ),
-                  Text("There's no diaper data available")
+                  Text("There's no nursing data available")
                 ],
               ),
             ),
