@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/healthActivites.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/vaccinecontroller.dart';
 import 'package:baba_tracker/models/vaccineData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/vaccine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
@@ -22,11 +23,13 @@ class _AddVaccineState extends State<AddVaccine> {
   String status = '';
   VaccineController vaccineController = VaccineController();
   late VaccineProvider vaccineProvider;
+  late BabyProvider babyProvider;
   bool isSwitch = false;
 
   @override
   void didChangeDependencies() {
     vaccineProvider = Provider.of<VaccineProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -107,6 +110,7 @@ class _AddVaccineState extends State<AddVaccine> {
                 Column(
                   children: [
                     HealthWidget(
+                      babybirth: babyProvider.activeBaby!.dateOfBirth!,
                       healthType: HealthType.vaccine,
                       startDate: startDate,
                       controller: _note1,

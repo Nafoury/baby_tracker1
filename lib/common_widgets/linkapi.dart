@@ -1,7 +1,7 @@
-const String linkServerName = "http://192.168.1.9/babyphp";
-const String linkImageFile = "http://192.168.1.9/babyphp/upload";
-//const String linkImageFile = "http://192.168.43.63/babyphp/upload";
-//const String linkServerName = "http://192.168.43.63/babyphp";
+//const String linkServerName = "http://192.168.1.9/babyphp";
+//const String linkImageFile = "http://192.168.1.9/babyphp/upload";
+const String linkImageFile = "http://192.168.43.63/babyphp/upload";
+const String linkServerName = "http://192.168.43.63/babyphp";
 //const String linkServerName = "http://192.168.40.96/babyphp";
 //const String linkImageFile = "http://192.168.40.96/babyphp/upload";
 

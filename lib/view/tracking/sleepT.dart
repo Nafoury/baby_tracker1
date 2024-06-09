@@ -1,6 +1,7 @@
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/sleepcontroller.dart';
 import 'package:baba_tracker/models/sleepData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/sleep_provider.dart';
 import 'package:baba_tracker/view/charts/sleepchart.dart';
 import 'package:baba_tracker/view/home/sleeping_view.dart';
@@ -23,7 +24,7 @@ class SleepTracking extends StatelessWidget {
               child: SingleChildScrollView(
                   child: Column(children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -36,15 +37,23 @@ class SleepTracking extends StatelessWidget {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(
-                      width: 85,
-                    ),
                     Text(
                       "Sleeping",
                       style: TextStyle(
                           color: Tcolor.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w700),
+                    ),
+                    Consumer<BabyProvider>(
+                      builder: (context, babyProvider, child) {
+                        return Text(
+                          " ${babyProvider.activeBaby?.babyName ?? 'Baby'}",
+                          style: TextStyle(
+                              color: Tcolor.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        );
+                      },
                     ),
                   ],
                 ),

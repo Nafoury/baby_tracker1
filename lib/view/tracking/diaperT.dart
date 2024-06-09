@@ -39,7 +39,7 @@ class _SleepingViewState extends State<DiaperTracking> {
               child: SafeArea(
                   child: Column(children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
@@ -53,13 +53,23 @@ class _SleepingViewState extends State<DiaperTracking> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    const SizedBox(width: 90),
                     Text(
                       "Diaper",
                       style: TextStyle(
                           color: Tcolor.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w700),
+                    ),
+                    Consumer<BabyProvider>(
+                      builder: (context, babyProvider, child) {
+                        return Text(
+                          " ${babyProvider.activeBaby?.babyName ?? 'Baby'}",
+                          style: TextStyle(
+                              color: Tcolor.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        );
+                      },
                     ),
                   ],
                 ),

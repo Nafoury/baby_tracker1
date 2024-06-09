@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/models/babyHead.dart';
 import 'package:baba_tracker/provider/babyHeadProvider.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
@@ -28,6 +29,7 @@ class _BabyHeadEditState extends State<BabyHeadEdit> {
   late DateTime? startDate;
   late double mlvalue;
   late HeadMeasureProvider headMeasureProvider;
+  late BabyProvider babyProvider;
 
   @override
   void initState() {
@@ -51,6 +53,7 @@ class _BabyHeadEditState extends State<BabyHeadEdit> {
   void didChangeDependencies() {
     headMeasureProvider =
         Provider.of<HeadMeasureProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -146,6 +149,7 @@ class _BabyHeadEditState extends State<BabyHeadEdit> {
                   height: 30,
                 ),
                 BalanceWeight(
+                    userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                     initialWeight: mlvalue,
                     max: 200,
                     min: 0,
@@ -245,7 +249,6 @@ class _BabyHeadEditState extends State<BabyHeadEdit> {
                           );
                         }
                       }
-                      Navigator.pop(context);
                     },
                     title: "Save changes")
               ],

@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/controller/momController.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/models/momweightData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/momWeightProvider.dart';
 import 'package:baba_tracker/view/tracking/momsweight.dart';
 
@@ -23,10 +24,12 @@ class _WeightPageState extends State<WeightPage> {
   MomController momController = MomController();
   DateTime startDate = DateTime.now();
   late MomWeightProvider momWeightProvider;
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
     momWeightProvider = Provider.of<MomWeightProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -54,11 +57,7 @@ class _WeightPageState extends State<WeightPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MomWeightpage()),
-                      );
+                      Navigator.pop(context);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
@@ -83,6 +82,7 @@ class _WeightPageState extends State<WeightPage> {
                 height: 10,
               ),
               BalanceWeight(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   initialWeight: mlValue,
                   max: 200,
                   min: 0,

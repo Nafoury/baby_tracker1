@@ -130,7 +130,7 @@ class _ActivitiesState extends State<Activities> {
                       fit: BoxFit.fitHeight,
                     ),
                   ),
-                  SizedBox(width: 75),
+                  SizedBox(width: 85),
                   Text(
                     "Guides",
                     style: TextStyle(
@@ -162,7 +162,7 @@ class _ActivitiesState extends State<Activities> {
                           duration: const Duration(milliseconds: 200),
                           child: Container(
                             width:
-                                (MediaQuery.of(context).size.width * 0.3) - 15,
+                                (MediaQuery.of(context).size.width * 0.3) - 10,
                             height: 40,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(colors: Tcolor.primaryG),
@@ -284,7 +284,7 @@ class _ActivitiesState extends State<Activities> {
       case 2:
         return Alignment.center;
       case 3:
-        return Alignment.centerRight - const Alignment(0.5, 0);
+        return Alignment.centerRight - const Alignment(0.52, 0);
       case 4:
         return Alignment.centerRight;
       default:

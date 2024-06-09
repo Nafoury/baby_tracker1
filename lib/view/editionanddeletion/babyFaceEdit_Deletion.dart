@@ -230,37 +230,60 @@ class _BabyFaceEditState extends State<BabyFaceEdit> {
                         ),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (widget.faceData.imageId != null) {
-                        faceDayProvider.editUserImage(
-                            faceData: FaceData(
-                              date: widget.faceData.date,
-                              image: widget.faceData.image,
-                              imageId: widget.faceData.imageId!,
-                            ),
-                            imageFile: myfile!);
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Image.asset(
-                                "assets/images/change.png",
-                                height: 60,
-                                width: 60,
+                        if (myfile == null) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset("assets/images/warning.png",
+                                    height: 60, width: 60),
+                                content:
+                                    Text("There's no new photo to update it"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          faceDayProvider.editUserImage(
+                              faceData: FaceData(
+                                date: widget.faceData.date,
+                                image: widget.faceData.image,
+                                imageId: widget.faceData.imageId!,
                               ),
-                              content: Text("Photo  was successfully updated."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Get.offAllNamed('/faceADay');
-                                  },
-                                  child: Text("OK"),
+                              imageFile: myfile!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Image.asset(
+                                  "assets/images/change.png",
+                                  height: 60,
+                                  width: 60,
                                 ),
-                              ],
-                            );
-                          },
-                        );
+                                content:
+                                    Text("Photo  was successfully updated."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Get.offAllNamed('/faceADay');
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
                     },
                     child: Text(

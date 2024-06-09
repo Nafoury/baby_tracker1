@@ -10,10 +10,12 @@ class BalanceWeight extends StatefulWidget {
   final Function(double) onWeightChanged;
   final double initialWeight;
   final Widget? suffix;
+  final DateTime userBirthDate;
 
   BalanceWeight({
     Key? key,
     required this.min,
+    required this.userBirthDate,
     required this.max,
     this.startDate,
     required this.onStartDateChanged,
@@ -88,8 +90,7 @@ class _BalanceWeightState extends State<BalanceWeight> {
   }
 
   void _showStartDatePicker(BuildContext context) {
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40));
+    DateTime minimumDateTime = widget.userBirthDate;
     DateTime maximumDateTime = DateTime.now();
 
     showDatePicker(

@@ -183,6 +183,8 @@ class _DiaperChangeState extends State<DiaperChange> {
                         child: Column(
                           children: [
                             TrackingWidget(
+                              userBirthDate:
+                                  babyProvider.activeBaby!.dateOfBirth!,
                               trackingType: TrackingType.Diaper,
                               controller: _note,
                               startDate: startDate,

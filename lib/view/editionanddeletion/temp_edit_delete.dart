@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/healthActivites.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/models/medData.dart';
 import 'package:baba_tracker/models/tempData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
 import 'package:baba_tracker/provider/tempProvider.dart';
 import 'package:baba_tracker/shapes/temp3.dart';
@@ -39,6 +40,7 @@ class _TempEditState extends State<TempEdit> {
   late TextEditingController noteController;
   late TempProvider tempProvider;
   final ValueNotifier<double> temperature = ValueNotifier(0.5);
+  late BabyProvider babyProvider;
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _TempEditState extends State<TempEdit> {
   @override
   void didChangeDependencies() {
     tempProvider = Provider.of<TempProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -94,7 +97,7 @@ class _TempEditState extends State<TempEdit> {
                     ),
                   ),
                   Text(
-                    "Tempreture",
+                    " Edit Temperature",
                     style: TextStyle(
                       color: Tcolor.black,
                       fontSize: 14,
@@ -162,6 +165,7 @@ class _TempEditState extends State<TempEdit> {
                       ],
                     ),
                     HealthWidget(
+                      babybirth: babyProvider.activeBaby!.dateOfBirth!,
                       healthType: HealthType.Temp,
                       startDate: date,
                       controller: noteController,
@@ -194,7 +198,7 @@ class _TempEditState extends State<TempEdit> {
                                 width: 60,
                               ),
                               content: Text(
-                                  "Temprature data of the same  date, and hour already exists."),
+                                  "Temperature data of the same  date, and hour already exists."),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -224,7 +228,7 @@ class _TempEditState extends State<TempEdit> {
                                 width: 60,
                               ),
                               content: Text(
-                                  "Temprature Data was successfully updated."),
+                                  "Temperature Data was successfully updated."),
                               actions: [
                                 TextButton(
                                   onPressed: () {

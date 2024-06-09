@@ -5,8 +5,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HeadChart extends StatelessWidget {
   final List<MeasureData> measureRecords;
+  final DateTime babybirth;
 
-  const HeadChart({required this.measureRecords});
+  const HeadChart({required this.measureRecords, required this.babybirth});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +26,10 @@ class HeadChart extends StatelessWidget {
           primaryXAxis: DateTimeAxis(
             dateFormat: DateFormat.M(),
             interval: 1,
-            minimum: DateTime(DateTime.now().year, 1, 1), // Minimum date
-            maximum: DateTime(DateTime.now().year, 12, 31), // Maximum date
+            minimum:
+                DateTime(babybirth.year, babybirth.month, 1), // Minimum date
+            maximum: DateTime(
+                babybirth.year + 1, babybirth.month, 31), // Maximum date
             majorGridLines: MajorGridLines(width: 1), // Hide grid lines
           ),
           primaryYAxis: NumericAxis(
@@ -75,11 +78,12 @@ class HeadChart extends StatelessWidget {
       Map<DateTime, List<MeasureData>> monthlyData) {
     final List<MeasureData> allData = [];
 
-    for (var month = 1; month <= 12; month++) {
-      final monthStart = DateTime(DateTime.now().year, month, 1);
+    DateTime startMonth = DateTime(babybirth.year, babybirth.month, 1);
+
+    for (var i = 0; i < 12; i++) {
+      final monthStart = DateTime(startMonth.year, startMonth.month + i, 1);
       final existingData = monthlyData[monthStart] ?? [];
 
-      // Add existing data
       allData.addAll(existingData);
     }
 

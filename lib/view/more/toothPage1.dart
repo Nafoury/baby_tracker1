@@ -2,9 +2,11 @@ import 'package:baba_tracker/common/color_extension.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/teethController.dart';
 import 'package:baba_tracker/models/teethModel.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/view/more/toothPgae.dart';
 import 'package:baba_tracker/view/summary/teethDataTable.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TeethWidget extends StatefulWidget {
   const TeethWidget({super.key});
@@ -19,6 +21,7 @@ class _TeethWidgetState extends State<TeethWidget> {
   String choice = '';
   String choice2 = '';
   TeethController teethControlle = new TeethController();
+  late BabyProvider babyProvider;
 
   Future<bool> _checkDuplicateTeethData(DateTime startDate) async {
     List<TeethData> existingData = await teethControlle.retrieveTeethData();
@@ -27,6 +30,12 @@ class _TeethWidgetState extends State<TeethWidget> {
         teeth.upper == choice &&
         teeth.lower == choice2);
     return duplicateExists;
+  }
+
+  @override
+  void didChangeDependencies() {
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
+    super.didChangeDependencies();
   }
 
   @override
@@ -41,7 +50,7 @@ class _TeethWidgetState extends State<TeethWidget> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
@@ -55,9 +64,15 @@ class _TeethWidgetState extends State<TeethWidget> {
                         fit: BoxFit.fitHeight,
                       ),
                     ),
-                    SizedBox(width: 85),
                     Text(
                       "Teeth",
+                      style: TextStyle(
+                          color: Tcolor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      babyProvider.activeBaby!.babyName!,
                       style: TextStyle(
                           color: Tcolor.black,
                           fontSize: 16,

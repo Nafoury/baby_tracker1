@@ -156,7 +156,7 @@ class _TeethEditState extends State<TeethEdit> {
                   },
                 ),
               ),
-              SizedBox(height: 175),
+              SizedBox(height: 205),
               RoundButton(
                   onpressed: () async {
                     if (choice.isNotEmpty || choice1.isNotEmpty) {

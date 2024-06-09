@@ -75,6 +75,11 @@ class _SolidsEditState extends State<SolidsEdit> {
   Future<bool> _checkDuplicateSolidsData(DateTime startDate) async {
     List<SolidsData> existingData = await solidsProvider.getSolidsRecords();
     bool duplicateExists = existingData.any((solids) =>
+        solids.fruits == fruits &&
+        solids.dairy == dairy &&
+        solids.grains == grain &&
+        solids.protein == meat &&
+        solids.veg == veg &&
         solids.date!.year == startDate.year &&
         solids.date!.month == startDate.month &&
         solids.date!.day == startDate.day &&
@@ -139,15 +144,7 @@ class _SolidsEditState extends State<SolidsEdit> {
                                     Navigator.of(context).pop();
                                     solidsProvider.deleteSolidsRecord(
                                         widget.entryData.solidId!);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        duration: Durations.medium1,
-                                        backgroundColor:
-                                            Tcolor.gray.withOpacity(0.4),
-                                        content: Text(
-                                            "Record was successfully deleted."),
-                                      ),
-                                    );
+
                                     Navigator.of(context).pop();
 
                                     // Go back to the previous page

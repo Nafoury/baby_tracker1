@@ -6,6 +6,7 @@ import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/models/diaperData.dart';
 import 'package:baba_tracker/models/sleepData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/sleep_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +39,7 @@ class _SleepEditState extends State<SleepEdit> {
   late String status;
   late String note;
   late TextEditingController noteController;
+  late BabyProvider babyProvider;
 
   Future<bool> _checkDuplicateSleepData(
       DateTime startDate, DateTime endDate) async {
@@ -77,6 +79,7 @@ class _SleepEditState extends State<SleepEdit> {
   @override
   void didChangeDependencies() {
     sleepProvider = Provider.of<SleepProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -172,6 +175,7 @@ class _SleepEditState extends State<SleepEdit> {
                   height: 30,
                 ),
                 TrackingWidget(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   trackingType: TrackingType.Sleeping,
                   startDate: startDate,
                   endDate: endDate,

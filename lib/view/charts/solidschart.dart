@@ -100,7 +100,8 @@ class _SolidsChartState extends State<SolidsChart> {
               width: 8,
             ),
             Text(
-              DateFormat('MMM dd, yyyy').format(selectedStartDate),
+              DateFormat('MMM dd, yyyy')
+                  .format(selectedStartDate.add(Duration(days: 6))),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ],

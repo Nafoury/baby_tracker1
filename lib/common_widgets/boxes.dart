@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class Boxes extends StatelessWidget {
   final Map aobj;
   final List<Map<String, dynamic>> weightboxes;
+
   const Boxes({super.key, required this.aobj, required this.weightboxes});
 
   @override

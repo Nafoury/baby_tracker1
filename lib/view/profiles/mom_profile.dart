@@ -326,7 +326,7 @@ class _MomProfileState extends State<MomProfile> {
                       itemBuilder: (context, index) {
                         BabyInfo baby = babies[index];
                         bool isactive =
-                            baby.infoId.toString() == babyProvider.activeBabyId;
+                            baby.infoId == babyProvider.activeBaby!.infoId!;
                         return TextButton(
                           onPressed: () {
                             Navigator.push(

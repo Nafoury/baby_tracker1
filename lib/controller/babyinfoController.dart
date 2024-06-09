@@ -178,7 +178,6 @@ class BabyInfoController {
       });
 
       if (response != null && response['status'] == 'success') {
-        // Update the info_id in shared preferences with the activated baby's info_id
         sharedPref.setString("info_id", babyId.toString());
 
         print('Baby successfully made active.');

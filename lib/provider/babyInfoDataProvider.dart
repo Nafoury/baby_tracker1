@@ -99,7 +99,7 @@ class BabyProvider extends ChangeNotifier {
   Future makeBabyActive(int babyId) async {
     try {
       await babyInfoController.makeBabyActive(babyId);
-      // You may want to fetch the updated list of babies after making one active
+
       await getbabyRecords();
       _activeBabyId = babyId.toString();
       // Update _activeBaby with the active baby's information

@@ -82,6 +82,7 @@ class _SleepingViewState extends State<SleepingView> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    print(babyProvider.activeBaby!.dateOfBirth!);
     return Scaffold(
       backgroundColor: Tcolor.white,
       body: SingleChildScrollView(
@@ -219,6 +220,7 @@ class _SleepingViewState extends State<SleepingView> {
                 Padding(
                   padding: EdgeInsets.all(10),
                   child: TrackingWidget(
+                    userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                     trackingType: TrackingType.Sleeping,
                     startDate: startDate,
                     endDate: endDate,

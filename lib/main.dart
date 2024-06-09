@@ -31,6 +31,8 @@ import 'package:baba_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baba_tracker/view/on_boarding/started_view.dart';
 import 'package:baba_tracker/view/profiles/mom_profile.dart';
 import 'package:baba_tracker/view/tracking/feedinT.dart';
+import 'package:baba_tracker/view/tracking/growthT.dart';
+import 'package:baba_tracker/view/tracking/health.dart';
 import 'package:baba_tracker/view/tracking/mainTracking.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -101,6 +103,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/morePage", page: () => MorePage()),
         GetPage(name: "/milestone", page: () => Milestones()),
         GetPage(name: "/momprofile", page: () => MomProfile()),
+        GetPage(name: "/growthTracking", page: () => GrowthTracking()),
       ],
       routes: {"login": (context) => LoginPage()},
     );

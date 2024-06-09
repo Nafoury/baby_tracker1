@@ -39,6 +39,7 @@ class TrackingWidget extends StatelessWidget {
   final Function(int)? onDairyChanged;
   final Function(int)? onProteinChanged;
   final Function(int)? onGrainsChanged;
+  final DateTime userBirthDate;
   String? selectedValue;
   String? dropdownError;
   String? note;
@@ -76,6 +77,7 @@ class TrackingWidget extends StatelessWidget {
     this.garins,
     this.protein,
     this.veg,
+    required this.userBirthDate,
   });
 
   @override
@@ -385,7 +387,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: media.width * 0.75,
+                        width: media.width * 0.72,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -429,7 +431,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: media.width * 0.65,
+                        width: media.width * 0.60,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -473,7 +475,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: media.width * 0.6,
+                        width: media.width * 0.53,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -517,7 +519,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: media.width * 0.75, // Adjust the width as needed
+                        width: media.width * 0.71, // Adjust the width as needed
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -561,7 +563,7 @@ class TrackingWidget extends StatelessWidget {
                             fontSize: 14,
                           )),
                       SizedBox(
-                        width: media.width * 0.77,
+                        width: media.width * 0.73,
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
@@ -692,8 +694,7 @@ class TrackingWidget extends StatelessWidget {
     DateTime? newStartDate = startDate;
     DateTime? newEndDate = endDate;
     DateTime? initialDateTime = isStartDate ? startDate : endDate;
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40)); // Previous date
+    DateTime minimumDateTime = userBirthDate; // Previous date
     DateTime maximumDateTime = DateTime.now(); // Current date
 
     showCupertinoModalPopup(
@@ -752,8 +753,7 @@ class TrackingWidget extends StatelessWidget {
   void _showStartDatePicker(BuildContext context) {
     DateTime? newStartDate = startDate;
     DateTime? initialDateTime = startDate;
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40));
+    DateTime minimumDateTime = userBirthDate;
     DateTime maximumDateTime = DateTime.now(); // You can adjust this if needed
 
     showCupertinoModalPopup(
@@ -769,7 +769,7 @@ class TrackingWidget extends StatelessWidget {
                   CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.dateAndTime,
                     initialDateTime: initialDateTime ?? DateTime.now(),
-                    minimumDate: minimumDateTime,
+                    minimumDate: userBirthDate,
                     maximumDate: maximumDateTime,
                     onDateTimeChanged: (DateTime? newDateTime) {
                       setState(() {

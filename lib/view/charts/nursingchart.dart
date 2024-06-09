@@ -76,12 +76,12 @@ class _NursingHeatmapState extends State<NursingHeatmap> {
               child: GridView.builder(
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7, // 7 columns for days of the week
+                  crossAxisCount: 7,
                   crossAxisSpacing: 3.5,
                   mainAxisSpacing: 3.5,
                   childAspectRatio: 3.5,
                 ),
-                itemCount: 24 * 7, // 24 rows for each hour of the day
+                itemCount: 24 * 7, 
                 itemBuilder: (BuildContext context, int index) {
                   final int day = index % 7;
                   final int hour = index ~/ 7;

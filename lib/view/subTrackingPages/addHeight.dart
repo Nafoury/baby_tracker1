@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/models/babyHeight.dart';
 import 'package:baba_tracker/provider/babyHeightProvider.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
@@ -19,11 +20,13 @@ class _BabyHeightPageState extends State<BabyHeightPage> {
   double mlValue = 0.0;
   DateTime startDate = DateTime.now();
   late HeightMeasureProvider heightMeasureProvider;
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
     heightMeasureProvider =
         Provider.of<HeightMeasureProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -76,6 +79,7 @@ class _BabyHeightPageState extends State<BabyHeightPage> {
                 height: 10,
               ),
               BalanceWeight(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   initialWeight: mlValue,
                   max: 200,
                   min: 0,

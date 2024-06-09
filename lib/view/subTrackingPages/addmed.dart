@@ -4,6 +4,7 @@ import 'package:baba_tracker/common_widgets/healthActivites.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/medController.dart';
 import 'package:baba_tracker/models/medData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
@@ -25,6 +26,7 @@ class _AddMedState extends State<AddMed> {
   String status = '';
   MedController medController = MedController();
   bool isSwitch = false;
+  late BabyProvider babyProvider;
 
   final List<String> reminderIntervals = [
     '15 mins',
@@ -79,6 +81,7 @@ class _AddMedState extends State<AddMed> {
   void didChangeDependencies() {
     medicationsProvider =
         Provider.of<MedicationsProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -137,6 +140,7 @@ class _AddMedState extends State<AddMed> {
                 Column(
                   children: [
                     HealthWidget(
+                      babybirth: babyProvider.activeBaby!.dateOfBirth!,
                       healthType: HealthType.Medications,
                       startDate: startDate,
                       controller: _note,

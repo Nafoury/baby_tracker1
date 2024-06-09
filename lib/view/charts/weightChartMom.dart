@@ -31,8 +31,8 @@ class WeightChart extends StatelessWidget {
 
     // Convert weightRecords into FlSpot objects
     for (int i = 0; i < weightRecords.length; i++) {
-      double x = i.toDouble(); // x-coordinate representing time
-      double y = weightRecords[i].weight!; // Parse weight as double
+      double x = i.toDouble();
+      double y = weightRecords[i].weight!;
       spots.add(FlSpot(x, y));
     }
     double minWeight =
@@ -40,8 +40,8 @@ class WeightChart extends StatelessWidget {
     double maxWeight =
         weightRecords.map((record) => record.weight!).reduce(max);
 
-    double yMin = minWeight - 1.0; // Adjust for padding
-    double yMax = maxWeight + 1.0; // Adjust for padding
+    double yMin = minWeight - 1.0;
+    double yMax = maxWeight + 1.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

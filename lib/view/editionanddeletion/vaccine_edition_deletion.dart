@@ -3,6 +3,7 @@ import 'package:baba_tracker/Services/notifi_service.dart';
 import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/models/vaccineData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/vaccine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +34,7 @@ class _VaccineEditState extends State<VaccineEdit> {
   late String note;
   late TextEditingController noteController;
   late VaccineProvider vaccineProvider;
+  late BabyProvider babyProvider;
   bool isSwitch = false;
 
   @override
@@ -48,6 +50,7 @@ class _VaccineEditState extends State<VaccineEdit> {
   @override
   void didChangeDependencies() {
     vaccineProvider = Provider.of<VaccineProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -403,8 +406,7 @@ class _VaccineEditState extends State<VaccineEdit> {
   }
 
   void _showStartDatePicker(BuildContext context, DateTime initialDateTime) {
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40));
+    DateTime minimumDateTime = babyProvider.activeBaby!.dateOfBirth!;
     DateTime maximumDateTime = DateTime.now();
 
     showCupertinoModalPopup(

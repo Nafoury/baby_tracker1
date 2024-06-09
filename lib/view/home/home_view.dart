@@ -693,7 +693,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                     SizedBox(
-                      height: media.width * 0.5,
+                      height: media.width * 0.56,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: activiteslist.length,
@@ -727,7 +727,7 @@ class _HomeViewState extends State<HomeView> {
                           }),
                     ),
                     SizedBox(
-                      height: media.width * 0.1,
+                      height: media.width * 0.01,
                     ),
                     Align(
                       alignment: Alignment.topLeft,
@@ -740,7 +740,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                     SizedBox(
-                      height: media.width * 0.01,
+                      height: media.width * 0.02,
                     ),
                     ListView.builder(
                       padding: EdgeInsets.zero,

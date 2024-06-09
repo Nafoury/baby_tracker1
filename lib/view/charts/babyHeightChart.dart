@@ -6,8 +6,10 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class BabyHeightChart extends StatelessWidget {
   final List<HeightMeasureData> heightmeasureRecords;
+  final DateTime babyBirth;
 
-  const BabyHeightChart({required this.heightmeasureRecords});
+  const BabyHeightChart(
+      {required this.heightmeasureRecords, required this.babyBirth});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +29,10 @@ class BabyHeightChart extends StatelessWidget {
           primaryXAxis: DateTimeAxis(
             dateFormat: DateFormat.M(),
             interval: 1,
-            minimum: DateTime(DateTime.now().year, 1, 1), // Minimum date
-            maximum: DateTime(DateTime.now().year, 12, 31), // Maximum date
+            minimum:
+                DateTime(babyBirth.year, babyBirth.month, 1), // Minimum date
+            maximum: DateTime(
+                babyBirth.year + 1, babyBirth.month, 31), // Maximum date
             majorGridLines: MajorGridLines(width: 1), // Hide grid lines
           ),
           primaryYAxis: NumericAxis(

@@ -24,6 +24,7 @@ class HealthWidget extends StatelessWidget {
   String? note;
   String? status;
   final Function(DateTime)? onDateStratTimeChanged;
+  final DateTime babybirth;
 
   HealthWidget(
       {required this.healthType,
@@ -35,6 +36,7 @@ class HealthWidget extends StatelessWidget {
       this.note,
       this.selectedValue,
       this.onDateStratTimeChanged,
+      required this.babybirth,
       this.status});
 
   @override
@@ -384,8 +386,7 @@ class HealthWidget extends StatelessWidget {
   void _showStartDatePicker(BuildContext context) {
     DateTime? newStartDate = startDate;
     DateTime? initialDateTime = startDate;
-    DateTime minimumDateTime =
-        DateTime.now().subtract(const Duration(days: 40));
+    DateTime minimumDateTime = babybirth;
     DateTime maximumDateTime = DateTime.now().add(const Duration(days: 40));
 
     showCupertinoModalPopup(

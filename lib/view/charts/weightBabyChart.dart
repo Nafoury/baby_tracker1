@@ -5,8 +5,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class WeightChart extends StatelessWidget {
   final List<WeightData> weightRecords;
+  final DateTime babyBirthDate;
 
-  const WeightChart({required this.weightRecords});
+  const WeightChart({required this.weightRecords, required this.babyBirthDate});
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +24,11 @@ class WeightChart extends StatelessWidget {
         child: SfCartesianChart(
           legend: Legend(isVisible: false),
           primaryXAxis: DateTimeAxis(
-            dateFormat: DateFormat.M(),
+            dateFormat: DateFormat.M(), // Format months as numbers
             interval: 1,
-            minimum: DateTime(DateTime.now().year, 1, 1), // Minimum date
-            maximum: DateTime(DateTime.now().year, 12, 31), // Maximum date
-            majorGridLines: MajorGridLines(width: 1), // Hide grid lines
+            minimum: DateTime(babyBirthDate.year, babyBirthDate.month, 1),
+            maximum: DateTime(babyBirthDate.year + 1, babyBirthDate.month, 31),
+            majorGridLines: MajorGridLines(width: 1),
           ),
           primaryYAxis: NumericAxis(
             minimum: 0,
@@ -57,30 +58,28 @@ class WeightChart extends StatelessWidget {
   Map<DateTime, List<WeightData>> _groupDataByMonth(List<WeightData> data) {
     final Map<DateTime, List<WeightData>> groupedData = {};
 
-    // Populate the lists with actual data
     for (var record in data) {
-      final monthStart = DateTime(record.date!.year, record.date!.month,
-          1); //detrmine the start of month
+      final monthStart = DateTime(record.date!.year, record.date!.month, 1);
       groupedData.update(
         monthStart,
-        (existingData) => [...existingData, record], //lambda function
+        (existingData) => [...existingData, record],
         ifAbsent: () => [record],
-      ); // if month start alreday exists update it with the weight record other wise create one
+      );
     }
 
     return groupedData;
   }
 
-  // Create a complete list of WeightData objects with placeholders for missing months
   List<WeightData> _createCompleteMonthlyData(
       Map<DateTime, List<WeightData>> monthlyData) {
     final List<WeightData> allData = [];
 
-    for (var month = 1; month <= 12; month++) {
-      final monthStart = DateTime(DateTime.now().year, month, 1);
+    DateTime startMonth = DateTime(babyBirthDate.year, babyBirthDate.month, 1);
+
+    for (var i = 0; i < 12; i++) {
+      final monthStart = DateTime(startMonth.year, startMonth.month + i, 1);
       final existingData = monthlyData[monthStart] ?? [];
 
-      // Add existing data
       allData.addAll(existingData);
     }
 

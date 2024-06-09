@@ -14,6 +14,7 @@ import 'package:baba_tracker/view/summary/vaccineTable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class HealthTracking extends StatefulWidget {
@@ -62,7 +63,7 @@ class _HealthTracking extends State<HealthTracking> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.offAllNamed('/mainTab', arguments: 1);
                       },
                       icon: Image.asset(
                         "assets/images/back_Navs.png",
@@ -135,7 +136,7 @@ class _HealthTracking extends State<HealthTracking> {
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     child: Text(
-                                      "Temperture",
+                                      "Temperature",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: selectedbutton == 0

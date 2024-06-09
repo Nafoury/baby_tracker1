@@ -293,7 +293,7 @@ class _BabyProfileState extends State<BabyProfile> {
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
-                                Get.offAllNamed("/mainTab");
+                                Navigator.of(context).pop();
                               },
                               child: Text("OK"),
                             ),

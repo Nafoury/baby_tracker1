@@ -343,6 +343,8 @@ class _FeedingViewState extends State<FeedingView> {
                           Padding(
                             padding: EdgeInsets.all(10),
                             child: TrackingWidget(
+                              userBirthDate:
+                                  babyProvider.activeBaby!.dateOfBirth!,
                               trackingType: TrackingType.Feeding,
                               feedingSubtype: FeedingSubtype.bottle,
                               controller: _note,
@@ -463,6 +465,8 @@ class _FeedingViewState extends State<FeedingView> {
                             Padding(
                               padding: EdgeInsets.all(5),
                               child: TrackingWidget(
+                                  userBirthDate:
+                                      babyProvider.activeBaby!.dateOfBirth!,
                                   trackingType: TrackingType.Feeding,
                                   feedingSubtype: FeedingSubtype.solids,
                                   startDate: startDate,

@@ -47,16 +47,17 @@ class _GrowthTracking extends State<GrowthTracking> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     weightProvider = Provider.of<WeightProvider>(context, listen: false);
     headMeasureProvider =
         Provider.of<HeadMeasureProvider>(context, listen: false);
     heightMeasureProvider =
         Provider.of<HeightMeasureProvider>(context, listen: false);
     babyProvider = Provider.of<BabyProvider>(context, listen: false);
+
     fetchWeightRecords(weightProvider);
     fetchHeadRecords(headMeasureProvider);
     fetchHeightRecords(heightMeasureProvider);
-    super.didChangeDependencies();
   }
 
   Future<void> fetchHeightRecords(
@@ -67,7 +68,7 @@ class _GrowthTracking extends State<GrowthTracking> {
       print('Fetched Medication Records: $records');
       setState(() {
         heightRecords = records;
-        updateHeightBoxes(records);
+
         print('Fetched weight Records: $records');
       });
     } catch (e) {
@@ -82,7 +83,7 @@ class _GrowthTracking extends State<GrowthTracking> {
       print('Fetched Medication Records: $records');
       setState(() {
         weightRecords = records;
-        updateWeightBoxes(records);
+
         print('Fetched weight Records: $records');
       });
     } catch (e) {
@@ -97,7 +98,6 @@ class _GrowthTracking extends State<GrowthTracking> {
       print('Fetched head circ Records: $records');
       setState(() {
         headRecords = records;
-        updateHeadBoxes(records);
 
         print('Fetched head Records: $records');
       });
@@ -106,229 +106,6 @@ class _GrowthTracking extends State<GrowthTracking> {
       // Handle error here
     }
   }
-
-  void updateWeightBoxes(List<WeightData> records) async {
-    // Check if birth weight has been calculated and at least one record exists
-    if (!birthWeightCalculated && records.isNotEmpty) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-      WeightData firstRecord = records.first;
-
-      // Calculate difference between birth weight and current weight
-      double currentWeight = double.parse(firstRecord.weight.toString());
-      double birthWeight = double.parse(birthweight.toString());
-
-      double birthToCurrentDifference = currentWeight - birthWeight;
-      String birthToCurrentDifferenceString =
-          birthToCurrentDifference.toStringAsFixed(2);
-      String birthToCurrentSign = birthToCurrentDifference >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = firstRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        weightboxes[1]["weight"] = currentWeight.toString();
-        weightboxes[1]["date"] = currentDate;
-        weightboxes[2]["weight"] =
-            "$birthToCurrentSign $birthToCurrentDifferenceString";
-      });
-
-      // Mark birth weight as calculated
-      birthWeightCalculated = true;
-    }
-
-    // Check if there are at least two records to calculate change
-    if (records.length >= 2) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-
-      // Get the latest two weight records
-      WeightData currentRecord = records.last;
-      WeightData previousRecord = records[records.length - 2];
-
-      // Calculate change and update weightboxes
-      double currentWeight = double.parse(currentRecord.weight.toString());
-      double previousWeight = double.parse(previousRecord.weight.toString());
-
-      double change = currentWeight - previousWeight;
-      String changeString = change.toStringAsFixed(2);
-      String sign = change >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = currentRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        weightboxes[1]["weight"] = currentWeight.toString();
-        weightboxes[1]["date"] = currentDate;
-        weightboxes[2]["weight"] = "$sign $changeString";
-        weightboxes[2]["date"] = currentDate;
-      });
-    }
-  }
-
-  void updateHeadBoxes(List<MeasureData> records) {
-    // Check if birth weight has been calculated and at least one record exists
-    if (!birthHeadCalculated && records.isNotEmpty) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-      MeasureData firstRecord = records.first;
-
-      // Calculate difference between birth weight and current weight
-      double currentWeight = double.parse(firstRecord.measure.toString());
-      double birthHead = double.parse(birthHeadMeasure.toString());
-
-      double birthToCurrentDifference = currentWeight - birthHead;
-      String birthToCurrentDifferenceString =
-          birthToCurrentDifference.toStringAsFixed(2);
-      String birthToCurrentSign = birthToCurrentDifference >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = firstRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        headboxes[1]["weight"] = currentWeight.toString();
-        headboxes[1]["date"] = currentDate;
-        headboxes[2]["weight"] =
-            "$birthToCurrentSign $birthToCurrentDifferenceString";
-      });
-
-      // Mark birth weight as calculated
-      birthHeadCalculated = true;
-    }
-
-    // Check if there are at least two records to calculate change
-    if (records.length >= 2) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-
-      // Get the latest two weight records
-      MeasureData currentRecord = records.last;
-      MeasureData previousRecord = records[records.length - 2];
-
-      // Calculate change and update weightboxes
-      double currentWeight = double.parse(currentRecord.measure.toString());
-      double previousWeight = double.parse(previousRecord.measure.toString());
-
-      double change = currentWeight - previousWeight;
-      String changeString = change.toStringAsFixed(2);
-      String sign = change >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = currentRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        headboxes[1]["weight"] = currentWeight.toString();
-        headboxes[1]["date"] = currentDate;
-        headboxes[2]["weight"] = "$sign $changeString";
-        headboxes[2]["date"] = currentDate;
-      });
-    }
-  }
-
-  void updateHeightBoxes(List<HeightMeasureData> records) {
-    // Check if birth weight has been calculated and at least one record exists
-    if (!birthHeightCalculated && records.isNotEmpty) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-      HeightMeasureData firstRecord = records.first;
-
-      // Calculate difference between birth weight and current weight
-      double currentWeight = double.parse(firstRecord.measure.toString());
-      double birthHead = double.parse(birthHeadMeasure.toString());
-
-      double birthToCurrentDifference = currentWeight - birthHead;
-      String birthToCurrentDifferenceString =
-          birthToCurrentDifference.toStringAsFixed(2);
-      String birthToCurrentSign = birthToCurrentDifference >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = firstRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        heightboxes[1]["weight"] = currentWeight.toString();
-        heightboxes[1]["date"] = currentDate;
-        heightboxes[2]["weight"] =
-            "$birthToCurrentSign $birthToCurrentDifferenceString";
-      });
-
-      // Mark birth weight as calculated
-      birthHeightCalculated = true;
-    }
-
-    // Check if there are at least two records to calculate change
-    if (records.length >= 2) {
-      records.sort((a, b) => a.date!.compareTo(b.date!));
-
-      // Get the latest two weight records
-      HeightMeasureData currentRecord = records.last;
-      HeightMeasureData previousRecord = records[records.length - 2];
-
-      // Calculate change and update weightboxes
-      double currentWeight = double.parse(currentRecord.measure.toString());
-      double previousWeight = double.parse(previousRecord.measure.toString());
-
-      double change = currentWeight - previousWeight;
-      String changeString = change.toStringAsFixed(2);
-      String sign = change >= 0 ? "+" : "-";
-
-      // Extract date part from the DateTime object
-      String currentDate = currentRecord.date.toString().split(" ")[0];
-
-      setState(() {
-        heightboxes[1]["weight"] = currentWeight.toString();
-        heightboxes[1]["date"] = currentDate;
-        heightboxes[2]["weight"] = "$sign $changeString";
-        heightboxes[2]["date"] = currentDate;
-      });
-    }
-  }
-
-  List weightboxes = [
-    {
-      "time": "At birth",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Current",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Change",
-      "weight": "",
-      "sign": ">",
-    },
-  ];
-  List headboxes = [
-    {
-      "time": "At birth",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Current",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Change",
-      "weight": "",
-      "sign": ">",
-    },
-  ];
-  List heightboxes = [
-    {
-      "time": "At birth",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Current",
-      "weight": "",
-      "date": "",
-    },
-    {
-      "time": "Change",
-      "weight": "",
-      "sign": ">",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -339,42 +116,42 @@ class _GrowthTracking extends State<GrowthTracking> {
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: SafeArea(
-                    child: Column(children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Image.asset(
-                          "assets/images/back_Navs.png",
-                          width: 25,
-                          height: 25,
-                          fit: BoxFit.fitHeight,
+                  child: Column(children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Image.asset(
+                            "assets/images/back_Navs.png",
+                            width: 25,
+                            height: 25,
+                            fit: BoxFit.fitHeight,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Growth",
-                        style: TextStyle(
-                            color: Tcolor.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        " ${babyProvider.activeBaby?.babyName ?? 'Baby'}",
-                        style: TextStyle(
-                            color: Tcolor.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 0.05,
-                  ),
-                  Column(
+                        Text(
+                          "Growth",
+                          style: TextStyle(
+                              color: Tcolor.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          " ${babyProvider.activeBaby?.babyName ?? 'Baby'}",
+                          style: TextStyle(
+                              color: Tcolor.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 0.05,
+                    ),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Align(
@@ -531,52 +308,22 @@ class _GrowthTracking extends State<GrowthTracking> {
                         if (selectedbutton == 0)
                           Column(
                             children: [
-                              Consumer<BabyProvider>(
-                                builder: (context, babyProvider, _) {
-                                  if (babyProvider.babyRecords.isNotEmpty) {
-                                    String birthdate = babyProvider
-                                            .activeBaby?.dateOfBirth
-                                            .toString() ??
-                                        '';
-                                    birthweight =
-                                        babyProvider.activeBaby?.babyWeight ??
-                                            0;
-
-                                    weightboxes[0]["date"] =
-                                        birthdate.toString().split(" ")[0];
-                                    weightboxes[0]["weight"] =
-                                        birthweight.toString();
-                                  }
-                                  return SizedBox();
-                                },
-                              ),
                               Consumer<WeightProvider>(
                                   builder: (context, weightProvider, child) {
                                 // Call updateHeightBoxes whenever weight records change
 
                                 return Column(children: [
-                                  SizedBox(
-                                    height: media.width * 0.3,
-                                    child: ListView.separated(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: weightboxes.length,
-                                      separatorBuilder:
-                                          (BuildContext context, int index) {
-                                        return SizedBox(width: 20);
-                                      },
-                                      itemBuilder: (context, index) {
-                                        var aobj =
-                                            weightboxes[index] as Map? ?? {};
-                                        return Boxes(
-                                            aobj: aobj,
-                                            weightboxes: weightboxes.cast());
-                                      },
-                                    ),
+                                  Text(
+                                    "Baby Weight at birth ",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700),
                                   ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
+                                  Text(babyProvider.activeBaby!.babyWeight!
+                                          .toString() +
+                                      "kg"),
                                   WeightChart(
+                                    babyBirthDate:
+                                        babyProvider.activeBaby!.dateOfBirth!,
                                     weightRecords: weightProvider.weightRecords,
                                   ),
                                   SizedBox(
@@ -596,172 +343,108 @@ class _GrowthTracking extends State<GrowthTracking> {
                                     height: 20,
                                   ),
                                   BabyWeightDataTable(
+                                      birthWeight:
+                                          babyProvider.activeBaby!.babyWeight!,
                                       weightRecords:
                                           weightProvider.weightRecords)
                                 ]);
                               })
                             ],
                           ),
-                        if (selectedbutton == 1)
-                          Column(children: [
-                            Consumer<BabyProvider>(
-                              builder: (context, babyProvider, _) {
-                                if (babyProvider.babyRecords.isNotEmpty) {
-                                  // Extract birthdate and weight at birth
-                                  String birthdate = babyProvider
-                                          .activeBaby?.dateOfBirth
-                                          .toString() ??
-                                      '';
-                                  birthHeadMeasure =
-                                      babyProvider.activeBaby?.babyhead ?? 0;
-
-                                  // Update "At birth" box with birthdate and weight at birth
-                                  headboxes[0]["date"] =
-                                      birthdate.toString().split(" ")[0];
-                                  headboxes[0]["weight"] =
-                                      birthHeadMeasure.toString();
-                                }
-                                // Return the UI components
-                                return SizedBox(); // Return a placeholder widget if needed
-                              },
-                            ),
-                            Consumer<HeadMeasureProvider>(
-                                builder: (context, headMeasureProvider, child) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: media.width * 0.3,
-                                    child: ListView.separated(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: weightboxes.length,
-                                      separatorBuilder:
-                                          (BuildContext context, int index) {
-                                        return SizedBox(
-                                            width:
-                                                20); // Adjust the width as needed
-                                      },
-                                      itemBuilder: (context, index) {
-                                        var aobj =
-                                            headboxes[index] as Map? ?? {};
-                                        return Boxes(
-                                            aobj: aobj,
-                                            weightboxes: headboxes.cast());
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  HeadChart(
-                                      measureRecords:
-                                          headMeasureProvider.headRecords),
-                                  RoundButton(
-                                      onpressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BabyHeadPage()),
-                                        );
-                                      },
-                                      title: "Add Head circ"),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  BabyHeadDataTable(
-                                      measureRecords:
-                                          headMeasureProvider.headRecords),
-                                ],
-                              );
-                            }),
-                          ]),
-                        if (selectedbutton == 2)
-                          Column(
+                      ],
+                    ),
+                    if (selectedbutton == 1)
+                      Column(children: [
+                        Consumer<HeadMeasureProvider>(
+                            builder: (context, headMeasureProvider, child) {
+                          return Column(
                             children: [
-                              Consumer<BabyProvider>(
-                                builder: (context, babyProvider, _) {
-                                  if (babyProvider.babyRecords.isNotEmpty) {
-                                    // Extract birthdate and weight at birth
-                                    String birthdate = babyProvider
-                                            .activeBaby?.dateOfBirth
-                                            .toString() ??
-                                        '';
-                                    birthHeightMeasure =
-                                        babyProvider.activeBaby?.babyHeight ??
-                                            0;
-
-                                    // Update "At birth" box with birthdate and weight at birth
-                                    heightboxes[0]["date"] =
-                                        birthdate.toString().split(" ")[0];
-                                    heightboxes[0]["weight"] =
-                                        birthHeightMeasure.toString();
-                                  }
-                                  // Return the UI components
-                                  return SizedBox(); // Return a placeholder widget if needed
-                                },
+                              Text(
+                                "Baby Head circ at birth ",
+                                style: TextStyle(fontWeight: FontWeight.w700),
                               ),
-                              Consumer<HeightMeasureProvider>(builder:
-                                  (context, heightMeasureProvider, child) {
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: media.width * 0.3,
-                                      child: ListView.separated(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: weightboxes.length,
-                                        separatorBuilder:
-                                            (BuildContext context, int index) {
-                                          return SizedBox(
-                                              width:
-                                                  20); // Adjust the width as needed
-                                        },
-                                        itemBuilder: (context, index) {
-                                          var aobj =
-                                              heightboxes[index] as Map? ?? {};
-                                          return Boxes(
-                                              aobj: aobj,
-                                              weightboxes: heightboxes.cast());
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    BabyHeightChart(
-                                        heightmeasureRecords:
-                                            heightMeasureProvider
-                                                .heightRecords),
-                                    RoundButton(
-                                        onpressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BabyHeightPage()),
-                                          );
-                                        },
-                                        title: "Add height measure"),
-                                    BabyHeightDataTable(
-                                        heightmeasuredata:
-                                            heightMeasureProvider.heightRecords)
-                                  ],
-                                );
-                              })
+                              Text(babyProvider.activeBaby!.babyhead!
+                                      .toString() +
+                                  "Cm"),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              HeadChart(
+                                  babybirth:
+                                      babyProvider.activeBaby!.dateOfBirth!,
+                                  measureRecords:
+                                      headMeasureProvider.headRecords),
+                              RoundButton(
+                                  onpressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => BabyHeadPage()),
+                                    );
+                                  },
+                                  title: "Add Head circ"),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              BabyHeadDataTable(
+                                  birthHead: babyProvider.activeBaby!.babyhead!,
+                                  measureRecords:
+                                      headMeasureProvider.headRecords),
                             ],
-                          ),
-                        if (selectedbutton == 3)
-                          Consumer3<HeightMeasureProvider, HeadMeasureProvider,
-                                  WeightProvider>(
-                              builder: (context, heightMeasureProvider,
-                                  headmeasureprovider, weightProvider, child) {
-                            return GrowthSummaryTable(
-                              heightRecords:
-                                  heightMeasureProvider.heightRecords,
-                              headRecords: headMeasureProvider.headRecords,
-                              weightRecords: weightProvider.weightRecords,
+                          );
+                        }),
+                      ]),
+                    if (selectedbutton == 2)
+                      Column(
+                        children: [
+                          Consumer<HeightMeasureProvider>(
+                              builder: (context, heightMeasureProvider, child) {
+                            return Column(
+                              children: [
+                                Text(
+                                  "Baby Height measure at birth ",
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                ),
+                                Text(babyProvider.activeBaby!.babyHeight!
+                                        .toString() +
+                                    "Cm"),
+                                BabyHeightChart(
+                                    babyBirth:
+                                        babyProvider.activeBaby!.dateOfBirth!,
+                                    heightmeasureRecords:
+                                        heightMeasureProvider.heightRecords),
+                                RoundButton(
+                                    onpressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                BabyHeightPage()),
+                                      );
+                                    },
+                                    title: "Add height measure"),
+                                BabyHeightDataTable(
+                                    babyheight:
+                                        babyProvider.activeBaby!.babyHeight!,
+                                    heightmeasuredata:
+                                        heightMeasureProvider.heightRecords)
+                              ],
                             );
                           })
-                      ]),
-                ])))));
+                        ],
+                      ),
+                    if (selectedbutton == 3)
+                      Consumer3<HeightMeasureProvider, HeadMeasureProvider,
+                              WeightProvider>(
+                          builder: (context, heightMeasureProvider,
+                              headmeasureprovider, weightProvider, child) {
+                        return GrowthSummaryTable(
+                          heightRecords: heightMeasureProvider.heightRecords,
+                          headRecords: headMeasureProvider.headRecords,
+                          weightRecords: weightProvider.weightRecords,
+                        );
+                      })
+                  ]),
+                ))));
   }
 }

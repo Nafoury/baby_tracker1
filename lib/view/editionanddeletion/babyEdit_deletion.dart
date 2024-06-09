@@ -310,19 +310,10 @@ class _BabyProfileEditAndDeletionState
                                       Navigator.of(context).pop();
                                       await babyProvider.deleteBabyRecord(
                                           widget.babyInfo.infoId!);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          duration: Durations.medium1,
-                                          backgroundColor:
-                                              Tcolor.gray.withOpacity(0.4),
-                                          content: Text(
-                                              "Baby was successfully deleted."),
-                                        ),
-                                      );
+
                                       List<BabyInfo> babies =
                                           babyProvider.babyRecords;
-                                      if (babies.length == 0) {
+                                      if (babies.isEmpty) {
                                         // If the list becomes empty after deletion, navigate to the "Complete Info" page
                                         Navigator.pushReplacement(
                                           context,
@@ -332,16 +323,7 @@ class _BabyProfileEditAndDeletionState
                                         );
                                       } else {
                                         // Show SnackBar using a Builder widget to ensure a valid context
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            duration: Durations.medium1,
-                                            backgroundColor:
-                                                Tcolor.gray.withOpacity(0.4),
-                                            content: Text(
-                                                "Baby was successfully deleted."),
-                                          ),
-                                        );
+
                                         Navigator.of(context).pop();
                                       }
                                     },

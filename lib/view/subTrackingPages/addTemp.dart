@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/medController.dart';
 import 'package:baba_tracker/models/medData.dart';
 import 'package:baba_tracker/models/tempData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
 import 'package:baba_tracker/provider/tempProvider.dart';
 import 'package:baba_tracker/shapes/temp3.dart';
@@ -23,12 +24,14 @@ class _AddTempState extends State<AddTemp> {
   late TempProvider tempProvider;
   DateTime startDate = DateTime.now();
   final _note = TextEditingController();
+  late BabyProvider babyProvider;
 
   ValueNotifier<double> temperature = ValueNotifier(0.5);
 
   @override
   void didChangeDependencies() {
     tempProvider = Provider.of<TempProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -71,7 +74,7 @@ class _AddTempState extends State<AddTemp> {
                     width: 75,
                   ),
                   Text(
-                    "Temperture",
+                    "Temperature",
                     style: TextStyle(
                         color: Tcolor.black,
                         fontSize: 14,
@@ -88,6 +91,7 @@ class _AddTempState extends State<AddTemp> {
                     ],
                   ),
                   HealthWidget(
+                    babybirth: babyProvider.activeBaby!.dateOfBirth!,
                     healthType: HealthType.Temp,
                     startDate: startDate,
                     controller: _note,
@@ -116,7 +120,7 @@ class _AddTempState extends State<AddTemp> {
                                   width: 40,
                                 ),
                                 content: Text(
-                                  'Temp data of the same temparture, date, and hour already exists.',
+                                  'temperature data of the same value, date, and hour already exists.',
                                   style: TextStyle(fontStyle: FontStyle.normal),
                                 ),
                                 actions: <Widget>[
@@ -147,7 +151,7 @@ class _AddTempState extends State<AddTemp> {
                                   width: 60,
                                 ),
                                 content: Text(
-                                  'Temparture was successfully added',
+                                  'temperature was successfully added',
                                   style: TextStyle(fontStyle: FontStyle.normal),
                                 ),
                                 actions: <Widget>[
@@ -168,7 +172,7 @@ class _AddTempState extends State<AddTemp> {
                           });
                         }
                       },
-                      title: "Save Temprature")
+                      title: "Save Temperature")
                 ],
               ),
             ])))));

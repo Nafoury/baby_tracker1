@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/models/babyWeight.dart';
 import 'package:baba_tracker/models/momweightData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/momWeightProvider.dart';
 import 'package:baba_tracker/provider/weightProvider.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
   late DateTime? startDate;
   late double mlvalue;
   late WeightProvider weightProvider;
+  late BabyProvider babyProvider;
 
   @override
   void initState() {
@@ -40,7 +42,9 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
 
   @override
   void didChangeDependencies() {
-    weightProvider = Provider.of<WeightProvider>(context, listen: false);
+    weightProvider = Provider.of<WeightProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
+
     super.didChangeDependencies();
   }
 
@@ -91,7 +95,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (widget.entryData.weightId != null) {
                           showDialog(
                             context: context,
@@ -112,16 +116,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                                       Navigator.of(context).pop();
                                       await weightProvider.deleteWeigthRecord(
                                           widget.entryData.weightId!);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          duration: Durations.medium1,
-                                          backgroundColor:
-                                              Tcolor.gray.withOpacity(0.4),
-                                          content: Text(
-                                              "Record was successfully deleted."),
-                                        ),
-                                      );
+
                                       Navigator.of(context).pop();
 
                                       // Go back to the previous page
@@ -145,6 +140,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                   height: 30,
                 ),
                 BalanceWeight(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   max: 200,
                   min: 0,
                   initialWeight: mlvalue, // Pass the initial weight
@@ -216,7 +212,7 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                         );
                         return;
                       } else {
-                        weightProvider.editWeightRecord(WeightData(
+                        await weightProvider.editWeightRecord(WeightData(
                             date: startDate,
                             weight: mlvalue,
                             weightId: widget.entryData.weightId!));
@@ -244,7 +240,6 @@ class _BabyWeightEditState extends State<BabyWeightEdit> {
                         );
                       }
                     }
-                    Navigator.pop(context);
                   },
                   title: "Save changes",
                 )

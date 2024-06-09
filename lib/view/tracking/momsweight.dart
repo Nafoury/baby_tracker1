@@ -18,28 +18,12 @@ class MomWeightpage extends StatefulWidget {
 }
 
 class _MomWeightpageState extends State<MomWeightpage> {
-  late MomWeightProvider momWeightProvider;
   late List<MomData> weightRecords = [];
 
   @override
   void didChangeDependencies() {
-    momWeightProvider = Provider.of<MomWeightProvider>(context, listen: false);
+    Provider.of<MomWeightProvider>(context, listen: false).getWeightRecords();
     super.didChangeDependencies();
-    fetchWeightRecords(momWeightProvider);
-  }
-
-  Future<void> fetchWeightRecords(MomWeightProvider momWeightProvider) async {
-    try {
-      List<MomData> records = await momWeightProvider.getWeightRecords();
-      print('Fetched Medication Records: $records');
-      setState(() {
-        weightRecords = records;
-        print('Fetched Medication Records: $records');
-      });
-    } catch (e) {
-      print('Error fetching medication records: $e');
-      // Handle error here
-    }
   }
 
   @override
@@ -82,7 +66,7 @@ class _MomWeightpageState extends State<MomWeightpage> {
           Consumer<MomWeightProvider>(
             builder: (context, momweightProvider, child) {
               return Column(children: [
-                WeightChart(weightRecords: weightRecords),
+                WeightChart(weightRecords: momweightProvider.weightRecords),
                 SizedBox(
                   height: 40,
                 ),
@@ -97,7 +81,7 @@ class _MomWeightpageState extends State<MomWeightpage> {
                 SizedBox(
                   height: 40,
                 ),
-                WeightDataTable(weightRecords: weightRecords)
+                WeightDataTable(weightRecords: momweightProvider.weightRecords)
               ]);
             },
           ),

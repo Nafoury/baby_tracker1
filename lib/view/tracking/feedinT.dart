@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
 import 'package:baba_tracker/view/charts/bottlechart.dart';
-import 'package:baba_tracker/view/subTrackingPages/bottleView.dart';
+
 import 'package:provider/provider.dart';
 
 class FeedingTracking extends StatefulWidget {
@@ -266,13 +266,14 @@ class _FeedingTracking extends State<FeedingTracking> {
                         if (selectedbutton == 2)
                           Consumer<SolidsProvider>(
                             builder: (context, solidProvider, child) {
-                              List<SolidsData> solidsRecords =
-                                  solidProvider.solidsRecords;
-
                               return Column(
                                 children: [
-                                  SolidsChart(solidsRecords: solidsRecords),
-                                  SolidsDataTable(solidsRecords: solidsRecords),
+                                  SolidsChart(
+                                      solidsRecords:
+                                          solidProvider.solidsRecords),
+                                  SolidsDataTable(
+                                      solidsRecords:
+                                          solidProvider.solidsRecords),
                                 ],
                               );
                             },

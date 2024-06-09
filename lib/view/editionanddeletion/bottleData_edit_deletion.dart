@@ -3,6 +3,7 @@ import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/volumebottle.dart';
 import 'package:baba_tracker/models/bottleData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/bottleDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,7 @@ class _BottleEditState extends State<BottleEdit> {
   late double amount;
   late String note;
   late TextEditingController noteController;
+  late BabyProvider babyProvider;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _BottleEditState extends State<BottleEdit> {
   @override
   void didChangeDependencies() {
     bottleDataProvider = Provider.of<BottleDataProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -154,6 +157,7 @@ class _BottleEditState extends State<BottleEdit> {
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: TrackingWidget(
+                      userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                       trackingType: TrackingType.Feeding,
                       feedingSubtype: FeedingSubtype.bottle,
                       controller: noteController,

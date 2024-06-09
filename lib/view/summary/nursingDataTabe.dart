@@ -28,7 +28,7 @@ class _NursingDataTableState extends State<NursingDataTable> {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/images/diaper.png',
+                    'assets/images/bottledata.png',
                     height: 90,
                     width: 90,
                   ),

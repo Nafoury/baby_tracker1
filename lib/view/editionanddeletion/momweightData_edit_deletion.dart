@@ -2,6 +2,7 @@ import 'package:baba_tracker/common_widgets/crud.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/models/momweightData.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/momWeightProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
@@ -27,6 +28,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
   late DateTime? startDate;
   late double mlvalue;
   late MomWeightProvider momWeightProvider;
+  late BabyProvider babyProvider;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
   @override
   void didChangeDependencies() {
     momWeightProvider = Provider.of<MomWeightProvider>(context, listen: false);
+    babyProvider = Provider.of<BabyProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -69,7 +72,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      // Get.offAllNamed("/mainTab");
+                      Navigator.pop(context);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
@@ -108,15 +111,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
                                     Navigator.of(context).pop();
                                     await momWeightProvider.deleteWeigthRecord(
                                         widget.entryData.momId!);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        duration: Durations.medium1,
-                                        backgroundColor:
-                                            Tcolor.gray.withOpacity(0.4),
-                                        content: Text(
-                                            "Record was successfully deleted."),
-                                      ),
-                                    );
+
                                     Navigator.of(context).pop();
 
                                     // Go back to the previous page
@@ -140,6 +135,7 @@ class _MomWeightEditState extends State<MomWeightEdit> {
                 height: 30,
               ),
               BalanceWeight(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   initialWeight: mlvalue,
                   max: 200,
                   min: 0,

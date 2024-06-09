@@ -2,6 +2,7 @@ import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/common_widgets/weightBalance.dart';
 import 'package:baba_tracker/main.dart';
 import 'package:baba_tracker/models/babyWeight.dart';
+import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/weightProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
@@ -20,10 +21,12 @@ class _WeightPageState extends State<BabyWeightPage> {
 
   DateTime startDate = DateTime.now();
   late WeightProvider weightProvider;
+  late BabyProvider babyProvider;
 
   @override
   void didChangeDependencies() {
     weightProvider = Provider.of<WeightProvider>(context, listen: true);
+    babyProvider = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -50,7 +53,7 @@ class _WeightPageState extends State<BabyWeightPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Get.offAllNamed("/mainTab");
+                      Navigator.pop(context);
                     },
                     icon: Image.asset(
                       "assets/images/back_Navs.png",
@@ -75,6 +78,7 @@ class _WeightPageState extends State<BabyWeightPage> {
                 height: 10,
               ),
               BalanceWeight(
+                  userBirthDate: babyProvider.activeBaby!.dateOfBirth!,
                   initialWeight: mlValue,
                   max: 200,
                   min: 0,
