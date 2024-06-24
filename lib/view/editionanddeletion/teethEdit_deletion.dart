@@ -3,12 +3,14 @@ import 'package:baba_tracker/common_widgets/healthActivites.dart';
 import 'package:baba_tracker/common_widgets/round_button.dart';
 import 'package:baba_tracker/controller/teethController.dart';
 import 'package:baba_tracker/models/teethModel.dart';
+import 'package:baba_tracker/view/more/toothPage1.dart';
 
 import 'package:baba_tracker/view/more/toothPgae.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class TeethEdit extends StatefulWidget {
@@ -115,6 +117,11 @@ class _TeethEditState extends State<TeethEdit> {
                                       ),
                                     );
                                     Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TeethWidget()));
 
                                     // Go back to the previous page
                                   },
@@ -195,18 +202,21 @@ class _TeethEditState extends State<TeethEdit> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Image.asset(
-                                "assets/images/check.png",
+                                "assets/images/change.png",
                                 height: 60,
                                 width: 60,
                               ),
-                              content: Text(
-                                'Data was successfully updated',
-                                style: TextStyle(fontStyle: FontStyle.normal),
-                              ),
-                              actions: <Widget>[
+                              content:
+                                  Text("Teeth Data was successfully updated."),
+                              actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TeethWidget()));
                                   },
                                   child: Text("OK"),
                                 ),

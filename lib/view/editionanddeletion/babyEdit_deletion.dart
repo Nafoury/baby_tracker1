@@ -32,13 +32,17 @@ class _BabyProfileEditAndDeletionState
   late TextEditingController weightController;
   late TextEditingController heightController;
   late TextEditingController headController;
-  late BabyProvider babyProvider;
+
   late File? updatedFile = null;
   late File? myFile = null;
+
+  late BabyProvider babyProvider;
+  late BabyProvider babyProviderListener;
 
   @override
   void didChangeDependencies() {
     babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    babyProviderListener = Provider.of<BabyProvider>(context, listen: true);
     super.didChangeDependencies();
   }
 

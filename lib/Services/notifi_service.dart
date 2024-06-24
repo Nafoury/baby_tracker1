@@ -114,6 +114,6 @@ class NotificationService {
   }
 
   static Future<void> cancelScheduledNotification() async {
-    await Workmanager().cancelByUniqueName('reminder_task');
+    await Workmanager().cancelByUniqueName('its Medication Time');
   }
 }

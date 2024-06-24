@@ -8,6 +8,7 @@ import 'package:baba_tracker/provider/medications_provider.dart';
 import 'package:baba_tracker/provider/tempProvider.dart';
 import 'package:baba_tracker/shapes/temp3.dart';
 import 'package:baba_tracker/shapes/temp4.dart';
+import 'package:baba_tracker/view/tracking/health.dart';
 import 'package:flutter/material.dart';
 import 'package:baba_tracker/common/color_extension.dart';
 import 'package:get/get.dart';
@@ -151,13 +152,17 @@ class _AddTempState extends State<AddTemp> {
                                   width: 60,
                                 ),
                                 content: Text(
-                                  'temperature was successfully added',
+                                  'Temperature was successfully added',
                                   style: TextStyle(fontStyle: FontStyle.normal),
                                 ),
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HealthTracking()));
                                     },
                                     child: Text("OK"),
                                   ),

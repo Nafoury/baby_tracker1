@@ -188,10 +188,13 @@ class _AddVaccineState extends State<AddVaccine> {
                             );
                             return;
                           }
+                          VaccineData vaccineData = new VaccineData();
 
                           if (isSwitch && startDate.isAfter(DateTime.now())) {
                             NotificationService.showSchduledNotification1(
-                                startDate, status);
+                              startDate,
+                              status,
+                            );
                           }
                           vaccineProvider.addVaccineRecord(
                             VaccineData(

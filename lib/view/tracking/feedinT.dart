@@ -237,8 +237,6 @@ class _FeedingTracking extends State<FeedingTracking> {
                         if (selectedbutton == 1)
                           Consumer<BottleDataProvider>(
                             builder: (context, bottleDataProvider, child) {
-                              List<BottleData> bottlesRecords =
-                                  bottleDataProvider.bottleRecords;
                               return Column(
                                 children: [
                                   Align(
@@ -253,12 +251,15 @@ class _FeedingTracking extends State<FeedingTracking> {
                                   SizedBox(
                                     height: 30,
                                   ),
-                                  BottleChart(bottleRecords: bottlesRecords),
+                                  BottleChart(
+                                      bottleRecords:
+                                          bottleDataProvider.bottleRecords),
                                   SizedBox(
                                     height: 80,
                                   ),
                                   BottleDataTable(
-                                      bottleRecords: bottlesRecords),
+                                      bottleRecords:
+                                          bottleDataProvider.bottleRecords),
                                 ],
                               );
                             },

@@ -8,6 +8,7 @@ import 'package:baba_tracker/provider/babyHeadProvider.dart';
 import 'package:baba_tracker/provider/babyHeightProvider.dart';
 import 'package:baba_tracker/provider/babyInfoDataProvider.dart';
 import 'package:baba_tracker/provider/babyfaceDay.dart';
+import 'package:baba_tracker/provider/babyteeth.dart';
 import 'package:baba_tracker/provider/bottleDataProvider.dart';
 import 'package:baba_tracker/provider/diaper_provider.dart';
 import 'package:baba_tracker/provider/medications_provider.dart';
@@ -27,6 +28,7 @@ import 'package:baba_tracker/view/main_tab/main_tab.dart';
 import 'package:baba_tracker/view/more/face_day.dart';
 import 'package:baba_tracker/view/more/mainMorePage.dart';
 import 'package:baba_tracker/view/more/milestones.dart';
+import 'package:baba_tracker/view/more/toothPage1.dart';
 import 'package:baba_tracker/view/on_boarding/on_boarding_view.dart';
 import 'package:baba_tracker/view/on_boarding/started_view.dart';
 import 'package:baba_tracker/view/profiles/mom_profile.dart';
@@ -51,6 +53,10 @@ void main() async {
 
   bool isLoggedIn = sharedPref.getBool('isLoggedIn') ?? false;
 
+  BabyProvider babyProvider = BabyProvider();
+  await babyProvider.fetchAndSetActiveBaby();
+  bool hasBaby = babyProvider.activeBaby != null;
+
   runApp(
     MultiProvider(
       providers: [
@@ -68,17 +74,20 @@ void main() async {
         ChangeNotifierProvider(create: (context) => HeadMeasureProvider()),
         ChangeNotifierProvider(create: (context) => UserImageProvider()),
         ChangeNotifierProvider(create: (context) => HeightMeasureProvider()),
-        ChangeNotifierProvider(create: (context) => FaceDayProvider())
+        ChangeNotifierProvider(create: (context) => FaceDayProvider()),
+
         // Add more providers if needed
       ],
-      child: MyApp(isLoggedIn: isLoggedIn),
+      child: MyApp(isLoggedIn: isLoggedIn, hasBaby: hasBaby),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
-  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
+  final bool hasBaby;
+  const MyApp({Key? key, required this.isLoggedIn, required this.hasBaby})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +96,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme:
           ThemeData(primaryColor: Tcolor.primaryColor1, fontFamily: "Poppins"),
-      home: isLoggedIn ? MainTab() : Startview(),
+      home: isLoggedIn ? (hasBaby ? MainTab() : Completeinfo()) : Startview(),
       getPages: [
         GetPage(name: "/completeinfo", page: () => Completeinfo()),
         GetPage(name: "/home", page: () => HomeView()),
@@ -104,6 +113,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/milestone", page: () => Milestones()),
         GetPage(name: "/momprofile", page: () => MomProfile()),
         GetPage(name: "/growthTracking", page: () => GrowthTracking()),
+        GetPage(name: "/healthTracking", page: () => HealthTracking()),
       ],
       routes: {"login": (context) => LoginPage()},
     );

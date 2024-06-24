@@ -163,6 +163,12 @@ class _VaccineEditState extends State<VaccineEdit> {
                                       Navigator.of(context).pop();
                                       vaccineProvider.deleteVaccineRecord(
                                           widget.entryData.vaccineId!);
+                                      if (widget.entryData.isReminderSet !=
+                                          null) {
+                                        await NotificationService
+                                            .cancelScheduledNotification();
+                                        print("notfication is cancelled also");
+                                      }
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(

@@ -68,7 +68,6 @@ class _AddMedState extends State<AddMed> {
       DateTime firstScheduledTime = now.add(interval);
 
       // Cancel existing tasks before scheduling the new one
-      await NotificationService.cancelScheduledNotification();
 
       // Initialize WorkManager and set the reminder
       await WorkManagerService().init();
@@ -77,7 +76,7 @@ class _AddMedState extends State<AddMed> {
       await NotificationService.showScheduledNotificationRepeated(
           firstScheduledTime, interval);
     } else {
-      NotificationService.cancelScheduledNotification();
+      print("fatima");
     }
   }
 

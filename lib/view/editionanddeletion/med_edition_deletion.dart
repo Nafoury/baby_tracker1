@@ -184,6 +184,11 @@ class _MediciationEditState extends State<MediciationEdit> {
                                       medicationsProvider
                                           .deleteMedicationRecord(
                                               widget.entryData.medId!);
+                                      if (widget.entryData.isReminderSet!) {
+                                        await NotificationService
+                                            .cancelScheduledNotification();
+                                        print("notfication is cancelled also");
+                                      }
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
